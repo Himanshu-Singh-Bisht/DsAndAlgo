@@ -11,48 +11,8 @@ public class basicFunctions
     }
 
     public static void solve() {
-        // basicf();
         LeetCode();
     }
-
-    /***************************************
-     * BASIC FUNCTIONS IN ARRAY
-     ***************************************/
-    public static void basicf() {
-        // MIN_MAX
-        /*
-         * int[] arr = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }; int[] ans = min_max(arr);
-         * System.out.print("min->" + ans[0] + "\n" + "max->" + ans[1]);
-         */
-
-        // All index
-        /*
-         * int[] arr = { 1, 2, 3, 4, 4, 4, 5, 6, 7, 4, 4, 6, 4, 4 }; 
-         * ArrayList<Integer>
-         * indices = findAllIndex(arr, 4); for (Integer index : indices) {
-         * System.out.print(index + " "); }
-         */
-
-        // Reverse array
-        /*
-         * int[] arr = { 1, 2, 3, 4, 5, 6, 7, 8 }; revArray(arr); display1D(arr);
-         */
-
-        // Matrix
-
-        // int[][] mat = { { 1, 2, 3 }, { 2, 3, 4 }, { 4, 5, 6 } };
-        // int[][] hmat = { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
-        // addTwoMatrix(mat, hmat);
-        // transposeMatrix(mat);
-        // multiplyMatrix(mat, hmat);
-        // wavePrint(mat);
-        // spiralPrint(mat);
-        // int[][] mat={{0,0,0,1},{0,1,0,1},{0,0,0,0},{0,0,0,0}};
-        // display1D(exitPoint1(mat));
-        // display2D(matrix);
-
-    }
-
 
 
     public static void LeetCode()
@@ -146,6 +106,86 @@ public class basicFunctions
         // Input: nums = [3,4,5,2]
         // Output: 12 
         // maxProduct(nums);
+
+
+        // Ques = 1252, Cells with Odd Values in a Matrix
+        // Input: n = 2, m = 3, indices = [[0,1],[1,1]]
+        // Output: 6
+        // oddCells(n, m, indices);
+
+
+
+        // Ques = 1351, Count Negative Numbers in a Sorted Matrix
+        // Input: grid = [[4,3,2,-1],[3,2,1,-1],[1,1,-1,-2],[-1,-1,-2,-3]]
+        // Output: 8
+        // countNegatives(grid);
+
+
+
+        // Ques = 1299, Replace Elements with Greatest Element on Right Side
+        // Input: arr = [17,18,5,4,6,1]
+        // Output: [18,6,6,6,1,-1]
+        // replaceElements(arr);
+
+
+
+        // Ques = 1304, Find N Unique Integers Sum up to Zero
+        // Input: n = 5
+        // Output: [-7,-1,1,3,4]
+        // sumZero(n);
+
+
+
+        // Ques = 1475, Final Prices With a Special Discount in a Shop
+        // Input: prices = [8,4,6,2,3]
+        // Output: [4,2,4,2,3]
+        // finalPrices(prices);
+
+
+
+        // Ques = 832 , Flipping an Image
+        // Input: int[][] A = [[1,1,0],[1,0,1],[0,0,0]]
+        // Output: [[1,0,0],[0,1,0],[1,1,1]]
+        // flipAndInvertImage(A);
+
+
+
+        // Ques - 1460, Make Two Arrays Equal by Reversing Sub-arrays
+        // Input: target = [1,2,3,4], arr = [2,4,1,3]
+        // Output: true
+        // canBeEqual(target, arr);
+
+
+
+        // Ques - 905, Sort Array By Parity
+        // Input: int[] arr = [3,1,2,4]
+        // Output: [2,4,3,1]
+        // sortArrayByParity(arr);
+
+
+
+        // Ques - 977, Squares of a Sorted Array
+        // Input: int[] A = [-4,-1,0,3,10]
+        // Output: [0,1,9,16,100]
+        // sortedSquares(A);
+
+
+
+        // Ques - 1491, Average Salary Excluding the Minimum and Maximum Salary
+        // Input: salary = [4000,3000,1000,2000]
+        // Output: 2500.00000
+        // average(salary);
+
+
+
+        // Ques - 561, Array Partition I
+        // Input: int[] nums = [1,4,3,2]
+        // Output: 4
+        // arrayPairSum(nums);
+
+
+
+        // Ques - 
     }
 
 
@@ -511,6 +551,337 @@ public class basicFunctions
         
         return (a-1) * (b-1);
     }
+
+
+
+    // LeetCode = 1252  ____________________________________________________________
+    public static int oddCells(int n, int m, int[][] indices) 
+    {
+        int[][] arr = new int[n][m];
+        
+        for(int i = 0; i < indices.length ; i++)
+        {
+            int ri = indices[i][0];
+            int ci = indices[i][1];
+            
+            for(int idx = 0 ; idx < arr[0].length; idx++)
+            {
+                arr[ri][idx] += 1;
+            }
+            
+            for(int idx = 0 ; idx < arr.length ; idx++)
+            {
+                arr[idx][ci] += 1;
+            }
+        }
+        
+        int count = 0;
+        for(int i = 0 ; i < arr.length ; i++)
+        {
+            for(int j = 0 ; j < arr[0].length ; j++)
+            {
+                if(arr[i][j] % 2 == 1)
+                {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+
+    public static int oddCells_2(int n, int m, int[][] indices) 
+    {
+        boolean[] row = new boolean[n];
+        boolean[] col = new boolean[m];
+        
+        for(int[] ind : indices)
+        {
+            row[ind[0]] = !row[ind[0]];
+            col[ind[1]] = !col[ind[1]];
+        }
+        
+        int count = 0;
+        for(int i = 0 ; i < n ; i++)
+        {
+            for(int j = 0 ; j < m ; j++)
+            {
+                if(row[i] ^ col[j])
+                {
+                    count++;
+                }
+            }
+        }
+        
+        return count;
+    }
+
+
+    // LeetCode - 1351 ____________________________________
+    public static int countNegatives(int[][] grid) 
+    {
+        int count = 0;
+        for(int i = 0 ; i < grid.length ; i++)
+        {
+            for(int j = 0; j < grid[0].length ;j++)
+            {
+                if(grid[i][j] < 0)
+                {
+                    count += grid[0].length - j;
+                    break;
+                }
+            }
+        }
+        
+        return count;
+    }
+
+    // LeetCode - 1299 _________________________________________
+    public static int[] replaceElements(int[] arr)
+    {
+        int[] ans = new int[arr.length];
+        
+        ans[ans.length - 1] = -1;
+        int max_ = Integer.MIN_VALUE;
+        
+        max_ = Math.max(max_ , arr[arr.length- 1]);
+        for(int i = ans.length - 2 ; i >= 0; i--)
+        {
+            ans[i] = max_;
+            max_ = Math.max(max_ , arr[i]);
+        }
+        
+        return ans;
+   }
+
+
+    // LeetCode - 1304 __________________________________________________
+    public static int[] sumZero(int n)
+    {
+        int[] ans = new int[n];
+       
+        int x = n / 2;
+        for(int i = 0 ; i < n/2 ; i++)
+        {
+            ans[i] = -x;
+            ans[n - i - 1] = x;
+           
+            x--;
+        }
+       
+        if(n % 2 == 1)           // when the n is odd.
+        {
+           ans[n/2] = 0;
+        }
+        return ans;
+    }
+
+
+
+    // LeetCode - 1475 _______________________________________________
+    public static int[] finalPrices(int[] prices) 
+    {
+        for(int i = 0 ; i < prices.length ; i++)
+        {
+            for(int j = i+1; j < prices.length ; j++)
+            {
+                if(prices[j] <= prices[i])
+                {
+                    prices[i] = prices[i] - prices[j];
+                    break;
+                }
+            }
+        }
+        
+        return prices;
+    }
+
+
+
+    // LeetCode - 832 ______________________________________________
+    public static int[][] flipAndInvertImage(int[][] A) 
+    {
+        for(int i = 0 ; i < A.length ; i++)
+        {
+            for(int j = 0 ; j < (A[0].length + 1) /2 ; j++)
+            {
+                int temp = A[i][j] ^ 1;
+                A[i][j] = A[i][A[0].length - j - 1] ^ 1;
+                A[i][A[0].length - j - 1] = temp;
+            }
+        }
+        
+        return A;
+    }
+
+
+    // LeetCode = 1460 _____________________________________________________
+    public static boolean canBeEqual(int[] target, int[] arr) 
+    {
+        Arrays.sort(target);
+        Arrays.sort(arr);
+        for(int i = 0; i < arr.length ; i++)
+        {
+            if(target[i] != arr[i])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+
+
+    // LeetCode - 905 _______________________________________
+    public static int[] sortArrayByParity(int[] A) 
+    {
+        int[] ans = new int[A.length];
+        int j = 0;
+        int k = ans.length- 1;
+        for(int i = 0 ; i < A.length ; i++)
+        {
+            if(A[i] % 2 == 0)
+            {
+                ans[j] = A[i];
+                j++;
+            }
+            else
+            {
+                ans[k] = A[i];
+                k--;
+            }
+        }
+        
+        return ans;
+    }
+
+
+    //LeetCode - 977 __________________________________________
+    public static int[] sortedSquares(int[] A) 
+    {
+        int[] ans = new int[A.length];
+        
+        int j = 0;
+        
+        while(j < A.length && A[j] < 0)
+        {
+            j++;
+        }
+        
+        int i = j - 1;
+        // i is where -ve no. ends and j is where +ve no. starts
+        
+        int idx = 0;  // to fill the ans array
+        while(i >= 0 && j < A.length)
+        {
+            if(Math.abs(A[i]) < A[j])
+            {
+                ans[idx++] = A[i] * A[i];
+                i--;
+            }
+            else
+            {
+                ans[idx++] = A[j] * A[j];
+                j++;
+            }
+        }
+        
+        while(i >= 0)       // if some -ve no. are left
+        {
+            ans[idx++] = A[i] * A[i];
+            i--;
+        }
+        
+        while(j < A.length)         // if some +ve no. are left
+        {
+            ans[idx++] = A[j] * A[j];
+            j++;
+        }
+        
+        return ans;
+    }
+
+
+
+
+    // LeetCode - 1491 _______________________________
+    public static double average(int[] salary) 
+    {
+        double sum = 0;
+        int max = 0;
+        int min = 10000000;
+        
+        for(int i = 0 ; i < salary.length ; i++)
+        {
+            sum += salary[i];
+            
+            max = Math.max(max , salary[i]);
+            min = Math.min(min , salary[i]);
+        }
+        
+        sum = sum - max - min;
+        sum = sum / (salary.length - 2);
+        
+        return sum;
+    }
+
+
+
+    // LeetCode - 561 _______________________________________
+    public static int arrayPairSum(int[] nums)
+    {
+        Arrays.sort(nums);
+        int sum = 0;
+        for(int i = 0 ; i < nums.length ; i+=2)
+        {
+            sum += nums[i];
+        }
+        return sum;
+    }
+
+
+
+
+    // LeetCode - 1380 ___________________________________________
+    public static ArrayList<Integer> luckyNumbers(int[][] matrix)
+    {
+        ArrayList<Integer> ans = new ArrayList<>();
+        
+        for(int i = 0 ; i < matrix.length ; i++)
+        {
+            int min_i = i;
+            int min_j = 0;
+            
+            for(int j = 1; j < matrix[0].length ; j++)
+            {
+                if(matrix[i][j] < matrix[i][min_j])
+                {
+                    min_j = j;
+                }
+            }
+            boolean flag = false;
+            int k = 0;
+            while(k < matrix.length)
+            {
+                if(matrix[k][min_j] > matrix[min_i][min_j])
+                {
+                    flag = true;
+                    break;
+                }
+                k++;
+            }
+            
+            if(!flag)
+            {
+                ans.add(matrix[min_i][min_j]);
+            }
+        }
+        
+        return ans;
+    }
+
+
 
 
 
