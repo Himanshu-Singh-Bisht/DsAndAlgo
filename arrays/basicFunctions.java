@@ -185,7 +185,53 @@ public class basicFunctions
 
 
 
-        // Ques - 
+        // Ques - 1380, Lucky Numbers in a Matrix
+        // Input: matrix = [[3,7,8],[9,11,13],[15,16,17]]
+        // Output: [15]
+        // luckyNumbers(nums);
+
+
+        // Ques - 1051 , Height Checker
+        // Input: heights = [1,1,4,2,1,3]
+        // Output: 3
+        // heightChecker(heights);
+
+
+
+
+        // Ques - 922 , Sort Array By Parity - 2
+        // Input: [4,2,5,7]
+        // Output: [4,5,2,7]
+        // sortArrayByParityII(A);
+
+
+
+        // Ques - 1377 , The K Weakest Rows in a Matrix
+        // Input: mat = 
+        // [[1,1,0,0,0],
+        // [1,1,1,1,0],
+        // [1,0,0,0,0],
+        // [1,1,0,0,0],
+        // [1,1,1,1,1]], 
+        // k = 3
+        // Output: [2,0,3]
+        // kWeakestRows(mat , k);
+
+
+
+
+        // Ques - 1122 , Relative Sort Array
+        // Input: arr1 = [2,3,1,3,2,4,6,7,9,2,19], arr2 = [2,1,4,3,9,6]
+        // Output: [2,2,2,1,4,3,3,9,6,7,19]
+        // relativeSortArray(arr1, arr2);
+
+
+
+
+        // Ques - 1002 , Find Common Characters
+        // Input: ["bella","label","roller"]
+        // Output: ["e","l","l"]
+        // commonChars(A);
     }
 
 
@@ -881,6 +927,202 @@ public class basicFunctions
         return ans;
     }
 
+
+
+
+    // LeetCode - 1051 _____________________________________________________
+    public static int heightChecker(int[] heights)
+    {
+        int[] target = heights.clone();
+        
+        Arrays.sort(target);
+        int count = 0;
+        for(int i = 0 ; i < heights.length ;i++)
+        {
+            if(heights[i] != target[i])
+            {
+                count++;
+            }
+        }
+        
+        return count;
+    }
+
+
+    // LeetCode - 922 ___________________________________________________
+    public static int[] sortArrayByParityII(int[] A)
+    {
+        int j = 1;
+        
+        for(int i = 0 ; i < A.length ; i += 2)
+        {
+            if(A[i] % 2 == 1)
+            {
+                while(A[j] % 2 == 1)
+                {
+                    j += 2;
+                }
+            
+                // swap A[i] and A[j]
+                int temp = A[i];
+                A[i] = A[j];
+                A[j] = temp;
+            }
+        }
+        
+        return A;
+    }
+
+
+    public static int[] sortArrayByParityII_2(int[] A)
+    {
+        int i = 0, j = A.length-1;
+        
+        while(i < A.length-1)
+        {
+            if((A[i] & 1) == 0) i+=2;
+            else if((A[j] & 1) != 0) j-=2;
+            else 
+            {
+                int temp = A[i];
+                A[i] = A[j];
+                A[j] = temp;
+            }
+        }
+        return A;
+    }
+
+
+
+
+    // LeetCode - 1377 __________________________________________
+    public static int[] kWeakestRows(int[][] mat, int k) 
+    {
+        int[][] helper = new int[mat.length][2];
+        
+        for(int i = 0 ; i < mat.length ; i++)
+        {
+            helper[i][0] = i;
+            helper[i][1] = soldiers(mat[i]);
+        }
+        
+        // sort the ans array according to the no. of soldiers.
+        Arrays.sort(helper , (index1, index2) -> (index1[1] != index2[1] ? index1[1] -                                                              index2[1] : index1[0] - index2[0]));
+        int[] ans = new int[k]; 
+        for(int i = 0 ; i < k ; i++)
+        {
+            ans[i] = helper[i][0];
+        }
+        
+        return ans;
+    }
+    
+    public static int soldiers(int[] row)
+    {
+        int left = 0;
+        int right = row.length - 1;
+        int mid;
+        
+        while(left <= right)
+        {
+            mid = left + (right - left) / 2;
+            if(row[mid] == 0)
+            {
+                right = mid - 1;
+            }
+            else
+            {
+                left = mid + 1;
+            }
+        }
+        
+        return left;
+    }
+
+
+
+
+
+    // LeetCode - 1122 _________________________________________
+    public static int[] relativeSortArray(int[] arr1, int[] arr2) 
+    {
+        if(arr1.length == 0 && arr2.length == 0) 
+            return arr1;
+        
+        
+        int[] frequency = new int[1001];     // as arr1[i] is < 1000
+        int max = -1;
+        
+        for(int i = 0 ; i < arr1.length ; i++)
+        {
+            frequency[arr1[i]]++;
+            max = Math.max(arr1[i] , max);
+        }
+        
+        int idx = 0;
+        for(int i = 0 ; i < arr2.length ; i++)
+        {
+            if(frequency[arr2[i]] > 0)
+            {
+                while(frequency[arr2[i]]-- > 0)
+                {
+                    arr1[idx++] = arr2[i];
+                }
+            }
+        }
+        
+        for(int i = 0 ; i <= max ; i++)
+        {
+            while(frequency[i]-- > 0)
+            {
+                arr1[idx++] = i;
+            }
+        }
+        
+        return arr1;
+    }
+
+
+
+
+
+    // LeetCode - 1002 __________________________________________________
+    public static ArrayList<String> commonChars(String[] A) 
+    {
+        ArrayList<String> ans = new ArrayList<>();
+        int[][] arr = new int[A.length][26];
+        
+        for(int i = 0 ; i < A.length ; i++)
+        {
+            for(char ch : A[i].toCharArray())
+            {
+                int j = (int)(ch - 'a');
+                arr[i][j]++;
+            }
+        }
+        
+        
+        for(int i = 0; i < arr[0].length ; i++)
+        {
+            int min = Integer.MAX_VALUE;
+            for(int j = 0 ; j < arr.length ; j++)
+            {
+                min = Math.min(min , arr[j][i]);
+                if(min == 0)
+                {
+                    break;
+                }
+            }
+            
+            while(min-- > 0)
+            {
+                ans.add((char)(i + (int)'a') + "");
+            }
+            
+        }
+        
+        return ans;
+    }
 
 
 
