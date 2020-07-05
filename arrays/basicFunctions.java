@@ -232,6 +232,66 @@ public class basicFunctions
         // Input: ["bella","label","roller"]
         // Output: ["e","l","l"]
         // commonChars(A);
+
+
+        // Ques - 1385, Find the Distance Value Between Two Arrays
+        // Input: arr1 = [4,5,8], arr2 = [10,9,1,8], d = 2
+        // Output: 2
+        // findTheDistanceValue(arr1, arr2, d);
+
+
+
+
+        // Ques - 1160, Find Words That Can Be Formed by Characters
+        // Input: words = ["cat","bt","hat","tree"], chars = "atach"
+        // Output: 6
+        // countCharacters(words, chars);
+
+
+
+        // Ques = 509 , fibonacci number
+        // Input: 3
+        // Output: 2
+        // fib(n);
+
+
+
+        // Ques - 999 , Available Captures for Rook
+        // Input: char[][] board = [[".",".",".",".",".",".",".","."],
+        //         [".",".",".","p",".",".",".","."],
+        //         [".",".",".","R",".",".",".","p"], 
+        //         [".",".",".",".",".",".",".","."],
+        //         [".",".",".",".",".",".",".","."],
+        //         [".",".",".","p",".",".",".","."],
+        //         [".",".",".",".",".",".",".","."],
+        //         [".",".",".",".",".",".",".","."]]
+        // Output: 3
+        // numRookCaptures(board);
+
+
+
+
+        
+        
+        // Ques - 1200 , Minimum Absolute Difference
+        // Input: arr = [4,2,1,3]
+        // Output: [[1,2],[2,3],[3,4]]
+        // minimumAbsDifference(arr);
+
+
+
+
+        // Ques - 1394, Find Lucky Integer in an Array
+        // Input: arr = [2,2,3,4]
+        // Output: 2
+        
+
+
+
+        // Ques - 1413 , Minimum Value to Get Positive Step by Step Sum
+        // Input: nums = [-3,2,-3,4,2]
+        // Output: 5
+        // minStartValue(nums);
     }
 
 
@@ -257,7 +317,6 @@ public class basicFunctions
             nums[i] = ans[i];
         }
     }
-
 
     public static void rotateArrayWithoutSpace(int[] nums , int k)
     {
@@ -285,6 +344,8 @@ public class basicFunctions
         nums[i1] = nums[i2];
         nums[i2] = temp;
     }
+
+
 
     //Leetcode = 1480___________________________________________________________________
     public static int[] runningSum(int[] nums)
@@ -407,7 +468,6 @@ public class basicFunctions
         
         return nums;
     }
-
 
     public static int[] smallerNumbersThanCurrent_3(int[] nums)  // O(nlog(n))
     {
@@ -682,6 +742,7 @@ public class basicFunctions
         return count;
     }
 
+
     // LeetCode - 1299 _________________________________________
     public static int[] replaceElements(int[] arr)
     {
@@ -949,6 +1010,7 @@ public class basicFunctions
     }
 
 
+
     // LeetCode - 922 ___________________________________________________
     public static int[] sortArrayByParityII(int[] A)
     {
@@ -972,7 +1034,6 @@ public class basicFunctions
         
         return A;
     }
-
 
     public static int[] sortArrayByParityII_2(int[] A)
     {
@@ -1123,6 +1184,250 @@ public class basicFunctions
         
         return ans;
     }
+
+
+
+
+    // LeetCode - 1385
+    public static int findTheDistanceValue(int[] arr1, int[] arr2, int d)
+    {
+        int count = 0;
+        for(int i = 0 ; i < arr1.length; i++)
+        {
+            boolean flag = false;
+            for(int j = 0 ; j < arr2.length ; j++)
+            {
+                if((Math.abs(arr1[i] - arr2[j])) <= d)
+                {
+                    flag = true;
+                    break;
+                }
+            }
+            
+            if(flag)
+            {
+                count++;
+            }
+        }
+        
+        return arr1.length - count;
+    }
+
+
+
+
+    // LeetCode - 1160 ___________________________________________
+    public static int countCharacters(String[] words, String chars) 
+    {
+        int[] indexedArray=new int[26];  //Data Indexed Array stores cnt of letters in chars
+        
+        for(int i=0;i<chars.length();i++)
+        {
+            char c = chars.charAt(i);
+            indexedArray[c-'a']++;
+        }
+        
+        int sum=0;
+        
+        for(int i=0;i<words.length;i++)
+        {
+            if(formed(words[i],indexedArray)) 
+            {
+                sum += words[i].length();
+            }
+        }
+        return sum;
+    }
+    
+   private static boolean formed(String word, int[] indexedArray)
+   {
+        int[] wordDic = new int[26];
+       
+        for(int i=0;i<word.length();i++)
+        {
+           char c = word.charAt(i);
+           if(wordDic[c-'a'] == indexedArray[c-'a'])
+           {                                            //already ==, false
+                return false;
+           }
+           else
+           {
+               wordDic[c-'a']++;
+           }
+        }
+        return true;
+    }
+    
+    
+    
+    // LeetCode = 509  ________________________________________
+    public static int fib(int n) 
+    {
+        if(n==0)
+        {
+            return 0;
+        }
+        int a = 0; 
+        int b = 1;
+        int c = a+b;
+        for(int  i = 2 ; i <=n ; i++)
+        {
+            c = a+b;
+            a = b;
+            b = c;
+        }
+        
+        return c;
+    }
+    
+    
+    
+    // LeetCode - 999 _____________________________________________
+    public static int numRookCaptures(char[][] board) 
+    {
+        int r = -1; 
+        int c = -1;
+        for(int i = 0 ; i < board.length ; i++)
+        {
+            for(int j = 0 ; j < board[0].length ; j++)
+            {
+                if(board[i][j] == 'R')
+                {
+                    r = i;
+                    c = j; 
+                    break;
+                }
+            }
+            
+            if(r != -1)
+            {
+                break;
+            }
+        }
+        
+        int count = 0;
+        
+        int[][] dir = {{0 , 1} , {1, 0} , {0 , -1} , {-1 , 0}};
+        
+        for (int i = 0 ; i < dir.length ; i++)
+        {
+            int row = r + dir[i][0];
+            int col = c + dir[i][1];
+            
+            // loop to traverse a row or a column at a time
+            while (row >= 0 && row < 8 && col >= 0 && col < 8)      
+            {
+                if (board[row][col] == 'p')
+                {
+                    count++;
+                    break;
+                }
+                else if (board[row][col] == 'B')
+                {
+                    break;  
+                }
+                row += dir[i][0];
+                col += dir[i][1];
+            }
+        }
+        return count;
+    }
+    
+
+
+
+    // LeetCode - 1200 _______________________________________________
+    public static ArrayList<ArrayList<Integer>> minimumAbsDifference(int[] arr) 
+    {
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        Arrays.sort(arr);
+        int d = Integer.MAX_VALUE;
+        
+        
+        for(int i = 1 ; i < arr.length ; i++)
+        {
+            d = Math.min(d , arr[i] - arr[i-1]);
+        }
+        
+        for(int i = 1 ; i < arr.length ; i++)
+        {
+            if(d == (arr[i] - arr[i-1]))
+            {
+                ArrayList<Integer> list = new ArrayList<>();
+                list.add(arr[i-1]);
+                list.add(arr[i]);
+                
+                ans.add(list);
+            }
+        }
+        
+        return ans;
+    }
+
+
+
+    // LeetCode - 1394 _______________________________________________
+    public static int findLucky(int[] arr) 
+    {
+        Arrays.sort(arr);
+        int ans = -1;
+        
+        int i = 0;
+        while(i < arr.length)
+        {
+            int val = arr[i];
+            int size = 1;
+            for(int j = i + 1 ; j < arr.length && arr[j] == val ; j++)
+            {
+                size++;
+                i = j;
+            }
+            
+            if(size == val)
+            {
+                if(ans == -1)
+                {
+                    ans = val;
+                }
+                else
+                {
+                    ans = Math.max(ans , val);
+                }
+            }
+            
+            i++;
+        }
+        
+        return ans;
+    } 
+
+
+
+    // LeetCode - 1413 ______________________________________________
+    public static int minStartValue(int[] nums) 
+    {
+        int startValue = 1;
+        int sum = 0;
+        
+        for(int i = 0; i < nums.length ; i++)
+        {
+            sum = sum + nums[i];
+            
+            startValue = Math.min(sum , startValue);
+        }
+        
+        
+        if(startValue < 1)
+        {
+            return Math.abs(startValue) + 1;
+        }
+        return startValue;
+    }
+
+
+
+
+
 
 
 
