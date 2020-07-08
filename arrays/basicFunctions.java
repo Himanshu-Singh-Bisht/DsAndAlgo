@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class basicFunctions
 {
@@ -292,6 +293,54 @@ public class basicFunctions
         // Input: nums = [-3,2,-3,4,2]
         // Output: 5
         // minStartValue(nums);
+
+
+
+        // Ques - 706 , Toeplitz Matrix
+        // matrix = [
+        //             [1,2,3,4],
+        //             [5,1,2,3],
+        //             [9,5,1,2] 
+        //             ]
+        // Output: True
+        // isToeplitzMatrix(matrix);
+
+
+
+
+        // Ques - 1399 , Count Largest Group
+        // Input: n = 13
+        // Output: 4
+        // countLargestGroup(n);
+
+
+
+
+        // Ques - 1185 , Day of the Week
+        // Input: day = 31, month = 8, year = 2019
+        // Output: "Saturday"
+        // dayOfTheWeek(day , month, year);
+
+
+
+
+        // Ques - 867 , Transpose of a Matrix
+        // transpose(A);
+
+
+
+        // Ques - 985 , Sum of Even Number After Queries
+        // Input: A = [1,2,3,4], queries = [[1,0],[-3,1],[-4,0],[2,3]]
+        // Output: [8,6,2,4]
+        // sumEvenAfterQueries(A, queries);
+
+
+
+        // Ques - 1260 , Shift 2D Grid
+        // Input: grid = [[1,2,3],[4,5,6],[7,8,9]], k = 1
+        // Output: [[9,1,2],[3,4,5],[6,7,8]]
+
+        
     }
 
 
@@ -1427,11 +1476,230 @@ public class basicFunctions
 
 
 
+    
+    // LeetCode - 706 ________________________________________
+    public static boolean isToeplitzMatrix(int[][] matrix) 
+    {
+        for(int i = 1 ; i < matrix.length ; i++)
+        {
+            for(int j = 1 ; j < matrix[i].length ; j++)
+            {
+                if(matrix[i][j] != matrix[i-1][j-1])
+                {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+
+
+    // LeetCode - 1399 ________________________________________
+    public static int countLargestGroup(int n) 
+    {
+        if(n < 10)
+            return n;
+        int count[] = new int[37];
+        
+        for(int i=1;i<=9;i++) 
+        {
+            count[i] = 1; // from 1 to 9 size is always 1 initially 
+        }
+        
+        for(int i=10;i<=n;i++)
+        {
+            count[getDigitSum(i)]++;  //get the digit sum and increment the respective bucket
+        }
+        
+        int size = 0 , lastMax = -1;
+        for(int v : count)
+        {  //count the occurances of a MAXIMUM VALUE
+            if(v == lastMax)
+            {
+                size++;
+            }
+            else if (v > lastMax && v > 0)
+            {
+                size = 1; 
+                lastMax = v;
+            }
+        }
+        return size;
+    }
+
+    public static int getDigitSum(int x)
+    {
+        int sum=0;
+        while(x>0)
+        {
+            sum += x % 10;
+            x = x/10;
+        }
+        return sum;
+    }
 
 
 
 
 
+    // LeetCode - 1185 _________________________________________
+    private static int NON_LEAP_YEAR = 365;
+    private static int LEAP_YEAR = 366;
+    
+    public static String dayOfTheWeek(int day, int month, int year) 
+    {
+        int days = 0;
+        String[] dayOfWeek = {"Friday" , "Saturday" , "Sunday" , "Monday" , "Tuesday" ,                                         "Wednesday" , "Thursday"};
+        // as day on 1/1/1971 is Friday
+        
+        for(int i = 1971 ; i < year ; i++)
+        {
+            if(checkLeapYear(i))
+            {
+                days += LEAP_YEAR;
+            }
+            else
+            {
+                days += NON_LEAP_YEAR;
+            }
+        }
+        
+        
+        boolean currYear = checkLeapYear(year);
+        
+        for(int  i = 1 ; i < month ; i++)
+        {
+            if(i == 2)
+            {
+                days += (currYear) ? 29 : 28;
+            }
+            else if(i == 4 || i == 6 || i == 9 || i == 11)
+            {
+                days += 30;
+            }
+            else
+            {
+                days += 31;
+            }
+        }
+        
+        days += day - 1;
+        
+        return dayOfWeek[days % 7];
+    }
+    
+    public static boolean checkLeapYear(int y)
+    {
+        if(y % 400 == 0)
+        {
+            return true;
+        }
+        if(y % 100 == 0)
+        {
+            return false;
+        }
+        if(y % 4 == 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    // LeetCode - 867 __________________________
+    public static int[][] transpose(int[][] A) 
+    {
+        int[][] ans = new int[A[0].length][A.length];
+        for(int i = 0 ; i < A.length ; i++)
+        {
+            for(int j = 0 ; j < A[0].length ; j++)
+            {
+                ans[j][i] = A[i][j];
+            }
+        }
+        return ans;
+    }
+    
+    
+    
+
+    // LeetCode - 985 ___________________________
+    public static int[] sumEvenAfterQueries(int[] A, int[][] queries) 
+    {
+        int[] ans = new int[queries.length];
+        
+        int sum = 0;
+        for(int x : A)
+        {
+            if(x % 2 == 0)
+            {
+                sum += x;
+            }
+        }
+        for(int i = 0 ; i < queries.length; i++)
+        {
+            int val = queries[i][0];
+            int idx = queries[i][1];
+            
+            if(A[idx] % 2 == 0)
+            {
+                sum -= A[idx];
+            }
+            A[idx] += val;
+            
+            if(A[idx] % 2 == 0)
+            {
+                sum += A[idx];
+            }
+            ans[i] = sum;
+        }
+        
+        return ans;
+    }
+    
+    
+
+    // LeetCode - 1260 ______________________________________
+    public List<List<Integer>> shiftGrid(int[][] grid, int k) 
+    {
+        while(k-- > 0)
+        {
+            int[][] newgrid = new int[grid.length][grid[0].length];
+            for(int i = 0 ; i < grid.length ; i++)
+            {
+                for(int j = 0 ; j < grid[0].length - 1 ; j++)
+                {
+                    newgrid[i][j+1] = grid[i][j];
+                }
+            }
+            
+            for(int i = 0; i < grid.length - 1 ; i++)
+            {
+                newgrid[i + 1][0] = grid[i][grid[0].length - 1];
+            }
+            
+            newgrid[0][0] = grid[grid.length - 1][grid[0].length -1];
+            
+            grid = newgrid;
+        }
+        
+        
+        List<List<Integer>> result = new ArrayList<>();
+        for(int[] row : grid)
+        {
+            List<Integer> list = new ArrayList<>();
+            for(int i : row)
+            {
+                list.add(i);
+            }
+            result.add(list);
+        }
+        
+        return result;
+    }
     // HELPER FUNCTIONS ____________________________
     public static void display(int[] arr)
     {
