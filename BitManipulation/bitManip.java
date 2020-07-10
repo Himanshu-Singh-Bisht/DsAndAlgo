@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class bitManip
 {
@@ -102,7 +104,33 @@ public class bitManip
 
 
 
-        // 
+        // Ques - 405 , Convert a Number to Hexadecimal
+        // Input : 26
+        // Output : "1a"
+        // toHex(num);
+
+
+
+        // Ques - 231 , Power Of Two
+        // Input: 1
+        // Output: true 
+        // isPowerOfTwo(n);
+        // isPowerOfTwo_2(n);
+
+
+
+        // Ques - 342 , Power Of Four
+        // Input : 32 
+        // Output : false
+        // isPowerOfFour(n);
+
+
+
+        // Ques - 190 , Reverse Bits
+        // Input: 00000010100101000001111010011100
+        // Output: 00111001011110000010100101000000
+        // reverseBits(n);
+        // reverseBits_2(n)
     }
 
 
@@ -207,7 +235,7 @@ public class bitManip
         return arr;
     }
 
-    public class Num
+    public static class Num
     {
         public int bit;
         public int num;
@@ -441,6 +469,125 @@ public class bitManip
     }
 
 
+
+    // LeetCode - 405 __________________________
+    public static String toHex(int num) 
+    {
+         if(num >= 0 && num < 10)
+         {
+             return Integer.toString(num);
+         }
+         StringBuilder sb = new StringBuilder();
+         char[] hex = {'0' , '1' , '2' , '3' , '4' , '5' , '6' , '7' , '8' , '9' , 'a' ,
+                      'b' , 'c' , 'd' , 'e' , 'f'};
+         for(int i = 0 ; i < 8 && num != 0 ; i++)   // as 32 / 4 = 8
+         {
+             sb.insert(0 , hex[num & 15]);
+             num = num >> 4;
+         }
+        
+         return sb.toString();
+    }
+
+
+
+    // LeetCode - 231 ____________________________
+    public static boolean isPowerOfTwo(int n) 
+    {
+        if (n < 1) 
+		return false;
+	    if (n == 1) 
+		return true;
+	    if (n % 2 == 1)
+		return false;
+        
+        int flag = 0;
+        while(n > 0)
+        {
+            if((n & 1) != 0)    
+            {
+                flag++;
+            }
+            if(flag > 1)
+            {
+                return false;
+            }
+            n >>= 1;
+        }
+        
+        return true;
+    }
+    public static boolean isPowerOfTwo_2(int n) 
+    {
+        if (n < 1) 
+		return false;
+	    
+        return (n & (n-1)) == 0;
+    }
+
+
+
+
+    // LeetCode - 342 _____________________________
+    public static boolean isPowerOfFour(int n) 
+    {
+        if(n < 1)
+        {
+            return false;
+        }
+        
+        int count = 0;
+        if((n & (n -1)) == 0) // for checking the power of two
+        {
+            while((n & 1) == 0)     // to get position of the set bit
+            {
+                count++;
+                n >>= 1;
+            }
+        }
+        else
+        {
+            return false;
+        }
+                                    // % 2 is done bcoz as then it will be divisible by 4
+        if(count % 2 == 0)    
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+
+    // LeetCode - 190 ____________________________
+    public static int reverseBits(int n) 
+    {
+        int ans = 0;
+        for(int i = 0; i < 32 ; i++)
+        {
+            ans <<= 1;
+            ans = ans | (n & 1);
+            n >>= 1;
+        }
+        return ans;
+    }
+    public static int reverseBits_2(int n) 
+    {
+        int mask = 1;
+        int ans = 0;
+        for(int i = 0; i < 32 ; i++)
+        {
+            if((n & mask) != 0)
+            {
+                int j = 31 - i;
+                int temp = 1 << j;
+                ans = ans | temp;
+            }
+            
+            mask <<= 1;
+        }
+        return ans;
+    }
 
 
 }
