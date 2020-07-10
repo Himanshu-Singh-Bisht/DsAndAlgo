@@ -339,7 +339,8 @@ public class basicFunctions
         // Ques - 1260 , Shift 2D Grid
         // Input: grid = [[1,2,3],[4,5,6],[7,8,9]], k = 1
         // Output: [[9,1,2],[3,4,5],[6,7,8]]
-
+        // shiftGrid(grid, k);
+        // shiftGrid_2(grid, k);
         
     }
 
@@ -1663,7 +1664,7 @@ public class basicFunctions
     
 
     // LeetCode - 1260 ______________________________________
-    public List<List<Integer>> shiftGrid(int[][] grid, int k) 
+    public static List<List<Integer>> shiftGrid(int[][] grid, int k) 
     {
         while(k-- > 0)
         {
@@ -1684,6 +1685,38 @@ public class basicFunctions
             newgrid[0][0] = grid[grid.length - 1][grid[0].length -1];
             
             grid = newgrid;
+        }
+        
+        
+        List<List<Integer>> result = new ArrayList<>();
+        for(int[] row : grid)
+        {
+            List<Integer> list = new ArrayList<>();
+            for(int i : row)
+            {
+                list.add(i);
+            }
+            result.add(list);
+        }
+        
+        return result;
+    }
+
+
+    public static List<List<Integer>> shiftGrid_2(int[][] grid, int k) 
+    {
+        while(k-- > 0)
+        {
+            int prev = grid[grid.length - 1][grid[0].length - 1];
+            for(int i = 0 ; i < grid.length ; i++)
+            {
+                for(int j = 0 ; j < grid[0].length ; j++)
+                {
+                    int temp = grid[i][j];
+                    grid[i][j] = prev;
+                    prev = temp;
+                }
+            }
         }
         
         
