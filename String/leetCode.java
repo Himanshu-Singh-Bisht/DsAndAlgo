@@ -283,7 +283,32 @@ public class leetCode
 
 
 
+        // Ques - 443 , String Compression
+        // Input:
+        // ["a","a","b","b","c","c","c"]
+        // Output:
+        // Return 6, and the first 6 characters of the input array should be: ["a","2","b","2","c","3"]
+        // compress(chars);
         
+        
+
+        // Ques - 434, Number of Segments in a String
+        // Input: "Hello, my name is John"
+        // Output: 5
+        // countSegment(s);
+
+
+        // Ques - 680 , Valid Palindrome - II
+        // Input: "abca"
+        // Output: True
+        // validPalindrome(s);
+
+
+
+        // Ques - 125 , Valid Palindrome
+        // Input: "A man, a plan, a canal: Panama"
+        // Output: true
+        // isPalindrome(s);
     }
 
 
@@ -1551,6 +1576,124 @@ public class leetCode
 
 
 
+    // LeetCode - 443 _____________________________________________
+    public static int compress(char[] chars) 
+    {
+        int count = 0;
+        int pointer = 0;
+
+        for (int i = 0; i < chars.length; i++) 
+        {
+            count++;
+
+            if (i == chars.length - 1 || (chars[i] != chars[i + 1])) 
+            {
+                if (count == 1)
+                {
+                    chars[pointer] = chars[i]; // Store only the character which has count 1
+                    pointer++;
+                }
+                else 
+                {
+                    chars[pointer] = chars[i]; // Store the character
+                    pointer++;
+                    for (char ch : String.valueOf(count).toCharArray())
+                    {
+                        chars[pointer] = ch; // Store the count of the character
+                        pointer++;
+                    }
+                }
+                count = 0;
+            }
+        }
+
+        return pointer;
+    }
 
 
+
+    //  LeetCode - 434___________________________________
+    public static int countSegments(String s) 
+    {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) 
+        {
+            if ((i == 0 || s.charAt(i-1) == ' ') && s.charAt(i) != ' ') 
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+
+
+
+    // LeetCode - 680 ________________________________________
+    public static boolean validPalindrome(String s) 
+    {
+        int i = 0 ; 
+        int j = s.length() - 1;
+        
+        while(i < j)
+        {
+            if(s.charAt(i) != s.charAt(j))
+            {
+                return helper(s , i + 1, j) || helper(s , i , j - 1);
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+    
+    public static boolean helper(String s , int i , int j)
+    {
+        while(i < j)
+        {
+            if(s.charAt(i) != s.charAt(j))
+            {
+                return false;
+            }
+            i++;
+            j--;
+        }
+        return true;
+    }
+
+
+
+
+    // LeetCode - 125 _________________________________________________
+    public static boolean isPalindrome(String s) 
+    {
+        s = s.toLowerCase();
+        int i = 0;
+        int j = s.length() - 1;
+        
+        while(i < j)
+        {
+            char ch1 = s.charAt(i);
+            char ch2 = s.charAt(j);
+            
+            if((ch1 < 'a' || ch1 > 'z') && (ch1 < '0' || ch1 > '9'))
+            {
+                i++;
+                continue;
+            }
+            if((ch2 < 'a' || ch2 > 'z') && (ch2 < '0' || ch2 > '9'))
+            {
+                j--;
+                continue;
+            }
+            if(ch1 != ch2)
+            {
+                return false;
+            }
+            i++;
+            j--;
+        }
+        
+        return true;
+    }
 }
