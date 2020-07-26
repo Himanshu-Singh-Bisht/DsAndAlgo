@@ -13,24 +13,24 @@ public class returnType
 
     public static void basicFunctions()
     {   
-        // Print elements 1 - 10 or 10 - 1
+        // Print elements 1 - 10 or 10 - 1  _____________________________________________
         // System.out.print(printInc(1 , 10));
         // System.out.print(printDec(10 , 1));
 
 
 
-        // FACTORIAL
+        // FACTORIAL    ______________________________________
         // System.out.println(factorial(5));
 
 
 
-        // POWER
+        // POWER   ______________________________________
         // System.out.println(power(2 , 6));
         // System.out.println(powerModified(2 , 6));
 
         
 
-        // RECURSION WITH ARRAY
+        // RECURSION WITH ARRAY ____________________________________________________________
         // int[] arr = { 1, 5, 4, 5, 5, 2, 4, 8, 5, 5, 9, 6, 3, 5, 4, 7, 8, 5, 2, 5, 2,
                     // 3, -5, 9, 7, 1, 2, 5 };
         // displayArray(arr , 0); 
@@ -42,12 +42,12 @@ public class returnType
 
 
 
-        // TOTAL JUMPS POSSIBLE TO REACH N VIA 1, 2 , 3 JUMPS POSSIBLE
+        // TOTAL JUMPS POSSIBLE TO REACH N VIA 1, 2 , 3 JUMPS POSSIBLE  __________________________________
         // System.out.println(totalJumps(3));
 
 
 
-        // STRING TYPE 
+        // STRING TYPE  _____________________________________________________________________
         // ArrayList<String> subseq = subsequences("abcd");
         // ArrayList<String> subseq = subsequences1("abcd");
         // displayArrayList(subseq);
@@ -59,7 +59,7 @@ public class returnType
 
 
 
-        // MAZEPATH TYPE
+        // MAZEPATH TYPE    ________________________________________________________________
         // ArrayList<String> ans = mazepathHV(0 , 0 , 2 , 2);
         // displayArrayList(ans);
         // ArrayList<String> ans = mazepathHVD(0 , 0 , 2 , 2);
@@ -70,13 +70,36 @@ public class returnType
 
 
 
-        // FLOODFILL TYPE
-        boolean[][] isdone = {{false , false , false},
-                            {false , false , false},
-                            {false , false , false},
-                            {false , false , false}};
-        ArrayList<String> ans = floodfill4Moves(0 , 0 , isdone.length - 1 , isdone[0].length - 1);
-        displayArrayList(ans); 
+        // FLOODFILL TYPE   ________________________________________________________________________________
+        // boolean[][] isdone = {{false , false , false},
+        //                     {false , false , false},
+        //                     {false , false , false},
+        //                     {false , false , false}};
+        // ArrayList<String> ans = floodfill4Moves(0 , 0 , isdone.length - 1 , isdone[0].length - 1 , isdone);
+        // displayArrayList(ans); 
+
+
+        // int[][] dir = {{-1 , 0} , {0 , 1} , {1 , 0} , {0 , -1}};
+        // String[] d = {"U" , "R" , "D" , "L"};
+        // ArrayList<String> ans = floodfill4MovesLoop(0 , 0 , isdone.length - 1 , isdone[0].length - 1 , isdone 
+        // , dir , d);
+        // displayArrayList(ans);
+
+        int[][] dir = {{-1 , 0} , {-1 , 1} , {0 ,1} , {1 , 1} , 
+                        {1 , 0} , {1 , -1} , {0 , -1} , {-1 , -1}};
+        String[] d = {"U" , "d1" , "R" , "d2" , "D" , "d3" , "L" , "d4"};
+        // ArrayList<String> ans = floodfill8MovesLoop(0 , 0, isdone.length - 1 , isdone[0].length - 1 
+        //                                     , isdone , dir , d);
+        // displayArrayList(ans);
+    
+        boolean[][] blockedIsdone = {{false , false , true},
+                                    {false , true , false},
+                                    {false , false , true},
+                                    {true , false , false}};
+        ArrayList<String> ans = floodfill8MovesLoop(0, 0, blockedIsdone.length - 1,
+                                         blockedIsdone[0].length- 1, blockedIsdone, dir, d);
+        displayArrayList(ans);
+
     }
 
 
@@ -521,8 +544,130 @@ public class returnType
 
 
     // FLOODFILL TYPE _________________________________________________________
-    public static ArrayList<String> floodfill4Moves(int sr , int sc , int er , int ec)
+    public static ArrayList<String> floodfill4Moves(int sr , int sc , int er , int ec , boolean[][] isdone)
     {
-        
+        if(sr == er && sc == ec)
+        {
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+
+        isdone[sr][sc] = true;
+        ArrayList<String> ans = new ArrayList<>();
+
+        if(sr - 1 >= 0 && !isdone[sr - 1][sc])
+        {
+            ArrayList<String> up = floodfill4Moves(sr - 1, sc, er, ec, isdone);
+            for(String s : up)
+            {
+                ans.add("U" + s);
+            }
+        }
+
+        if(sc + 1 <= ec && !isdone[sr][sc  + 1])
+        {
+            ArrayList<String> right = floodfill4Moves(sr, sc + 1, er, ec, isdone);
+            for(String s : right)
+            {
+                ans.add("R" + s);
+            }
+        }
+
+        if(sr + 1 <= er && !isdone[sr + 1][sc])
+        {
+            ArrayList<String> down = floodfill4Moves(sr + 1, sc, er, ec, isdone);
+            for(String s : down)
+            {
+                ans.add("D" + s);
+            }
+        }
+
+        if(sc - 1 >= 0 && !isdone[sr][sc - 1])
+        {
+            ArrayList<String> left = floodfill4Moves(sr, sc - 1, er, ec, isdone);
+            for(String s : left)
+            {
+                ans.add("L" + s);
+            }
+        }
+
+        isdone[sr][sc] = false;
+        return ans;
     }
+
+
+    public static ArrayList<String> floodfill4MovesLoop(int sr , int sc, int er , int ec ,
+                                                     boolean[][] isdone , int[][] dir , String[] d)
+    {
+        if(sr == er && sc == ec)
+        {
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+
+        isdone[sr][sc] = true;
+        ArrayList<String> ans = new ArrayList<>();
+
+        for(int i = 0 ; i < d.length ; i++)
+        {
+            int x = sc + dir[i][1];
+            int y = sr + dir[i][0];
+
+            if(isvalid(y , x , isdone))
+            {
+                ArrayList<String> recans = floodfill4MovesLoop(y , x , er, ec, isdone , dir , d);
+                for(String s : recans)
+                {
+                    ans.add(d[i] + s);
+                }
+            }
+        }
+
+        isdone[sr][sc] = false;
+        return ans;
+    }
+
+    public static boolean isvalid(int x , int y , boolean[][] isdone)
+    {
+        if(x >= 0 && y >= 0 && x < isdone.length && y < isdone[0].length && !isdone[x][y])
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    public static ArrayList<String> floodfill8MovesLoop(int sr , int sc , int er , int ec ,
+                                         boolean[][] isdone , int[][] dir , String[] d)
+    {
+        if(sr == er && sc == ec)
+        {
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+
+        ArrayList<String> ans = new ArrayList<>();
+        isdone[sr][sc] = true;
+
+        for(int i = 0 ; i < d.length ; i++)
+        {
+            int x = sc + dir[i][1];
+            int y = sr + dir[i][0];
+
+            if(isvalid(y , x , isdone))
+            {
+                ArrayList<String> recAns = floodfill8MovesLoop(y, x, er, ec, isdone, dir, d);
+                for(String s : recAns)
+                {
+                    ans.add(d[i] + s);
+                }
+            }
+        }
+        isdone[sr][sc] = false;
+        return ans;
+    }
+
 }
