@@ -1,6 +1,6 @@
 import java.util.Scanner;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 
 public class returnType
 {
@@ -56,6 +56,8 @@ public class returnType
         // System.out.println(removeDuplicate("aabbccddeffea"));
         // System.out.println(compression("abbccddeefff" , 0 , 1));
         // System.out.println(compression_2("aaabbcccdeef" , 1));
+        // ArrayList<String> permu = permutation("abc");
+        // displayArrayList(permu);
 
 
 
@@ -71,10 +73,10 @@ public class returnType
 
 
         // FLOODFILL TYPE   ________________________________________________________________________________
-        // boolean[][] isdone = {{false , false , false},
-        //                     {false , false , false},
-        //                     {false , false , false},
-        //                     {false , false , false}};
+        // boolean[][] isdone = {{false , false , false , false},
+        //                     {false , false , false , false},
+        //                     {false , false , false , false},
+        //                     {false , false , false , false}};
         // ArrayList<String> ans = floodfill4Moves(0 , 0 , isdone.length - 1 , isdone[0].length - 1 , isdone);
         // displayArrayList(ans); 
 
@@ -85,21 +87,51 @@ public class returnType
         // , dir , d);
         // displayArrayList(ans);
 
-        int[][] dir = {{-1 , 0} , {-1 , 1} , {0 ,1} , {1 , 1} , 
-                        {1 , 0} , {1 , -1} , {0 , -1} , {-1 , -1}};
-        String[] d = {"U" , "d1" , "R" , "d2" , "D" , "d3" , "L" , "d4"};
+        // int[][] dir = {{-1 , 0} , {-1 , 1} , {0 ,1} , {1 , 1} , 
+        //                 {1 , 0} , {1 , -1} , {0 , -1} , {-1 , -1}};
+        // String[] d = {"U" , "d1" , "R" , "d2" , "D" , "d3" , "L" , "d4"};
         // ArrayList<String> ans = floodfill8MovesLoop(0 , 0, isdone.length - 1 , isdone[0].length - 1 
         //                                     , isdone , dir , d);
         // displayArrayList(ans);
     
-        boolean[][] blockedIsdone = {{false , false , true},
-                                    {false , true , false},
-                                    {false , false , true},
-                                    {true , false , false}};
-        ArrayList<String> ans = floodfill8MovesLoop(0, 0, blockedIsdone.length - 1,
-                                         blockedIsdone[0].length- 1, blockedIsdone, dir, d);
-        displayArrayList(ans);
+        // boolean[][] blockedIsdone = {{false , false , true},
+        //                             {false , true , false},
+        //                             {false , false , true},
+        //                             {true , false , false}};
+        // ArrayList<String> ans = floodfill8MovesLoop(0, 0, blockedIsdone.length - 1,
+        //                                  blockedIsdone[0].length- 1, blockedIsdone, dir, d);
+        // displayArrayList(ans);
 
+        // int[][] dirKnight = {{1 ,2} , {2 , 1} , {2 , -1} , {1 , -2} , {-1 , -2} , {-2 , -1} , {-2 , 1}};
+        // // System.out.println(knightFloodfill(0, 0, isdone.length - 1, isdone[0].length - 1, isdone , dirKnight));
+        
+        // int[][] ans = new int[8][8];
+        // System.out.println(knightFill(0 , 0 , (ans.length) * (ans[0].length) 
+        //                                     , 1 , ans , dirKnight));
+
+
+        // NOKIA KEYPAD___________________________________________________________________
+        // String[] keys ={"." , "abc" , "def" , "ghi" , "jkl" , "mno" , "pqr" , "st" , "uvw" , "xyz"};
+        // ArrayList<String> ans = keypad("405" , keys);
+        // displayArrayList(ans);
+
+
+        // ENCODING____________________________________________________________________
+        // ArrayList<String> ans = encoding("1003");
+        // displayArrayList(ans);
+
+
+        // SUDOKU __________________________________________________________________
+        int[][] board = {{3, 0, 6, 5, 0, 8, 4, 0, 0},
+                        {5, 2, 0, 0, 0, 0, 0, 0, 0},
+                        {0, 8, 7, 0, 0, 0, 0, 3, 1},
+                        {0, 0, 3, 0, 1, 0, 0, 8, 0},
+                        {9, 0, 0, 8, 6, 3, 0, 0, 5},
+                        {0, 5, 0, 0, 9, 0, 6, 0, 0},
+                        {1, 3, 0, 0, 0, 0, 2, 5, 0},
+                        {0, 0, 0, 0, 0, 0, 0, 7, 4},
+                        {0, 0, 5, 2, 0, 6, 3, 0, 0}};
+        System.out.println(sudoku(board , 0));
     }
 
 
@@ -421,7 +453,28 @@ public class returnType
         }
     }
 
+    public static ArrayList<String> permutation(String str)
+    {
+        if(str.length() == 1)
+        {
+            ArrayList<String> base = new ArrayList<>();
+            base.add(str);
+            return base;
+        }
 
+        ArrayList<String> ans = new ArrayList<>();
+
+        ArrayList<String> recAns = permutation(str.substring(1));
+
+        for(String s : recAns)
+        {
+            for(int i = 0; i <= s.length() ; i++)  // = (equal) is used as the substring 2nd arg is exclusive
+            {
+                ans.add(s.substring(0 , i) + str.charAt(0) + s.substring(i , s.length()));
+            }
+        }
+        return ans;
+    }
 
 
     // MAZEPATH TYPE __________________________________________________
@@ -670,4 +723,217 @@ public class returnType
         return ans;
     }
 
+
+    public static int knightFloodfill(int sr , int sc , int er , int ec , boolean[][] isdone , int[][] dirKnight)
+    {
+        if(sr == er && sc == ec)
+        {
+            return 1;
+        }
+
+        int count = 0;
+        isdone[sr][sc] = true;
+        for(int i = 0 ; i < dirKnight.length ; i++)
+        {
+            int x = sc + dirKnight[i][1];
+            int y = sr + dirKnight[i][0];
+
+            if(isvalid(y , x , isdone))
+            {
+                count += knightFloodfill(y, x, er, ec, isdone , dirKnight);
+            }
+        }
+
+        isdone[sr][sc] = false;
+        return count;
+    }
+
+
+    public static boolean knightFill(int sr , int sc , int boxSize , int count , int[][] ans , int[][] dirKnight)
+    {
+        ans[sr][sc] = count;
+        if(count == boxSize)
+        {
+            for(int[] ar : ans)
+            {
+                for(int ele : ar)
+                {
+                    System.out.print(ele + "\t");
+                }
+                System.out.println();
+            }
+            return true;
+        }
+
+        boolean res = false;
+        for(int i = 0 ; i < dirKnight.length ; i++)
+        {
+            int x = sc + dirKnight[i][1];
+            int y = sr + dirKnight[i][0];
+            
+            if(x >= 0 && y >= 0 && y < ans.length && x < ans[0].length && ans[y][x] == 0)
+            {
+                res = res || knightFill(y, x, boxSize, count + 1, ans, dirKnight);
+            }
+        }
+
+        ans[sr][sc] = 0;
+        return res;
+    }
+
+
+    // NOKIA KEYPAD_________________________________________________________________
+    public static ArrayList<String> keypad(String num , String[] keys)
+    {
+        if(num.length() == 0)
+        {
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+
+        
+        ArrayList<String> ans = new ArrayList<>();
+
+        ArrayList<String> recAns = keypad(num.substring(1), keys);
+        char ch = num.charAt(0);
+        int btn = ch - '0';
+
+        for(int i = 0 ; i < keys[btn].length() ; i++)
+        {
+            for(String s : recAns)
+            {
+                ans.add(keys[btn].charAt(i) + s);
+            }
+        }
+        return ans;
+    }
+
+
+    // ENCODING _____________________________________________________________
+    public static ArrayList<String> encoding(String str)
+    {
+        if(str.length() == 0)
+        {
+            ArrayList<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+
+        char ch = str.charAt(0);
+        ArrayList<String> ans = new ArrayList<>();
+
+        if(ch == '0')
+        {
+            return encoding(str.substring(1));
+        }
+        else
+        {
+            ArrayList<String> rec = encoding(str.substring(1));
+            char c = (char)(ch - '1' + 'a');
+            for(String s : rec)
+            {
+                ans.add(c + s);
+            }
+        }
+
+        if(str.length() > 1)
+        {
+            char ch2 = str.charAt(1);
+            int n = (ch - '0') * 10 + (ch2 - '0');
+
+            if(n <= 27)
+            {
+                char c = (char)(n - 1 + 'a');
+                ArrayList<String> rec = encoding(str.substring(2));
+                for(String s : rec)
+                {
+                    ans.add(c + s);
+                }
+            }
+        }
+
+        return ans;
+    }
+
+
+    // SUDOKU _________________________________________________________
+    public static int sudoku(int[][] board , int vidx)
+    {
+        if(vidx == board.length * board[0].length)
+        {
+            for(int[] ar : board)
+            {
+                for(int ele : ar)
+                {
+                    System.out.print(ele + "\t");
+                }
+                System.out.println();
+            }
+            System.out.println("\n\n");
+            
+            return 1;
+        }
+
+        int count = 0;
+
+        int r = vidx / 9;
+        int c = vidx % 9;
+
+        if(board[r][c] != 0)        // preoccupied cell
+        {
+            count += sudoku(board, vidx + 1);
+        }
+        else
+        {
+            for(int n = 1 ; n <= 9 ; n++)
+            {
+                if(isValidSudoku(board , r , c , n))
+                {
+                    board[r][c] = n;
+                    count += sudoku(board , vidx + 1);
+                    board[r][c] = 0;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public static boolean isValidSudoku(int[][] board , int r , int c , int num)
+    {
+        // check in row
+        for(int i = 0 ; i < board[0].length ; i++)
+        {
+            if(board[r][i] == num)
+            {
+                return false;
+            }
+        }
+
+        // check in column
+        for(int j = 0 ; j < board.length ; j++)
+        {
+            if(board[j][c] == num)
+            {
+                return false;
+            }
+        }
+
+        // check for 3 X 3 matrix
+        int x = (r / 3) * 3;
+        int y = (c / 3) * 3;
+        for(int i = 0 ; i < 3 ; i++)
+        {
+            for(int j = 0 ; j < 3 ; j++)
+            {
+                if(board[i + x][j + y] == num)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    } 
 }
