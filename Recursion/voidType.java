@@ -1,6 +1,5 @@
 import java.util.Scanner;
-
-import javafx.scene.Parent;
+import java.util.Arrays;
 
 import java.util.ArrayList;
 
@@ -47,7 +46,7 @@ public class voidType
 
 
 
-        // COIN CHANGE ALL VARIATIONS
+        // COIN CHANGE ALL VARIATIONS   _______________________________________________________
         // int[] arr = {2 , 3 , 5 , 7};
         // System.out.println(coinChangePer1(arr , 10  , ""));         // coin used infinite times.
         // System.out.println(coinChangeCombi1(arr , 10 , 0 , ""));    // coin used infinite times.
@@ -64,9 +63,48 @@ public class voidType
 
         
         //  EQUI SETS WITH RESPECT TO SUM______________________________________
-        int[] arr = {10 , 20 , 30 , 40 , 50 , 60 , 70};
+        // int[] arr = {10 , 20 , 30 , 40 , 50 , 60 , 70};
         // System.out.println(equiSet(arr , 0, 0 , 0 , "" , ""));
-        System.out.println(equiSetRemovedDuplicacy(arr, 1, 10, 0, "10 ", ""));     // just 0th index in any set
+        // System.out.println(equiSetRemovedDuplicacy(arr, 1, 10, 0, "10 ", ""));     // just 0th index in any set
+
+
+
+        // QUEENS IN 1D ARRAY   _____________________________________________________________
+        // boolean[] boxes = new boolean[5];       // 5 size box
+        // int tq = 3;         // total queens to be placed
+        // System.out.println(queen1DCombi1(5 , 0 , tq , 0 ,  ""));
+        // System.out.println(queen1DPer1(boxes , 0 , tq , 0 , ""));
+        // System.out.println(queen1DCombi2Subsequence(5 , 0 , tq , 0 , ""));   // using subsequence method
+        // System.out.println(queen1DPer2Subsequence(boxes , 0 , tq , 0 , ""));    // using subsequence method
+
+
+
+        // QUEENS IN THE BOARD (2D ARRAY) _______________________________________________
+        // int tq = 4;
+        // boolean[][] board = new boolean[4][4];
+        // System.out.println(queen2DCombi1(board , 0 , tq , 0 , ""));
+        // System.out.println(queen2DPer1(board , 0 , tq , 0 , ""));
+        // System.out.println(queen2DCombi2Subsequence(board , 0 , tq , 0 , ""));
+        // System.out.println(queen2DPer2Subsequence(board , 0 , tq , 0 , ""));
+
+
+        // NQUEEN PLACING QUEEN IN A BOARD SUCH THAT NO TWO QUEEN CAN CUT EACH OTHER ___________________________
+        // int tq = 4;
+        // boolean[][] board = new boolean[4][4];
+        // System.out.println(nQueenProblemCombi1(board , 0 , tq , 0 , ""));
+        // System.out.println(nQueenProblemPer1(board , 0 , tq  , 0 , ""));
+        // System.out.println(nQueenProblemCombi2Subsequence(board , 0 , tq , 0 , ""));
+        // System.out.println(nQueenProblemPer2Subsequence(board , 0 , tq , 0 , ""));
+
+
+
+        // CRYPTOGRAPHY ______________________________________________________________
+        // System.out.println(crypto());
+
+
+        // DICTIONARY________________________________________________________________
+        String word = "ilikemangoandsamsung";
+        System.out.println(dictionary(word, ""));        
     }
 
 
@@ -609,5 +647,475 @@ public class voidType
         count += equiSetRemovedDuplicacy(arr, idx + 1, sumSet1, sumSet2 + arr[idx], sum1, sum2 + arr[idx] + " ");
 
         return count;
-    }                             
+    }        
+    
+    
+
+
+
+
+    // QUEEN IN 1D ARRAY _________________________________________________
+    
+    // tq = total queen
+    // qpsf = queen placed so far
+    public static int queen1DCombi1(int box , int idx , int tq ,int qpsf ,  String ans)
+    {
+        if(tq == qpsf)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+        int count = 0;
+
+        for(int i = idx ; i < box ; i++)
+        {
+            count += queen1DCombi1(box, i + 1, tq , qpsf + 1,  ans + "q" + (qpsf + 1) + "b" + (i) + "  ");
+        }
+        return count;
+    }
+
+    public static int queen1DPer1(boolean[] boxes , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+        for(int i = 0 ; i < boxes.length ; i++)
+        {
+            if(!boxes[i])
+            {
+                boxes[i] = true;
+                count += queen1DPer1(boxes, 0 , tq, qpsf + 1, ans + "q" + (qpsf + 1) + "b" + (i) + "  ");
+                boxes[i] = false;
+            }
+        }
+
+        return count;
+    }
+
+    public static int queen1DCombi2Subsequence(int box , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf || idx == box)
+        {
+            if(tq == qpsf)
+            {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+
+        count += queen1DCombi2Subsequence(box, idx + 1 , tq, qpsf + 1, ans + "q" + (qpsf + 1) + "b" + idx + "  ");
+        count += queen1DCombi2Subsequence(box, idx + 1, tq, qpsf, ans);
+
+        return count;
+    }
+
+    public static int queen1DPer2Subsequence(boolean[] boxes , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf || idx == boxes.length)
+        {
+            if(tq == qpsf)
+            {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+        if(!boxes[idx])
+        {
+            boxes[idx] = true;
+            count += queen1DPer2Subsequence(boxes, 0, tq, qpsf + 1, ans + "q" + (qpsf + 1) + "b" + idx + "  ");
+            boxes[idx] = false;
+        }
+        count += queen1DPer2Subsequence(boxes, idx + 1, tq, qpsf, ans);
+
+        return count;
+    }
+
+
+
+
+
+
+    // QUEENS IN 2D ARRAY (BOARD) ___________________________________________
+    public static int queen2DCombi1(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+        for(int i = idx ; i < board.length * board[0].length ; i++)
+        {
+            int x = i / board.length;
+            int y = i % board[0].length;
+
+            count += queen2DCombi1(board, i + 1, tq, qpsf + 1, 
+                            ans + "q" + (qpsf + 1) + "b" + "(" + x + "," + y + ")   ");
+        }
+
+        return count;
+    }
+
+    public static int queen2DPer1(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+        for(int i = idx ; i < board.length * board[0].length ; i++)
+        {
+            int x = i / board.length;
+            int y = i % board[0].length;
+
+            if(!board[x][y])
+            {
+                board[x][y] = true;
+                count += queen2DPer1(board, 0 , tq, qpsf + 1, 
+                            ans + "q" + (qpsf + 1) + "b" + "(" + x + "," + y + ")   ");
+                board[x][y] = false;
+            }
+        }
+
+        return count;
+    }
+
+    public static int queen2DCombi2Subsequence(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf || board.length * board[0].length == idx)
+        {
+            if(tq == qpsf)
+            {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+        int x = idx / board.length;
+        int y = idx % board[0].length;
+
+        count += queen2DCombi2Subsequence(board, idx + 1 , tq, qpsf + 1, 
+                                ans + "q" + (qpsf + 1) + "b" + "(" + x + "," + y + ")   ");
+        count += queen2DCombi2Subsequence(board, idx + 1, tq, qpsf, ans);
+
+        return count;
+    }
+
+    public static int queen2DPer2Subsequence(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf || idx == board.length * board[0].length)
+        {
+            if(tq == qpsf)
+            {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+
+        int x = idx / board.length;
+        int y = idx % board[0].length;
+        if(!board[x][y])
+        {
+            board[x][y] = true;
+            count += queen2DPer2Subsequence(board, 0 , tq, qpsf + 1, 
+                                        ans + "q" + (qpsf + 1) + "b" + "(" + x + "," + y + ")   ");
+            board[x][y] = false;
+        }
+        count += queen2DPer2Subsequence(board, idx + 1, tq, qpsf, ans);
+
+        return count;
+    }
+
+
+
+    // NQUEEN PLACING QUEEN IN A BOARD SUCH THAT NO TWO QUEEN CAN CUT EACH OTHER ___________________________
+
+    public static int nQueenProblemCombi1(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+
+        for(int i = idx ; i < board.length * board[0].length ; i++)
+        {
+            int x = i / board[0].length;
+            int y = i % board[0].length;
+
+            if(isSafeToPlaceCombination(board , x , y))
+            {
+                board[x][y] = true;
+                count += nQueenProblemCombi1(board, i + 1, tq, qpsf + 1, ans + "(" + x + "," + y + ")  ");
+                board[x][y] = false;
+            }
+        }
+        return count;
+    }
+
+    public static boolean isSafeToPlaceCombination(boolean[][] board , int x , int y)
+    {
+        int[][] dir = {{0 , -1} , {-1 , -1} , {-1 , 0} , {-1 , 1}};
+        
+        for(int i = 0 ; i < dir.length ; i++)
+        {
+            for(int rad = 1 ; rad <= Math.max(board.length , board[0].length) ; rad++)
+            {
+                int r = x + (rad * dir[i][0]);
+                int c = y + (rad * dir[i][1]);
+
+                if(r < 0 || c < 0 || r >= board.length || c >= board[0].length)
+                {
+                    break;
+                }
+                if(board[r][c])
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+
+    public static int nQueenProblemPer1(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(tq == qpsf)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+        for(int i = 0 ; i < board.length * board[0].length ; i++)
+        {
+            int r = i / board[0].length;
+            int c = i % board[0].length;
+
+            if(isSafeToPlacePermutation(board, r, c) && !board[r][c])
+            {
+                board[r][c] = true;
+                count += nQueenProblemPer1(board, 0, tq, qpsf + 1,
+                                         ans + "q" + (qpsf + 1) + "(" + r + "," + c + ")  ");
+                board[r][c] = false;
+            }
+        }
+
+        return count;
+    }
+
+    public static boolean isSafeToPlacePermutation(boolean[][] board , int r , int c)
+    {
+        int[][] dir = {{0 , -1} , {-1 , -1} , {-1 , 0} ,  {-1 , 1} , {0 , 1} , {1 , 1} , {1 , 0} , {1 , -1}};
+
+        for(int i = 0 ; i < dir.length ;i++)
+        {
+            for(int rad = 1; rad <= Math.max(board.length , board[0].length) ; rad++)
+            {
+                int x = r + (rad * dir[i][0]);
+                int y = c + (rad * dir[i][1]);
+
+                if(x < 0 || y < 0 || x >= board.length || y >= board[0].length)
+                {
+                    break;
+                }
+                if(board[x][y])
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static int nQueenProblemCombi2Subsequence(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(idx == board.length * board[0].length || tq == qpsf)
+        {
+            if(tq == qpsf)
+            {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+        int r = idx / board[0].length;
+        int c = idx % board[0].length;
+
+        if(isSafeToPlaceCombination(board , r  , c))
+        {
+            board[r][c] = true;
+            count += nQueenProblemCombi2Subsequence(board, idx + 1, tq, qpsf + 1, ans + "(" + r + "," + c + ")  ");
+            board[r][c] = false;
+        }
+
+        count += nQueenProblemCombi2Subsequence(board, idx + 1, tq, qpsf, ans);
+        return count;
+    }
+
+    public static int nQueenProblemPer2Subsequence(boolean[][] board , int idx , int tq , int qpsf , String ans)
+    {
+        if(idx == board.length * board[0].length || tq == qpsf)
+        {
+            if(tq == qpsf)
+            {
+                System.out.println(ans);
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+        int r = idx / board[0].length;
+        int c = idx % board[0].length;
+
+        if(isSafeToPlacePermutation(board, r, c) && !board[r][c])
+        {
+            board[r][c] = true;
+            count += nQueenProblemPer2Subsequence(board, 0 , tq, qpsf + 1, 
+                                                ans + "q" + (qpsf + 1) + "(" + r + "," + c + ")  ");
+            board[r][c] = false;
+        }
+
+        count += nQueenProblemPer2Subsequence(board, idx + 1, tq, qpsf, ans);
+        return count;
+    }
+
+
+
+    // CRYPTOGRAPHY ______________________________________________________________________
+    public static String str1 = "send";
+    public static String str2 = "more";
+    public static String str3 = "money";
+    public static int[] map = new int[26];
+    public static boolean[] numUsed = new boolean[10];
+
+    public static int crypto()
+    {
+        String str = str1 + str2 + str3;
+        int[] freq = new int[26];
+        for(int i = 0 ; i < str.length() ; i++)
+        {
+            int idx = str.charAt(i) - 'a';
+            freq[idx]++;
+        }
+        String res = new String("");
+        for(int i = 0 ; i < 26 ; i++)
+        {
+            if(freq[i] != 0)
+            {
+                res += (char)(i + 'a');
+            }
+        }
+
+        return crypto_(res , 0);
+    }
+
+    public static int crypto_(String str , int idx)
+    {
+        if(idx == str.length())
+        {
+            int num1 = decode(str1);
+            int num2 = decode(str2);
+            int num3 = decode(str3);
+
+            if(num1 + num2 == num3)
+            {
+                System.out.print(str1 + " - " + "(" + num1 + ")" + " + ");
+                System.out.print(str2 + " - " + "(" + num2 + ")" + "  =  ");
+                System.out.println(str3 + " - " + "(" + num3 + ")");
+                return 1;
+            }
+            return 0;
+        }
+
+        int count = 0;
+        char ch = str.charAt(idx);
+
+        for(int i = 0 ; i < 10 ; i++)
+        {
+            if(!numUsed[i])
+            {
+                numUsed[i] = true;
+                map[ch - 'a'] = i;      // storing i for the maping[] in the character
+                count += crypto_(str , idx + 1);
+                map[str.charAt(idx) - 'a'] = 0;
+                numUsed[i] = false;
+            }
+        }
+
+        return count;
+    }
+
+    public static int decode(String s)
+    {
+        int num = 0;
+        for(int i = 0 ; i < s.length() ; i++)
+        {
+            int n = map[s.charAt(i) - 'a'];
+            num = (num * 10) + n;
+        }
+        return num;
+    }
+
+
+
+    // DICTIONARY _______________________________________________
+    public static String[] dict = {"man" , "go" , "mango" , "i" , "like" , "and" , "sam" , "sung" 
+                                        , "samsung" , "ili" , "ilike" , "ke"};
+
+    public static int dictionary(String word , String ans)
+    {
+        if(word.length() == 0)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+        String temp = "";
+        for(int i = 0 ; i < word.length() ; i++)
+        {
+            temp += word.charAt(i);
+            if(isWordPresent(temp))
+            {
+                count += dictionary(word.substring(i + 1) , ans + temp + " ");
+            }
+        }
+        return count;
+    }
+
+    public static boolean isWordPresent(String s)
+    {
+        for(String str : dict)
+        {
+            if(str.equals(s))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
