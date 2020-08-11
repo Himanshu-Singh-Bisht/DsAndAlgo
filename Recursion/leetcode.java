@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.AbstractList;
 
 
 public class leetcode
@@ -72,9 +73,49 @@ public class leetcode
 
 
         // Ques - 46 , Permutation __________________________________________
-        int[] arr = {1, 2 , 3};
-        List<List<Integer>> ans = permute(arr);
-        System.out.println(ans);
+        // int[] arr = {1, 2 , 3};
+        // List<List<Integer>> ans = permute(arr);
+        // System.out.println(ans);
+
+
+
+        // LEETCODE - 22 , GENERATE PARENTHESIS ________________________________________________
+        // List<String> ans = generateParenthesis(3);
+        // System.out.println(ans);
+        // ["((()))","(()())","(())()","()(())","()()()"]
+
+
+
+        // LEETCODE - 78 , SUBSETS _________________________________________________________
+        // int[] nums = {1 , 2 , 3};
+        // List<List<Integer>> ans = subsets(nums);
+        // System.out.println(ans);
+        // OUTPUT - [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
+
+
+
+        // LEETCODE - 216 , COMBINATION SUM III _________________________________________________
+        // List<List<Integer>> ans = combinationSum3(3 , 9);
+        // System.out.println(ans);
+        // OUTPUT -  [[1, 2, 6], [1, 3, 5], [2, 3, 4]]
+
+
+        // LEETCODE - 39 , COMBINATION SUM _____________________________________________________
+        // int[] arr = {2, 3, 5} ; int target = 8;
+        // List<List<Integer>> ans = combinationSum(arr, target);
+        // System.out.println(ans);
+        // OUTPUT - [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
+
+
+
+        // LEETCODE - 77 , COMBINATION ________________________________________________________
+        // List<List<Integer>> res = combine(4 , 2);
+        // System.out.println(res);
+        // OUTPUT -  [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]
+
+
+
+        // LEETCODE - 
     }
 
 
@@ -471,7 +512,11 @@ public class leetcode
     {
         if(ans.size() == nums.length)
         {
-            res.add(ans);
+            res.add(new ArrayList<>());
+            for(int i = 0 ; i < ans.size() ;i++)
+            {
+                (res.get(res.size() - 1)).add(ans.get(i));
+            }
             return;
         }
 
@@ -499,4 +544,167 @@ public class leetcode
     // }
 
     // public static List<List<Integer>> permuteArray2(int[] nums , boolean[] vis)
+
+
+
+    // LEETCODE - 22 , GENERATE PARENTHESIS ________________________________________________
+    public static List<String> generateParenthesis(int n) 
+    {
+        List<String> ans = new ArrayList<>();
+        backtrack(ans , "" , 0 , 0, n);
+        return ans;
+    }
+    
+    public static void backtrack(List<String> ans , String str , int open , int close , int max)
+    {
+        if(str.length() == 2 * max)
+        {
+            ans.add(str);
+            return;
+        }
+        
+        if(open < max)
+        {
+            backtrack(ans , str + "(" , open + 1, close , max);
+        }
+        if(close < open)
+        {
+            backtrack(ans , str + ")" , open , close + 1 , max);
+        }
+    }
+
+
+
+
+
+    // LEETCODE - 78 , SUBSETS _________________________________________________________
+    public static List<List<Integer>> subsets(int[] nums) 
+    {
+        List<List<Integer>> ans = recursionSubsets(nums , nums.length - 1);
+        return ans;
+    }
+    
+    public static List<List<Integer>> recursionSubsets(int[] nums , int idx) 
+    {
+        if(idx == -1)
+        {
+            List<List<Integer>> base = new ArrayList<List<Integer>>();
+            base.add(new ArrayList<>());
+            return base;
+        }
+        
+        List<List<Integer>> recAns = recursionSubsets(nums , idx-1);
+        
+        List<List<Integer>> newSubsets = new ArrayList();
+        
+        for (List<Integer> curr : recAns) 
+        {
+            newSubsets.add(new ArrayList<Integer>(curr){{add(nums[idx]);}});
+        }
+        
+        for (List<Integer> curr : newSubsets) 
+        {
+            recAns.add(curr);
+        }
+        
+        return recAns;
+    }
+
+
+
+
+    // LEETCODE - 216 , COMBINATION SUM III ___________________________________________________
+    public static List<List<Integer>> combinationSum3(int k, int n)
+    {
+        List<Integer> ans = new ArrayList<>();
+        recursionCombinationSum(k , n , 1 , ans);
+        return result;
+    }
+    
+    public static List<List<Integer>> result = new ArrayList<List<Integer>>();
+    
+    public static void recursionCombinationSum(int k , int sum , int idx , List<Integer> ans)
+    {
+        if(idx == 10 || sum == 0 || k == ans.size())
+        {
+            if(sum == 0 && k == ans.size())
+            {
+                List<Integer> arr = new ArrayList<>(ans);
+                result.add(arr);
+                return;
+            }
+            return;
+        }
+        
+        for(int i = idx ; i <= 9 ; i++)
+        {
+            if(sum - i >= 0)
+            {
+                ans.add(i);
+                recursionCombinationSum(k , sum - i , i + 1 , ans); 
+                ans.remove(ans.size() - 1);
+            }
+        }
+    }
+
+
+
+
+    // LEETCODE - 39 , COMBINATION SUM____________________________________________________________
+    public static List<List<Integer>> combinationSum(int[] candidates, int target) 
+    {
+        coinChangeCombiInfiniteTime(candidates , target , 0 , new ArrayList<>());
+        return result;
+    }
+    
+    public static List<List<Integer>> resultCombi = new ArrayList<List<Integer>>();
+    
+    public static void coinChangeCombiInfiniteTime(int[] candidates, int target , int idx , List<Integer> ans)
+    {
+        if(target == 0)
+        {
+            List<Integer> arr = new ArrayList<>(ans);
+            result.add(arr);
+            return;
+        }
+        
+        for(int i = idx ; i < candidates.length ; i++)
+        {
+            if(target - candidates[i] >= 0)
+            {
+                ans.add(candidates[i]);
+                coinChangeCombiInfiniteTime(candidates , target - candidates[i] , i , ans);
+                ans.remove(ans.size() - 1);
+            }
+        }
+    }
+
+
+
+
+    // LEETCODE - 77 , COMBINATION ___________________________________________________________
+    public static List<List<Integer>> combine(int n, int k) 
+    {
+        combiRecursion(n , k , 1 ,new ArrayList<>());
+        return ans;
+    }
+    
+    public static List<List<Integer>> ans = new ArrayList<List<Integer>>();
+    public static void combiRecursion(int n , int k ,int idx , List<Integer> arr)
+    {
+        if(k == arr.size())
+        {
+            List<Integer> ar = new ArrayList<>(arr);
+            ans.add(ar);
+            return;
+        }
+        
+        for(int i = idx ; i <= n ; i++)
+        {
+            arr.add(i);
+            combiRecursion(n , k , i + 1, arr);
+            arr.remove(arr.size() - 1);
+        }
+    }
+
 }

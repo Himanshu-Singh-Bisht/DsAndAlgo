@@ -107,8 +107,19 @@ public class binaryTrees
         // System.out.println(hasPathSum(root , 160));
 
         // LEAF TO LEAF SUM (GFG)___________________________________________________
-        leafToLeafSum(root);
-        System.out.println(maxSumLeafToLeaf);
+        // leafToLeafSum(root);
+        // System.out.println(maxSumLeafToLeaf);
+
+
+        // BINARY TREE MAXIMUM PATH SUM (LEETCODE - 124)_______________________________________________________
+        // nodeToNodeSum(root);
+        // System.out.println(maxSumNodeToNode);
+
+
+        // MINIMUM CAMERAS REQUIRED (LEETCODE - 968) ____________________________________________________
+        minCamera(root);
+        System.out.println(minCameras);
+
     }
 
     // CREATE TREE __________________________________________________________________________
@@ -441,7 +452,11 @@ public class binaryTrees
     {
         if(node == null)
         {
-            return 0;
+            return Integer.MIN_VALUE;
+        }
+        if(node.left == null && node.right == null)         // for leaf node
+        {
+            return node.data;
         }
 
         int lsum = leafToLeafSum(node.left);
@@ -456,5 +471,68 @@ public class binaryTrees
     }
 
 
+    // BINARY TREE MAXIMUM PATH SUM (LEETCODE - 124)_______________________________________________________
+    static int maxSumNodeToNode = Integer.MIN_VALUE;
+    public static int nodeToNodeSum(Node node)
+    {
+        if(node == null)
+        {
+            return 0;
+        }
+
+        int lmax = nodeToNodeSum(node.left);
+        int rmax = nodeToNodeSum(node.right);
+
+        int maxBranch = Math.max(lmax , rmax);
+
+        maxSumNodeToNode = Math.max(Math.max(maxSumNodeToNode , node.data) ,
+                                 Math.max(maxBranch + node.data , lmax + rmax + node.data));
+
+        return Math.max(node.data , maxBranch + node.data);
+    }
     
+
+
+    //  MINIMUM CAMERA REQUIRED (LEETCODE - 968) _________________________________________________________
+
+    // -1 : i need camera
+    // 0 : already covered
+    // 1 : i m camera
+    static int minCameras = 0;
+    public static int minCamera(Node node)
+    {
+        int val = minCamera_(node);
+        if(val == -1)
+        {
+            minCameras++;
+        }
+        return minCameras;
+    }
+
+    public static int minCamera_(Node node)
+    {
+        if(node == null)
+        {
+            return 0;
+        }
+
+        int left = minCamera_(node.left);
+        int right = minCamera_(node.right);
+
+        if(left == -1 || right == -1)
+        {
+            minCameras++;
+            return 1;
+        }
+
+        if(left == 1 || right == 1)
+        {
+            return 0;
+        }
+
+        return -1;
+    }
+
+
+
 }
