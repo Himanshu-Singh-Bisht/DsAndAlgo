@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.AbstractList;
-
+import java.util.Collections;
 
 public class leetcode
 {
@@ -115,7 +115,33 @@ public class leetcode
 
 
 
-        // LEETCODE - 
+        // LEETCODE - 1291 , SEQUENTIAL DIGITS ____________________________________________________
+        // List<Integer> res = sequentialDigits(100, 300);
+        // System.out.println(res);
+        // Output - [123, 234]
+
+
+
+        // LEETCODE - 40 , COMBINATION SUM II ___________________________________________________
+        // int[] candidates = {10,1,2,7,6,1,5}; int target = 8;
+        // List<List<Integer>> ans = combinationSum2(candidates, target);
+        // System.out.println(ans);
+        // Output - [[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]]
+
+
+
+        // LEETCODE - 17 ,  Letter Combinations of a Phone Number_________________________________
+        // List<String> ans = letterCombinations("23");
+        // System.out.println(ans);
+        // Output = [ad, ae, af, bd, be, bf, cd, ce, cf]
+
+
+
+        // LEETCODE = 47 , PERMUTATIONS II _____________________________________________________
+        // int[] nums = {1 ,1 , 2};
+        // List<List<Integer>> ans = permuteUnique(nums);
+        // System.out.println(ans);
+        // Output = [[1, 1, 2], [1, 2, 1], [2, 1, 1]]
     }
 
 
@@ -706,5 +732,165 @@ public class leetcode
             arr.remove(arr.size() - 1);
         }
     }
+
+
+
+
+    // LEETCODE - 1291 _____________________________________________________________
+    public static List<Integer> sequentialDigits(int low, int high) 
+    {
+        List<Integer> res = new ArrayList<>();
+        for(int i = 1 ; i <= 9 ; i++)    
+        {
+            digits(low , high , 0 , i , res);
+        }
+        
+        Collections.sort(res);
+        return res;
+    }
+    
+    public static void digits(int low , int high , int ans , int n , List<Integer> res)
+    {
+         if(ans > high)
+         {
+             return;
+         }
+        
+         if(ans >= low)
+         {
+             res.add(ans);
+         }
+        
+         if(n > 9)
+         {
+             return;
+         }
+        
+         digits(low , high , ans * 10 + n , n + 1 , res);
+    }
+
+
+
+
+    // LEETCODE - 40 ______________________________________________________________________
+    public static List<List<Integer>> combinationSum2(int[] candidates, int target) 
+    {
+        Arrays.sort(candidates);
+        recursionCombi2(candidates , target , 0 , new ArrayList<Integer>() );
+        return ansCombi2;
+    }
+    
+    public static List<List<Integer>> ansCombi2 = new ArrayList<List<Integer>>();
+    
+    public static void recursionCombi2(int[] candidates , int target , int idx ,
+                                List<Integer> ans) 
+    {
+        if(target == 0)
+        {
+            List<Integer> baseAns = new ArrayList<>(ans);
+            ansCombi2.add(baseAns);
+            return;
+        }
+        
+        for(int i = idx ; i < candidates.length ; i++)
+        {
+            if(i > idx && candidates[i] == candidates[i-1])
+            {
+                continue;
+            }
+            if(target - candidates[i] >= 0)
+            {
+                ans.add(candidates[i]);
+                recursionCombi2(candidates , target - candidates[i] , i + 1 , ans );
+                ans.remove(ans.size() -1); 
+            }
+        }
+    }
+
+
+
+
+
+    // LEETCODE - 17 _____________________________________________________________________________
+    public static List<String> letterCombinations(String digits) 
+    {
+        if(digits.length() == 0)
+        {
+            return new ArrayList<>();
+        }
+        
+        List<String> ansLetter = recursionLetterCombination(digits);
+        return ansLetter;
+    }
+    
+    public static String[] arr = {"abc" , "def" , "ghi" , "jkl" , "mno" , "pqrs" , "tuv" , "wxyz"};
+    public static List<String> recursionLetterCombination(String digits)
+    {
+        if(digits.length() == 0)
+        {
+            List<String> base = new ArrayList<>();
+            base.add("");
+            return base;
+        }
+        
+        List<String> ans = new ArrayList<>();
+        
+        List<String> recAns = recursionLetterCombination(digits.substring(1));
+        
+        char ch = digits.charAt(0);
+        int btn = ch - '0' - 2;
+        
+        for(int i = 0 ; i < arr[btn].length() ; i++)
+        {
+            for(String s : recAns)
+            {
+                ans.add(arr[btn].charAt(i) + s);
+            }
+        }
+        
+        return ans;
+    }
+
+
+
+
+    // LEETCODE = 47 ________________________________________________________________________________
+    public static List<List<Integer>> permuteUnique(int[] nums)
+    {
+        Arrays.sort(nums);
+        boolean[] vis = new boolean[nums.length];
+        recursionPermuteUnique(nums , 0 , new ArrayList<>() , vis);
+        return ansPermute;
+    }
+    
+    public static List<List<Integer>> ansPermute = new ArrayList<List<Integer>>();
+    
+    public static void recursionPermuteUnique(int[] nums , int idx , List<Integer> ans , boolean[] vis)
+    {
+        if(ans.size() == nums.length) 
+        {
+            List<Integer> base = new ArrayList<>(ans);
+            ansPermute.add(base);
+            return;
+        }
+        
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            if(vis[i] || (i > 0 && nums[i-1] == nums[i] && !vis[i-1]))     // for duplicacy
+            {
+                continue;
+            }
+            else
+            {
+                vis[i] = true;
+                ans.add(nums[i]);
+                recursionPermuteUnique(nums , 0 , ans, vis);
+                ans.remove(ans.size() - 1);
+                vis[i] = false;
+            }
+        }
+    }
+
+
 
 }
