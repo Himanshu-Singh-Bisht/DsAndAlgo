@@ -117,8 +117,13 @@ public class binaryTrees
 
 
         // MINIMUM CAMERAS REQUIRED (LEETCODE - 968) ____________________________________________________
-        minCamera(root);
-        System.out.println(minCameras);
+        // minCamera(root);
+        // System.out.println(minCameras);
+
+
+        // HOUSE ROBBER - III (LEETCODE - 337) _________________________________________________
+        System.out.println(rob(root));  
+        // OUTPUT - 
 
     }
 
@@ -535,4 +540,30 @@ public class binaryTrees
 
 
 
+    // LEETCODE - 337 , HOUSE ROBBER - III
+    public static int currIdx = 0;
+    public static int prevIdx = 1;
+
+    public static int rob(Node node)
+    {
+        int[] ans = houseRobber(node);
+        return ans[0];
+    }
+
+    public static int[] houseRobber(Node node)
+    {
+        int[] out = new int[]{0 , 0};
+        if(node != null)
+        {
+            int[] left = houseRobber(node.left);
+            int[] right = houseRobber(node.right);
+
+            int curr = left[currIdx] + right[currIdx];
+            int prev = left[prevIdx] + right[prevIdx];
+
+            out[currIdx] = Math.max(node.data + prev , curr);
+            out[prevIdx] = curr;
+        }
+        return out;
+    }
 }
