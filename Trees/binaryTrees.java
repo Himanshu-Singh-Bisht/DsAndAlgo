@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import org.omg.PortableInterceptor.INACTIVE;
+
 public class binaryTrees
 {
     public static class Node 
@@ -42,6 +44,22 @@ public class binaryTrees
             return str;
         }
     }
+
+
+    public static class AllSol
+    {
+        int height = -1;
+        int size = 0;
+        boolean find = false;
+
+        Node pred = null;
+        Node succ = null;
+        Node prev = null;
+
+        int ceil = Integer.MAX_VALUE;
+        int floor = Integer.MIN_VALUE;
+    }
+
 
 
     public static void main(String[] args)
@@ -122,9 +140,21 @@ public class binaryTrees
 
 
         // HOUSE ROBBER - III (LEETCODE - 337) _________________________________________________
-        System.out.println(rob(root));  
-        // OUTPUT - 
+        // System.out.println(rob(root));  
+        // OUTPUT - 680
 
+
+
+        // SUCCESSOR , PREDECESSOR , CEIL AND FLOOR VALUES______________________________________
+        AllSol pair = new AllSol();
+        allSolutions(root , 60 , 0 , pair);
+        System.out.println("Height of Tree - " + pair.height);
+        System.out.println("Size of Tree - " + pair.size);
+        System.out.println("Data found in Tree - " + pair.find);
+        System.out.println("Ceil Value of Data - " + pair.ceil);
+        System.out.println("Floor Value of Data - " + pair.floor);
+        System.out.println("Predecessor of Data - " + pair.pred.data);
+        System.out.println("Successor Of Data - " + pair.succ.data);
     }
 
     // CREATE TREE __________________________________________________________________________
@@ -565,5 +595,50 @@ public class binaryTrees
             out[prevIdx] = curr;
         }
         return out;
+    }
+
+
+
+
+    // SUCCESSOR , PREDECESSOR , CEIL AND FLOOR VALUES______________________________________
+    public static void allSolutions(Node node , int data , int level , AllSol pair)
+    {
+        if(node == null)
+        {
+            return;
+        }
+
+        pair.height = Math.max(pair.height , level);
+        pair.size++;
+        pair.find = (pair.find || node.data == data);
+
+        if(node.data > data)
+        {
+            pair.ceil = Math.min(pair.ceil , node.data);
+        }
+        if(node.data < data)
+        {
+            pair.floor = Math.max(pair.floor , node.data);
+        }
+
+
+        // PREORDER REGION 
+
+        allSolutions(node.left, data, level + 1, pair);
+
+        // INORDER REGION
+        if(node.data == data && pair.pred == null)
+        {
+            pair.pred = pair.prev;
+        }
+        else if(pair.pred != null && pair.succ == null && pair.prev.data == data)
+        {
+            pair.succ = node;
+        }
+        pair.prev = node;
+
+        allSolutions(node.right, data, level + 1, pair);
+
+        // POSTORDER REGION
     }
 }
