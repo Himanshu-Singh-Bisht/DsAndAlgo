@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 public class bst
 {
@@ -72,8 +73,25 @@ public class bst
 
 
         // SUCCESSOR AND PREDECCESSOR IN BST ____________________________________________
-        predSuccInBST(root , 80);
+        // predSuccInBST(root , 80);
 
+
+
+        // REMOVE NODE IN BST ________________________________________________________________
+        // root = removeNode(root , 80);
+        // System.out.println(root);
+
+
+        // MORRIS TRAVERSAL OF TREE __________________________________________________________________
+        // morrisTraversalInorder(root);
+        // morrisTraversalPreorder(root);
+
+
+
+        // TRAVERSING THE TREE USING STACK _____________________________________________________________
+        // preorderStack(root);
+        // inorderStack(root);
+        postorderStack(root);
     }
 
 
@@ -221,6 +239,276 @@ public class bst
             else
             {
                 node = node.right;
+            }
+        }
+    }
+
+
+    // REMOVE NODE IN BST ________________________________________________________________
+    public static Node removeNode(Node node , int data)
+    {
+        if(node == null)
+        {
+            return null;
+        }
+
+        if(data == node.data)
+        {
+            if(node.left == null || node.right == null)     // for 0 and 1 child
+            {
+                return node.left == null ? node.right : node.left;
+            }
+
+            int maxData = maxInTree(node.left);
+            node.data = maxData;
+
+            node.left = removeNode(node.left , maxData);        // to remove the node which we used to replace 
+                                                                // the node.
+        }
+        else if(data < node.data)
+        {
+            node.left = removeNode(node.left, data);
+        }
+        else
+        {
+            node.right = removeNode(node.right, data);
+        }
+
+        return node;
+    }
+
+    public static int maxInTree(Node node)
+    {
+        if(node == null)
+        {
+            return Integer.MIN_VALUE;
+        }
+
+        Node rnode = node;
+        while(rnode.right != null)
+        {
+            rnode = rnode.right;
+        }
+
+        return rnode.data;
+    }
+
+    public static int minInTree(Node node)
+    {
+        if(node == null)
+        {
+            return Integer.MAX_VALUE;
+        }
+
+        Node rnode = node;
+        while(rnode.left != null)
+        {
+            rnode = rnode.left;
+        }
+
+        return rnode.data;
+    }
+
+
+
+    // MORRIS TRAVERSAL ____________________________________________________________________
+
+    public static Node rightMostOfNextLeft(Node nextLeft , Node curr)
+    {
+        while(nextLeft.right != null  && nextLeft.right != curr)
+        {
+            nextLeft = nextLeft.right;
+        }
+        return nextLeft;
+    }
+
+    // INORDER
+    public static void morrisTraversalInorder(Node node)
+    {
+        Node curr = node;
+        while(curr != null)
+        {
+            Node nextLeft = curr.left;
+
+            if(nextLeft == null)
+            {
+                System.out.print(curr.data + " ");                  // print
+                curr = curr.right;
+            }
+            else
+            {
+                Node rightMost = rightMostOfNextLeft(nextLeft, curr);
+                if(rightMost.right == null)             // thread creation
+                {
+                    rightMost.right = curr;
+                    curr = curr.left;
+                }
+                else
+                {
+                    System.out.print(curr.data + " ");
+                    rightMost.right = null;                       // break thread and print
+                    curr = curr.right;
+                }
+            }
+        }
+    }
+
+
+    // PREORDER
+    public static void morrisTraversalPreorder(Node node)
+    {
+        Node curr = node;
+        while(curr != null)
+        {
+            Node nextLeft = curr.left;
+            if(nextLeft == null)
+            {
+                System.out.print(curr.data + " ");             // print
+                curr = curr.right;
+            }
+            else
+            {
+                Node rightMost = rightMostOfNextLeft(nextLeft, curr);
+                if(rightMost.right == null)
+                {
+                    System.out.print(curr.data + " ");              // thread creation and print
+                    rightMost.right = curr;
+                    curr = curr.left;
+                }
+                else
+                {
+                    rightMost.right = null;                     // thread break
+                    curr = curr.right;
+                }
+            }
+        }
+    }
+
+
+    //  TRAVERSING THE TREE USING STACK_______________________________________________________________
+    public static class tpair
+    {
+        Node node = null;
+        boolean sd = false;
+        boolean ld = false;
+        boolean rd = false;
+
+        tpair(Node node)
+        {
+            this.node = node;
+        }
+    }
+
+
+    // PREORDER  (SD , LD , RD) ________________
+    public static void preorderStack(Node node)
+    {
+        Stack<tpair> st = new Stack<>();
+        st.push(new tpair(node));
+
+        while(st.size() != 0)
+        {
+            tpair tnode = st.peek();
+            if(!tnode.sd)
+            {
+                tnode.sd = true;
+                System.out.print(tnode.node.data + " ");
+            }
+            else if(!tnode.ld)
+            {
+                tnode.ld = true;
+                if(tnode.node.left != null)
+                {
+                    st.push(new tpair(tnode.node.left));
+                }
+            }
+            else if(!tnode.rd)
+            {
+                tnode.rd = true;
+                if(tnode.node.right != null)
+                {
+                    st.push(new tpair(tnode.node.right));
+                }
+            }
+            else
+            {
+                st.pop();
+            }
+        }
+    }
+
+
+    // INORDER (LD , SD , RD) ___________________________
+    public static void inorderStack(Node node)
+    {
+        Stack<tpair> st = new Stack<>();
+        st.push(new tpair(node));
+
+        while(st.size() != 0)
+        {
+            tpair tnode = st.peek();
+            if(!tnode.ld)
+            {
+                tnode.ld = true;
+                if(tnode.node.left != null)
+                {
+                    st.push(new tpair(tnode.node.left));
+                }
+            }
+            else if(!tnode.sd)
+            {
+                tnode.sd = true;
+                System.out.print(tnode.node.data + " ");
+            }
+            else if(!tnode.rd)
+            {
+                tnode.rd = true;
+                if(tnode.node.right != null)
+                {
+                    st.push(new tpair(tnode.node.right));
+                }
+            }
+            else
+            {
+                st.pop();
+            }
+        }
+    }
+
+
+    // POSTORDER (LD , RD , SD) ____________________________
+    public static void postorderStack(Node node)
+    {
+        Stack<tpair> st = new Stack<>();
+        st.push(new tpair(node));
+
+        while(st.size() != 0)
+        {
+            tpair tnode = st.peek();
+            if(!tnode.ld)
+            {
+                tnode.ld = true;
+                if(tnode.node.left != null)
+                {
+                    st.push(new tpair(tnode.node.left));
+                }
+            }
+            else if(!tnode.rd)
+            {
+                tnode.rd = true;
+                if(tnode.node.right != null)
+                {
+                    st.push(new tpair(tnode.node.right));
+                }
+            }
+            else if(!tnode.sd)
+            {
+                tnode.sd = true;
+                System.out.print(tnode.node.data + " ");
+            }
+            else
+            {
+                st.pop();
             }
         }
     }
