@@ -1,5 +1,7 @@
 import java.util.Scanner;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.PreAction;
+
 import jdk.internal.util.xml.impl.Input;
 
 import java.util.ArrayList;
@@ -99,8 +101,39 @@ public class leetcode
 
 
 
-        // LEETCODE - 
+        // LEETCODE - 590 , N - ARRAY POSTORDER TRAVERSAL ________________________________________
+        // Input: root = [1,null,3,2,4,null,5,6]
+        // Output: [5,6,3,2,4,1]
+        // System.out.println(postorder(root));
 
+
+
+        // LEETCODE - 589 , N-ARY PREORDER TRAVERSAL ________________________________________________
+        // Input: root = [1,null,3,2,4,null,5,6]
+        // Output: [1,3,5,6,2,4]
+        // System.out.println(preorder(root));
+
+
+        // LEETCODE - 559 , MAXIMUM DEPTH OF N-ARY TREE _____________________________________________
+        // Input: root = [1,null,3,2,4,null,5,6]
+        // Output: 3
+        // System.out.println(maxDepth(root));
+
+
+
+        // LEETCODE - 653 , TWO SUM - IV - (INPUT IS A BST) __________________________________________
+        // Input = root - [5,3,6,2,4,null,7] , k = 9
+        // Output = true
+        // System.out.println(findTarget1(root, k));
+        // System.out.println(findTarget2(root, k));
+        // System.out.println(findTarget3(root, k));
+
+
+
+        // LEETCODE - 538 , CONVERT BST TO A GREATER TREE ______________________________________________
+        // Input : [5 , 3, 7 , 1, 4 , 6, 9]
+        // Output : [27,34,16,35,31,22,9]
+        // System.out.println(convertBST1(root));
     }
 
 
@@ -528,7 +561,250 @@ public class leetcode
 
 
 
+    // LEETCODE - 590 __________________________________________________
+    public static List<Integer> postorder(Node root) 
+    {
+        ans = new ArrayList<>();
+        if(root == null)
+        {
+            return ans;
+        }
+        traversalPostorder(root);
+        return ans;
+    }
+
+    public static void traversalPostorder(Node node)
+    {
+        for(Node child : node.children)
+        {
+            traversalPostorder(child);
+        }
+        ans.add(node.val);
+    }
+
+    public static List<Integer> ans;
+
     
+
+    // LEETCODE - 589 ___________________________________________________
+    public static List<Integer> preorder(Node root) 
+    {
+        if(root == null)
+        {
+            return ansPre;
+        }
+        
+        traversalPreorder(root);
+        return ansPre;
+    }
+    
+    public static List<Integer> ansPre = new ArrayList<>();;
+    public void traversalPreorder(Node node)
+    {
+        ans.add(node.val);
+        for(Node child : node.children)
+        {
+            traversalPreorder(child);
+        }
+    }
+
+
+
+    // LEETCODE - 559 ________________________________________________________________
+    public static int maxDepth(Node node) 
+    {
+        if(node == null)
+        {
+            return 0;
+        }
+        int height = 0;
+        for(Node child : node.children)
+        {
+            int ch = maxDepth(child); 
+            height = Math.max(height , ch);
+        }
+        
+        return height + 1;
+    }
+
+
+
+    // LEETCODE - 653 ______________________________________________________________
+    // using hashset and recursion
+    public static boolean findTarget1(TreeNode root, int k) 
+    {
+        HashSet<Integer> set = new HashSet<>();
+        return find(root , k , set);
+    }
+    public static boolean find(TreeNode node , int k , HashSet<Integer> set)
+    {
+        if(node == null) return false;
+        if(set.contains(k - node.val))   return true;
+        
+        set.add(node.val);
+        
+        boolean res = false;
+        res = res || find(node.left , k , set);
+        res = res || find(node.right , k , set);
+        
+        return res;
+    }
+
+    // using HashSet and queue 
+    public static boolean findTarget2(TreeNode root, int k) 
+    {
+        HashSet<Integer> set = new HashSet<>();
+        
+        Queue<TreeNode> queue = new LinkedList<>();
+        queue.add(root);
+        
+        while(queue.size() != 0)
+        {
+            if(queue.peek() != null)
+            {
+                TreeNode node = queue.remove();
+                if(set.contains(k - node.val))
+                {
+                    return true;
+                }
+                set.add(node.val);
+                queue.add(node.left);
+                queue.add(node.right);
+            }
+            else
+            {
+                queue.remove();
+            }
+        }
+        return false;
+    }
+
+    // using BST
+    public static boolean findTarget3(TreeNode root, int k) 
+    {
+        List<Integer> list = new ArrayList<>();
+        inorder(root , list);
+        
+        int i = 0;
+        int j = list.size() - 1;
+        while(i < j)
+        {
+            int sum = list.get(i) + list.get(j);
+            if(k == sum)
+            {
+                return true;
+            }
+            
+            if(sum < k)
+            {
+                i++;        // as we need bigger no.
+            }
+            else
+            {
+                j--;        // as we need smaller no.
+            }
+        }
+        return false;
+    }
+    public static void inorder(TreeNode node , List<Integer> list)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        inorder(node.left , list);
+        list.add(node.val);
+        inorder(node.right , list);
+    }
+
+
+
+    // LEETCODE - 538 ____________________________________________________________________
+    public static TreeNode convertBST1(TreeNode root) 
+    {
+        List<TreeNode> list = new ArrayList<>();
+        
+        inorderTraversal(root , list);
+        
+        for(int i = list.size() - 2 ; i >= 0 ; i--)
+        {
+            list.get(i).val += list.get(i+1).val;
+        }
+        
+        return root;
+    }
+    
+    public static void inorderTraversal(TreeNode node , List<TreeNode> list)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        inorderTraversal(node.left , list);
+        list.add(node);
+        inorderTraversal(node.right , list);
+    }
+
+    // using recursion 
+    public static int sumBST = 0;
+    public static TreeNode convertBST2(TreeNode node) 
+    {
+        if(node != null)
+        {
+            convertBST(node.right);
+            sumBST += node.val;
+            node.val = sumBST;
+            convertBST(node.left);
+        }
+        return node;
+    }
+
+    // using Reverse Morris Traversal Algo
+    public static TreeNode convertBST(TreeNode node) 
+    {
+        int sum = 0;
+        TreeNode curr = node;
+        
+        while(curr != null)
+        {
+            TreeNode nextRight = curr.right;
+            if(nextRight == null)
+            {
+                sum += curr.val;
+                curr.val = sum;
+                curr = curr.left;
+            }
+            else
+            {
+                TreeNode leftMost = leftMostInNextRight(nextRight , curr);
+                
+                if(leftMost.left == null)
+                {
+                    leftMost.left = curr;
+                    curr = curr.right;
+                }
+                else
+                {
+                    leftMost.left = null;
+                    sum += curr.val;
+                    curr.val = sum;
+                    curr = curr.left;
+                }
+            }
+        }
+        
+        return node;
+    }
+    public static TreeNode leftMostInNextRight(TreeNode nextRight ,TreeNode curr)
+    {
+        while(nextRight.left != null && nextRight.left != curr)
+        {
+            nextRight = nextRight.left;
+        }
+        
+        return nextRight;
+    }
+
 
 
 }
