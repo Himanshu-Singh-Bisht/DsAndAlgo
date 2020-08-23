@@ -134,6 +134,45 @@ public class leetcode
         // Input : [5 , 3, 7 , 1, 4 , 6, 9]
         // Output : [27,34,16,35,31,22,9]
         // System.out.println(convertBST1(root));
+
+
+        // LEETCODE - 606 , CONSTRUCT STRING FROM BINARY TREE _____________________________________
+        // INPUT : root = [1,2,3,null,4]
+        // OUTPUT : "1(2()(4))(3)"
+        // System.out.println(tree2str(root));
+        // System.out.println(tree2str2(root));
+
+
+
+        // LEETCODE - 530 , MINIMUM ABSOLUTE DIFFERENCE IN BST ______________________________________
+        // INPUT : root = [543 , 384 , 652 , null , 445 , null , 699]
+        // OUTPUT = 47 
+        // System.out.println(getMinimumDifference1(root));
+        // System.out.println(getMinimumDifference2(root));
+
+
+
+        // LEETCODE - 107 , BINARY TREE LEVEL ORDER TRAVERSAL - II ____________________________________
+        // INPUT : root = [3,9,20,null,null,15,7]
+        // OUTPUT : [[15,7],[9,20],[3]]
+        // System.out.println(levelOrderBottom(root));
+        // System.out.println(levelOrderBottom2(root));
+
+
+        // LEETCODE - 100 , SAME TREE _______________________________________________
+        // INPUT : p = [1, 2] , q = [1 , null , 2]
+        // OUTPUT : false
+        // System.out.println(isSameTree(p , q));
+
+
+        // LEETCODE - 783 , MINIMUM DISTANCE BETWEEN BST NODES_____________________________________________
+        // INPUT : root = [4 , 2 ,6 ,1, 3 , null ,null]
+        // OUTPUT : 1
+        // System.out.println(minDiffInBST(root));
+
+
+        // 
+
     }
 
 
@@ -807,4 +846,264 @@ public class leetcode
 
 
 
+    // LEETCODE - 606 ________________________________________________________
+    // using recursion
+    public static String tree2str(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(node.val + "");
+        
+        if(node.left != null && node.right != null)
+        {
+            sb.append("(" + tree2str(node.left) + ")(" + tree2str(node.right) + ")");
+        }
+        else if(node.left != null)
+        {
+            sb.append("(" + tree2str(node.left) + ")");
+        }
+        else if(node.right != null)
+        {
+            sb.append("()(" + tree2str(node.right) + ")");
+        }
+        
+        return sb.toString();
+    }
+
+    // using stack
+    public static String tree2str2(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return "";
+        }
+        Stack<TreeNode> st = new Stack<>();
+        st.push(node);
+        
+        StringBuilder sb = new StringBuilder();
+        
+        HashSet<TreeNode> vis = new HashSet<>();
+        while(st.size() > 0)
+        {
+            node = st.peek();
+            if(vis.contains(node))
+            {
+                st.pop();
+                sb.append(")");
+            }
+            else
+            {
+                vis.add(node);
+                sb.append("(" + node.val);
+                if(node.left == null && node.right != null)
+                {
+                    sb.append("()");
+                }
+                if(node.right != null)
+                {
+                    st.push(node.right);
+                }
+                if(node.left != null)
+                {
+                    st.push(node.left);
+                }
+            }
+        }
+        
+        return sb.substring(1 , sb.length() - 1).toString();
+    }
+
+
+
+    // LEETCODE - 530 ______________________________________________________________
+    public static int getMinimumDifference1(TreeNode node) 
+    {
+        traverseToFindMinDiff(node);
+        return diff;
+    }
+    
+    public static int diff = Integer.MAX_VALUE;
+    public static void traverseToFindMinDiff(TreeNode node)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        if(node.left != null)
+        {
+            TreeNode temp = node.left;
+            TreeNode t = rightMostLeftNode(temp);
+            diff = Math.min(diff , node.val - t.val);
+            traverseToFindMinDiff(node.left);
+        }
+        if(node.right != null)
+        {
+            TreeNode temp = node.right;
+            TreeNode t = leftMostRightNode(temp);
+            diff = Math.min(diff , t.val - node.val);
+            traverseToFindMinDiff(node.right);
+        }
+    }
+    
+    
+    public static TreeNode rightMostLeftNode(TreeNode leftNode)
+    {
+        while(leftNode.right != null)
+        {
+            leftNode = leftNode.right;
+        }
+        return leftNode;
+    }
+    
+    public static TreeNode leftMostRightNode(TreeNode rightNode)
+    {
+        while(rightNode.left != null)
+        {
+            rightNode = rightNode.left;
+        }
+        return rightNode;
+    }
+
+    // using inorder traversal and to store the previous value in BST tree inorder
+    public int min = Integer.MAX_VALUE;
+    public Integer prev = null;
+    public int getMinimumDifference2(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return min;
+        }
+        
+        getMinimumDifference(node.left);
+        
+        if(prev != null)
+        {
+            min = Math.min(min , node.val - prev);
+        }
+        prev = node.val;
+        
+        getMinimumDifference(node.right);
+        return min;
+    }
+
+
+
+    // LEETCODE - 107 _______________________________________________________________
+    public static List<List<Integer>> levelOrderBottom(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return new ArrayList<>();
+        }
+        Queue<TreeNode> que = new ArrayDeque<>();
+        que.add(node);
+        
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        while(que.size() != 0)
+        {
+            int size = que.size();
+            List<Integer> temp = new ArrayList<Integer>();
+            while(size != 0)
+            {
+                node = que.remove();
+                temp.add(node.val);
+                if(node.left != null)
+                {
+                    que.add(node.left);    
+                }
+                if(node.right != null)
+                {
+                    que.add(node.right);
+                }
+                size--;
+            }
+            
+            list.add(temp);
+        }
+        
+        Collections.reverse(list);
+        return list;
+    }
+
+
+    // using the recursion 
+    public static List<List<Integer>> levelOrderBottom2(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return new ArrayList<>();
+        }
+        List<List<Integer>> list = new ArrayList<List<Integer>>();
+        levelMaker(node , 0 , list);
+        
+        return list;
+    }
+    
+    public static void levelMaker(TreeNode node , int level , List<List<Integer>> list)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        
+        if(level >= list.size())
+        {
+            list.add(0 , new ArrayList<>());
+        }
+        
+        levelMaker(node.left , level + 1 , list);
+        levelMaker(node.right , level + 1 , list);
+        list.get(list.size() - 1 - level).add(node.val);
+    }
+
+
+    // LEETCODE - 100 ___________________________________________________________
+    public static boolean isSameTree(TreeNode p, TreeNode q) 
+    {
+        if(p == null || q == null)
+        {
+            if(p == null && q == null)
+            {
+                return true;
+            }
+            return false;
+        }
+        if(p.val != q.val)
+        {
+            return false;
+        }
+        
+        boolean res = true;
+        res = res && isSameTree(p.left , q.left);
+        res = res && isSameTree(p.right ,q.right);
+        
+        return res;
+    }
+
+
+
+    // LEETCODE - 783 _____________________________________________________________
+    public static Integer minDiff = Integer.MAX_VALUE;
+    public static Integer prevNode = null;
+    public static int minDiffInBST(TreeNode node)
+    {   
+        if(node == null)
+        {
+            return minDiff;
+        }
+        
+        minDiffInBST(node.left);
+        if(prevNode != null)
+        {
+            minDiff = Math.min(minDiff , node.val - prevNode);
+        }
+        
+        prevNode = node.val;
+        minDiffInBST(node.right);
+        
+        return minDiff;
+    }
 }
