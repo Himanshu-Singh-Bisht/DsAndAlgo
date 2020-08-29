@@ -171,8 +171,80 @@ public class leetcode
         // System.out.println(minDiffInBST(root));
 
 
-        // 
+        // LEETCODE - 993 , COUSINS IN BINARY TREE ____________________________________
+        // Input : root = [1,2,3,null,4,null,5], x = 5, y = 4
+        // Output : true
+        // System.out.prnitln(isCousins(root, x, y));
+        // System.out.println(isCousins2(root, x, y));
 
+
+
+        // LEETCODE - 257 , BINARY TREE PATHS ________________________________________________________
+        // Input : root = [1,2,3,null,5]
+        // Output : ["1->2->5", "1->3"]
+        // System.out.println(binaryTreePaths1(root));
+        // System.out.println(binaryTreePaths2(root));
+
+
+
+        // LEETCODE - 404 , SUM LEFT LEAVES _______________________________________________________
+        // INPUT : root = [3,9,20,null,null,15,7]
+        // OUTPUT : 24
+        // System.out.println(sumOfLeftLeaves(root));
+
+
+        // LEETCODE - 235 , LOWEST COMMON ANCESTOR OF A BINARY SEARCH TREE ______________________________
+        // INPUT : root = [6,2,8,0,4,7,9,null,null,3,5] , p = 0 , q = 3
+        // OUTPUT : 2
+        // System.out.println(lowestCommonAncestor(root , p , q));
+
+
+        // LEETCODE - 101 , SYMMETRIC TREE ______________________________________________
+        // INPUT : root = [1,2,2,3,4,4,3]
+        // OUTPUT : true
+        // System.out.println(isSymmetric(root));
+        // System.out.println(isSymmetric2(root));
+
+
+        // LEETCODE - 572 , SUBTREE OF ANOTHER TREE__________________________________
+        // INPUT :  s = [3,4,5,1,2]  ,  t = [4,1,2]
+        // OUTPUT : true
+        // System.out.println(isSubtree(s, t));
+        // System.out.println(isSubtree2(s, t));
+
+
+        // LEETCODE - 110 , BALANCED BINARY TREE ___________________________________________________
+        // Input : root = [3,9,20,null,null,15,7]
+        // Output : true
+        // System.out.println(isBalanced(root));
+        // System.out.println(isBalanced2(root));
+
+
+        // LEETCODE - 671 , SECOND MINIMUM SMALLEST NODE IN A BINARY TREE ___________________________
+        // Input : root = [1 , null , 2 , 2]
+        // Output : [2]
+        // System.out.println(findMode(root));
+        // System.out.println(findMode2(root));
+
+
+        // LEETCODE - 111 , MINIMUM DEPTH OF BINARY TREE _________________________________________
+        // INPUT : root = [3,9,20,null,null,15,7]
+        // OUTPUT : 2
+        // System.out.println(minDepth(root));
+
+
+        // LEETCODE - 687 , LONGEST UNIVALUE PATH _________________________________________________
+        // Input : root = [1,null,1,1,1,1,1,1]
+        // Output : 4 
+        // System.out.println(longestUnivaluePath(root));
+        // System.out.println(longestUnivaluePath2(root));
+
+
+
+        // LEETCODE - 112 , PATH SUM _________________________________________________________
+        // INPUT : root = [5,4,8,11,null,13,4,7,2,null,null,null,1] , sum = 22
+        // Output = true
+        // System.out.println(hasPathSum(root, sum));
     }
 
 
@@ -1105,5 +1177,635 @@ public class leetcode
         minDiffInBST(node.right);
         
         return minDiff;
+    }
+
+
+    // LEETCODE - 993 _______________________________________________________________
+    public static boolean isCousins(TreeNode node, int x, int y) 
+    {
+        Queue<TreeNode> que = new ArrayDeque<>();
+        que.add(node);
+        
+        while(que.size() > 0)
+        {
+            int size = que.size();
+            HashSet<Integer> set = new HashSet<>();
+            
+            while(size > 0)
+            {
+                node = que.remove();
+                if((node.left != null && node.right != null) && 
+                    (node.left.val == x || node.right.val == x )&& (node.left.val == y || node.right.val == y))
+                {
+                    return false;
+                }
+                
+                if(node.left != null)
+                {
+                    que.add(node.left);
+                }
+                if(node.right != null)
+                {
+                    que.add(node.right);
+                }
+                set.add(node.val);
+                
+                size--;
+            }
+            
+            if(set.contains(x) && set.contains(y))
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+
+
+    public static HashMap<Integer , DataNode> mapCousins = new HashMap<>();
+    
+    public static boolean isCousins2(TreeNode node, int x, int y) 
+    {
+        traverse(node , x, y , null , 0);
+        if(mapCousins.get(x).depth == mapCousins.get(y).depth  && 
+          mapCousins.get(x).parent != mapCousins.get(y).parent)
+        {
+            return true;
+        }
+        return false;
+    }   
+    
+    public static class DataNode
+    {
+        private Integer parent;
+        private int depth;
+        
+        public DataNode(Integer parent , int depth)
+        {
+            this.parent = parent;
+            this.depth = depth;
+        }
+    }
+    
+    public static void traverse(TreeNode node , int x, int y, Integer parent , int depth)
+    {
+        if(node == null || mapCousins.size() == 2)
+        {
+            return;
+        }
+        
+        if(node.val == x || node.val == y)
+        {
+            mapCousins.put(node.val , new DataNode(parent , depth));
+        }
+        
+        traverse(node.left , x , y , node.val , depth + 1);
+        traverse(node.right , x , y, node.val , depth + 1);
+    }
+
+
+
+    // LEETCODE - 257 ______________________________________________________________________
+    public static List<String> binaryTreePaths1(TreeNode node)
+    {
+        List<String> list = new ArrayList<String>();
+        
+        if(node == null)
+        {
+            return list;
+        }
+        if(node.left == null && node.right == null)
+        {
+            list.add(Integer.toString(node.val) + "");
+            return list;
+        }
+        
+        for(String s : binaryTreePaths(node.left))
+        {
+            list.add(node.val + "->" + s);
+        }
+        
+        for(String s : binaryTreePaths(node.right))
+        {
+            list.add(node.val + "->" + s);
+        }
+        
+        return list;
+    }
+
+
+
+    public static List<String> binaryTreePaths2(TreeNode node)
+    {
+        List<String> list = new ArrayList<>();
+        if(node == null)
+        {
+            return list;
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        recursionBinaryTreePaths(node , sb , list);
+        return list;
+    }
+    
+    public static void recursionBinaryTreePaths(TreeNode node , StringBuilder sb , List<String> list)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        
+        int len = sb.length();
+        sb.append(node.val);
+        if(node.left == null && node.right == null)
+        {
+            list.add(sb.toString());
+        }
+        else
+        {
+            sb.append("->");
+            recursionBinaryTreePaths(node.left , sb , list);
+            recursionBinaryTreePaths(node.right , sb , list);
+        }
+        sb.setLength(len);      // used for deleting characters added to the StringBuilder
+    }
+
+
+
+    // LEETCODE - 404 ______________________________________________
+    public static int sumLeftLeaves = 0;    
+    public static int sumOfLeftLeaves(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return sum;
+        }
+        
+        calls(node , null);
+        return sum;
+    }
+    
+    public static void calls(TreeNode node , TreeNode prev)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        if(node.left == null && node.right == null)
+        {
+            if(prev != null && node == prev.left)
+            {
+                sum += node.val;
+            }
+        }
+        
+        prev = node;
+        calls(node.left , prev);
+        calls(node.right , prev);
+    }
+
+
+
+    // LEETCODE = 235 ________________________________________________________________
+    public static TreeNode lowestCommonAncestor(TreeNode node, TreeNode p, TreeNode q) 
+    {
+        while(node != null)
+        {
+            if(p.val < node.val && q.val < node.val)
+            {
+                node = node.left;
+            }
+            else if(p.val > node.val && q.val > node.val)
+            {
+                node = node.right;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        return node;
+    }
+
+
+
+    // LEETCODE - 101 , SYMMETRIC TREE___________________________________________________
+    public static boolean isSymmetric(TreeNode node) 
+    {
+        if(isMirror(node , node))
+            return true;
+        return false;
+    }
+    
+    public static boolean isMirror(TreeNode node1 , TreeNode node2)
+    {
+        if(node1 == null || node2 == null)
+        {
+            if(node1 == null && node2 == null)
+            return true;
+            
+            return false;
+        }
+        if(node1.val != node2.val)
+        {
+            return false;
+        }
+        
+        if(isMirror(node1.left , node2.right) && isMirror(node1.right , node2.left))
+        {
+            return true;
+        }
+        
+        return false;
+    }
+
+
+    public static boolean isSymmetric2(TreeNode node) 
+    {
+        Queue<TreeNode> que = new LinkedList<>();
+        que.add(node);
+        que.add(node);
+        
+        while(que.size() != 0)
+        {
+            TreeNode node1 = que.remove();
+            TreeNode node2 = que.remove();
+            
+            if(node1 == null && node2 == null)
+            {
+                continue;
+            }
+            if(node1 == null || node2 == null)
+            {    
+                return false;
+            }
+            
+            if(node1.val != node2.val)
+            {
+                return false;
+            }
+            
+            que.add(node1.left);
+            que.add(node2.right);
+            que.add(node1.right);
+            que.add(node2.left);
+        }
+        
+        return true;
+    }
+
+
+
+    // LEETCODE - 572 __________________________________________________________________________
+    public static boolean isSubtree(TreeNode s, TreeNode t) 
+    {
+        String tree1 = preorder(s , true);
+        String tree2 = preorder(t , true);
+        
+        return tree1.contains(tree2);
+    }
+    
+    public static String preorder(TreeNode node , boolean left)
+    {
+        if(node == null)
+        {
+            if(left)
+            {
+                return "lnull";
+            }
+            else
+            {
+                return "rnull";
+            }
+        }
+        return "#" + node.val + " " + preorder(node.left , true) +" "+ preorder(node.right , false);   
+    }
+
+
+
+    public static boolean isSubtree2(TreeNode s, TreeNode t) 
+    {
+        return traverse(s , t);
+    }
+    
+    public static boolean traverse(TreeNode s , TreeNode t)
+    {
+        return s != null && (equals(s , t)  || traverse(s.left , t) || traverse(s.right , t));
+    }
+    
+    public static boolean equals(TreeNode x , TreeNode y)
+    {
+        if(x == null && y == null)
+        {
+            return true;
+        }
+        if(x == null || y == null)
+        {
+            return false;
+        }
+        return (x.val == y.val) && equals(x.left , y.left) && equals(x.right , y.right);
+    }
+
+
+
+    // LEETCODE - 110 _______________________________________________________________________
+    public static boolean isBalanced(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return true;
+        }
+        
+        int lDepth = height(node.left);
+        int rDepth = height(node.right);
+        
+        return Math.abs(lDepth - rDepth) <= 1 && isBalanced(node.left) && isBalanced(node.right);
+    }
+    public static int height(TreeNode node)
+    {
+        if(node == null)
+        {
+            return -1;
+        }
+        
+        int left = height(node.left);
+        int right = height(node.right);
+        
+        return Math.max(left , right) + 1;
+    }
+
+
+    public static boolean isBalanced2(TreeNode node) 
+    {
+        return recursionBalanced(node) != -1;
+    }
+    public static int recursionBalanced(TreeNode node)
+    {
+        if(node == null)
+        {
+            return 0;
+        }
+        
+        int left = recursionBalanced(node.left);
+        if(left == -1)
+        {
+            return -1;
+        }
+        int right = recursionBalanced(node.right);
+        if(right == -1)
+        {
+            return -1;
+        }
+        
+        if(Math.abs(left - right) > 1)
+        {
+            return -1;
+        }
+        
+        return Math.max(left , right) + 1;
+    }
+
+
+    // LEETCODE - 671 __________________________________________________________________
+    public static long smallest = Long.MAX_VALUE;
+    public static long secondSmallest = Long.MAX_VALUE;
+    
+    public static int findSecondMinimumValue(TreeNode node)
+    {
+        setSmallestAndSecondSmallest(node);
+        return secondSmallest < Long.MAX_VALUE ? (int)secondSmallest : -1;
+    }
+    
+    public static void setSmallestAndSecondSmallest(TreeNode node)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        
+        if(node.val < smallest)
+        {
+            secondSmallest = smallest;
+            smallest = node.val;
+        }
+        else if(node.val < secondSmallest && node.val > smallest)
+        {
+            secondSmallest = node.val;
+        }
+        
+        setSmallestAndSecondSmallest(node.left);
+        setSmallestAndSecondSmallest(node.right);
+    }
+
+
+
+    // LEETCODE - 501 _____________________________________________________________________________
+    private static Map<Integer, Integer> map= new HashMap<>();
+    private static int max = 1;
+    
+    public static int[] findMode(TreeNode root) 
+    {
+        if(root == null)
+        {
+            return new int[0];
+        }
+        
+        makeHashMap(root);
+        int result[] = new int[map.size()];     // max size of the ans array
+        int i = 0;
+        for(Integer k: map.keySet())
+        {
+            if(map.get(k) == max)
+            {
+                result[i++] = k;
+            }
+        }
+        return Arrays.copyOf(result, i);        // means the array only upto i index
+    }
+    
+    private static void makeHashMap(TreeNode node)
+    {
+        if(node != null)
+        {
+            if(map.containsKey(node.val))
+            {
+                int count = map.get(node.val) + 1;
+                map.put(node.val, map.get(node.val) + 1);
+                max = Math.max(max, count);
+            }
+            else
+            {
+                map.put(node.val, 1);
+            }
+            
+            makeHashMap(node.left);
+            makeHashMap(node.right);
+        }
+    }
+
+
+    // using BST property and O(1) space
+    public static ArrayList<Integer> list = new ArrayList<>();
+    public static  int maxNode = 0;
+    public static int curr;
+    public static TreeNode prevNode1;
+    
+    public static int[] findMode2(TreeNode root) 
+    {
+        makingArrayList(root);
+        
+        int[] ans = new int[list.size()];
+        for(int i = 0 ; i < ans.length ; i++)
+        {
+            ans[i] = list.get(i);
+        }
+        
+        return ans;
+    }
+    
+    public static void makingArrayList(TreeNode node)
+    {
+        if(node == null)
+        {
+            return;
+        }
+        
+        makingArrayList(node.left);
+        
+        curr = (prevNode1 == null ? 1 : (prevNode1.val == node.val ? curr + 1 : 1));
+        
+        if(curr > maxNode)
+        {
+            maxNode = curr;
+            list.clear();   // tp remove all elements
+            list.add(node.val);
+        }
+        else if(curr == maxNode)
+        {
+            list.add(node.val);
+        }
+        
+        prevNode1 = node;
+        makingArrayList(node.right);
+    }
+
+
+    // LEETCODE - 111 _____________________________________________________________________
+    public static int minDepth(TreeNode node) 
+    {
+        if(node == null)
+        {
+            return 0;
+        }
+        
+        int left = minDepth(node.left);
+        int right = minDepth(node.right);
+        
+        return (left == 0 || right == 0) ? (left + right + 1) : Math.min(left , right) + 1;
+    }
+
+
+    // LEETCODE - 687 ____________________________________________________________________
+    public static int maxUnivaluePath = 0;
+    public static int longestUnivaluePath(TreeNode root) 
+    {
+        int[] rvalue = recursionForUnivaluePath(root);
+        
+        return maxUnivaluePath;
+    }
+    
+    public static int[] recursionForUnivaluePath(TreeNode node)
+    {
+        if(node == null)
+        {
+            return new int[]{0 , -1};
+        }
+        
+        int[] left = recursionForUnivaluePath(node.left);
+        int[] right = recursionForUnivaluePath(node.right);
+        
+        int[] ans = new int[2];
+        if(left[1] == node.val && right[1] == node.val)
+        {
+            ans[1] = node.val;
+            ans[0] = Math.max(left[0] , right[0]) + 1;
+            maxUnivaluePath = Math.max(maxUnivaluePath , left[0] + right[0]);
+        }
+        else if(left[1] == node.val || right[1] == node.val)
+        {
+            ans[1] = node.val;
+            ans[0] = (left[1] == node.val ? left[0] : right[0]) + 1;
+            maxUnivaluePath = Math.max(maxUnivaluePath , ans[0] - 1);
+        }
+        else
+        {
+            ans[0] = 1;
+            ans[1] = node.val;
+        }
+        
+        return ans;
+    }
+
+
+    public static int ansUnivaluePath = 0;
+    public static int longestUnivaluePath2(TreeNode root) 
+    {
+        recursion(root);
+        return ansUnivaluePath;
+    }
+    
+    public static int recursion(TreeNode node)
+    {
+        if(node == null) 
+        {
+            return 0;
+        }
+        
+        int l = recursion(node.left);
+        int r = recursion(node.right);
+        
+        int ansleft = 0;
+        int ansright = 0;
+        
+        if(node.left != null && node.left.val == node.val)
+        {
+            ansleft += l + 1;    
+        }
+        if(node.right != null && node.right.val == node.val)
+        {
+            ansright += r + 1;
+        }
+        
+        ansUnivaluePath = Math.max(ansUnivaluePath ,ansleft + ansright);
+        return Math.max(ansleft , ansright);
+    }
+
+
+    // LEETCODE - 112 ___________________________________________________________
+    public static boolean hasPathSum(TreeNode node, int sum) 
+    {
+        if(node == null)
+        {
+            return false;
+        }
+        
+        if(node.left == null && node.right == null)
+        {
+            sum -= node.val;
+            if(sum == 0)
+            {
+                return true;
+            }
+        }
+        
+        boolean res = false;
+        
+        res = res || hasPathSum(node.left , sum - node.val);
+        res = res || hasPathSum(node.right , sum - node.val);
+        
+        return res;
     }
 }
