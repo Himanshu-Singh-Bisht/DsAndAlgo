@@ -1,14 +1,1 @@
-9
-8 7 6 
-4 3 2 1 
-1 2 3 4 
-30
-Hello, Dynamic Stack
-hi
-hi!!!!!!!!!!!!!!!!!!!
-20
-Hello, myStack
-hi
-30
-Hello, Dynamic Stack
-hi
+5
