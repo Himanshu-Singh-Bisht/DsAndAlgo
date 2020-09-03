@@ -51,7 +51,18 @@ public class basicStackQueueQuestions
 
 
         // MINIMUM STACK (LEETCODE - 155) ________________________________________________________
+        // MinStack1 obj1 = new MinStack1();    // using 2 stacks
+        // MinStack2 obj2 = new MinStack2();   // using 1 stack
 
+
+        // TRAPPING RAIN WATER (LEETCODE - 42) ____________________________________________________
+        // int[] height = {0 , 1 , 0 , 2, 1 , 0 , 1, 2 , 3 , 1 ,2 ,1};     // o/p = 6
+        // System.out.println(trap1(height));
+        // System.out.println(trap2(height));
+
+
+        // VALID PARENTHESIS (LEETCODE - 20) ___________________________________________________
+        // System.out.println(isValid("({})"));    // o/p = true
     }
 
     // NEXT GREATER ELEMENT(GFG) __________________________________________________________
@@ -461,7 +472,7 @@ public class basicStackQueueQuestions
         /** initialize your data structure here. */
         Stack<Integer> st;
         Stack<Integer> minSt;
-        public MinStack() 
+        public MinStack1() 
         {
             st = new Stack<>();
             minSt = new Stack<>();
@@ -496,6 +507,192 @@ public class basicStackQueueQuestions
             return minSt.peek();    
         }
     }
+
+
+
+    // using one stack only
+    public static class MinStack2 
+    {
+        /** initialize your data structure here. */
+        Stack<Long> st;
+        long min = (long)(1e8);
+        public MinStack2() 
+        {
+            st = new Stack<>();    
+        }
+        
+        public void push(int x)
+        {
+            if(st.size() == 0)
+            {
+                long val = (long)(x);
+                st.push(val);
+                min = val;
+            }
+            else
+            {
+                if(x < min)
+                {
+                    long val = x - min + x;
+                    min = x;
+                    st.push(val);
+                }
+                else
+                {
+                    st.push((long)(x));
+                }
+            }
+            
+        }
+        
+        public void pop() 
+        {
+            if(st.peek() <= min)
+            {
+                min = min - st.peek() + min;
+            }
+            st.pop();
+        }
+        
+        public int top() 
+        {
+            if(st.peek() > min)
+            {
+                long val = st.peek();
+                return (int)val;
+            }
+            else
+            {
+                return (int)min;   
+            }
+        }
+        
+        public int getMin() 
+        {
+            return (int)min;    
+        }
+    }
+
+
+
+    // TRAPPING RAIN WATER (LEETCODE - 42) __________________________________________________________
+    public static int trap1(int[] height) 
+    {
+        int[] left = leftMaxHeight(height);
+        int[] right = rightMaxHeight(height);
+        
+        int ans = 0;
+        for(int i = 0 ; i < height.length ; i++)
+        {
+            ans += (Math.min(right[i] , left[i]) - height[i]);
+        }
+        return ans;
+    }
+    
+    public static int[] leftMaxHeight(int[] height)
+    {
+        int[] left = new int[height.length];
+        
+        for(int i = 0 ; i < left.length ; i++)
+        {
+            left[i] = height[i];
+            for(int j = i - 1 ; j >= 0 ; j--)
+            {
+                left[i] = Math.max(left[i] , height[j]);
+            }
+        }
+        
+        return left;
+    }
+    
+    public static int[] rightMaxHeight(int[] height)
+    {
+        int[] right = new int[height.length];
+        for(int i = 0 ; i < right.length ; i++)
+        {
+            right[i] = height[i];
+            for(int j = i + 1 ; j < height.length ; j++)
+            {
+                right[i] = Math.max(right[i] , height[j]);
+            }
+        }
+        
+        return right;
+    }
+
+
+    // using stack
+    public static int trap2(int[] arr) 
+    {
+        Stack<Integer> st = new Stack<>();
+        st.push(-1);
+        
+        int ans = 0;
+        
+        for(int i = 0 ; i < arr.length ; i++)
+        {
+            while(st.peek() != -1 && arr[st.peek()] <= arr[i])
+            {
+                int h = arr[st.pop()];
+                if(st.peek() == -1)
+                {
+                    break;
+                }
+                else
+                {
+                    ans += (Math.min(arr[i] , arr[st.peek()]) - h) * (i - st.peek() - 1);           
+                }
+            }
+            st.push(i);
+        }
+        return ans;
+    }
+
+
+
+    // VALID PARENTHESIS (LEETCODE - 20) _____________________________________________________
+    public static boolean isValid(String s)
+    {
+        char[] arr = s.toCharArray();
+        Stack<Character> st = new Stack<>();
+        
+        for(int i = 0 ; i < arr.length ; i++)
+        {
+            if(arr[i] == '(' || arr[i] == '{' || arr[i] == '[')
+            {
+                st.push(arr[i]);
+            }
+            else 
+            {
+                if(st.size() == 0)
+                {
+                    return false;
+                }
+                else if(st.peek() == '(' && arr[i] != ')')
+                {
+                    return false;
+                }
+                else if(st.peek() == '{' && arr[i] != '}')
+                {
+                    return false;
+                }
+                else if(st.peek() == '[' && arr[i] != ']')
+                {
+                    return false;
+                }
+                else
+                {
+                    st.pop();
+                }
+            }
+        }
+        
+        return st.size() == 0;
+    }
+
+
+
+
 
 
 
