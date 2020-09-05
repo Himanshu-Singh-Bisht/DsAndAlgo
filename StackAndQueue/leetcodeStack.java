@@ -33,8 +33,26 @@ public class leetcodeStack
 
 
         // LEETCODE - 682 , BASEBALL GAME __________________________________________
-        String[] ops = {"5" , "2", "C" , "D" , "+"};
-        System.out.println(calPoints(ops));
+        // String[] ops = {"5" , "2", "C" , "D" , "+"};
+        // System.out.println(calPoints(ops));
+
+
+        // LEETCODE - 1544 , MAKE THE STRING GREAT _________________________________________________
+        // System.out.println(makeGood("abBAcC"));         // o/p = ""
+
+
+
+        // LEETCODE - 232 , IMPLEMENT QUEUE USING STACKS_____________________________________________
+        // MyQueue1 obj1 = new MyQueue1();
+        // MyQueue2 obj2 = new MyQueue2();
+        // MyQueue3 obj3 = new MyQueue3();
+
+
+
+        // LEETCODE - 844 , BACKSPACE STRING COMPARE ____________________________________
+        // System.out.println(backspaceCompare1("y#fo##f" , "y#f#o##f"));
+        // System.out.println(backspaceCompare2("y#fo##f" , "y#f#o##f"));
+        // System.out.println(backspaceCompare3("y#fo##f" , "y#f#o##f"));
     }
 
 
@@ -334,5 +352,367 @@ public class leetcodeStack
             sum += st.pop();
         }
         return sum;
+    }
+
+
+
+    // LEETCODE - 1544 , MAKE THE GREAT STRING _____________________________________________________
+    public static String makeGood(String str) 
+    {
+        Stack<Character> st = new Stack<>();
+        
+        for(char ch : str.toCharArray())
+        {
+            if(st.size() == 0)
+            {
+                st.push(ch);
+            }
+            else
+            {
+                char c = st.peek();
+                if(c == (ch - 'A' + 'a') || (c == (ch - 'a' + 'A')))
+                {
+                    st.pop();       
+                }
+                else 
+                {
+                    st.push(ch);       
+                }
+            }
+        }
+                   
+        StringBuilder sb = new StringBuilder("");
+        while(!st.isEmpty())
+        {
+            sb.append(st.pop());               
+        }
+                   
+        return sb.reverse().toString();
+    }
+
+
+
+
+    // LEETCODE - 232 , IMPLEMENT QUEUE USING STACK______________________________________
+
+    // Push() - O(1) , Pop() - O(n) , Front() - O(n) , Size() - O(1) 
+    public static class MyQueue1 {
+
+        /** Initialize your data structure here. */
+        Stack<Integer> st1 ;
+        Stack<Integer> st2;
+        public MyQueue1() 
+        {
+            st1 = new Stack<>();
+            st2 = new Stack<>();
+        }
+        
+        /** Push element x to the back of queue. */
+        public void push(int x) 
+        {
+            st1.push(x);    
+        }
+        
+        /** Removes the element from in front of queue and returns that element. */
+        public int pop() 
+        {
+            while(st1.size() != 0)
+            {
+                st2.push(st1.pop());
+            }
+            
+            int val = st2.pop();
+            
+            while(st2.size() != 0)
+            {
+                st1.push(st2.pop());
+            }
+            
+            return val;
+        }
+        
+        /** Get the front element. */
+        public int peek() 
+        {
+            while(st1.size() != 0)
+            {
+                st2.push(st1.pop());
+            }
+            
+            int val = st2.peek();
+            
+            while(st2.size() != 0)
+            {
+                st1.push(st2.pop());
+            }
+            
+            return val;    
+        }
+        
+        /** Returns whether the queue is empty. */
+        public boolean empty() 
+        {
+            return st1.size() == 0;    
+        }
+    }
+
+
+    // Push() - O(n) , Pop() - O(1) , Front() - O(1) , Size() - O(1) ________
+    public static class MyQueue2 {
+
+        /** Initialize your data structure here. */
+        public Stack<Integer> st1;
+        public Stack<Integer> st2;
+        public MyQueue2() 
+        {
+            st1 = new Stack<>();
+            st2 = new Stack<>();
+        }
+        
+        /** Push element x to the back of queue. */
+        private int front;
+        public void push(int x) 
+        {
+            if(st1.size() == 0)
+            {
+                front = x;
+            }
+            while(st1.size() != 0)
+            {
+                st2.push(st1.pop());
+            }
+            st1.push(x);
+            
+            while(st2.size() != 0)
+            {
+                st1.push(st2.pop());
+            }
+        }
+        
+        /** Removes the element from in front of queue and returns that element. */
+        public int pop()
+        {
+            int val = st1.pop();
+            if(st1.size() != 0)
+            {
+                front = st1.peek();
+            }
+            return val;
+        }
+        
+        /** Get the front element. */
+        public int peek() 
+        {
+            return front;    
+        }
+        
+        /** Returns whether the queue is empty. */
+        public boolean empty() 
+        {
+            return st1.size() == 0;   
+        }
+    }
+
+
+    // Push() - O(1) , Pop() - O(1) , Front() - O(1) , Size() - O(1) ________
+    public static class MyQueue3 {
+
+        /** Initialize your data structure here. */
+        Stack<Integer> st1 = new Stack<>();
+        Stack<Integer> st2 = new Stack<>();
+        public MyQueue3() 
+        {
+            st1 = new Stack<>();
+            st2 = new Stack<>();
+        }
+        
+        /** Push element x to the back of queue. */
+        private int front;
+        public void push(int x) 
+        {
+            if(st1.size() == 0)
+            {
+                front = x;
+            }
+            st1.push(x);
+        }
+        
+        /** Removes the element from in front of queue and returns that element. */
+        public int pop() 
+        {
+            if(st2.size() == 0)
+            {
+                while(st1.size() != 0)
+                {
+                    st2.push(st1.pop());
+                }
+            }
+            
+            return st2.pop();
+        }
+        
+        /** Get the front element. */
+        public int peek() 
+        {
+            if(st2.size() != 0)
+            {
+                return st2.peek();
+            }
+            return front;
+        }
+        
+        /** Returns whether the queue is empty. */
+        public boolean empty() 
+        {
+            return st1.size() == 0 && st2.size() == 0;    
+        }
+    }
+
+
+
+    // LEETCODE - 844 , BACKSPACE STRING COMPARE ____________________________________________
+    public static boolean backspaceCompare1(String S, String T) 
+    {
+        Stack<Character> st1 = new Stack<>();
+        Stack<Character> st2 = new Stack<>();
+        
+        for(char ch : S.toCharArray())
+        {
+            if(ch == '#')
+            {
+                if(st1.size() != 0)
+                {
+                    st1.pop();
+                }
+            }
+            else
+            {
+                st1.push(ch);
+            }
+        }
+        
+        for(char ch : T.toCharArray())
+        {
+            if(ch == '#')
+            {
+                if(st2.size() != 0)
+                {
+                    st2.pop();
+                }
+            }
+            else
+            {
+                st2.push(ch);
+            }
+        }
+        
+        if(st1.size() != st2.size())
+        {
+            return false;
+        }
+        
+        while(st1.size() != 0)
+        {
+            if(st1.pop() != st2.pop())
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+
+    public static boolean backspaceCompare2(String S, String T) 
+    {
+        return makeString(S).equals(makeString(T));
+    }
+    
+    public static String makeString(String str)
+    {
+        Stack<Character> st = new Stack<>();
+        
+        for(char ch : str.toCharArray())
+        {
+            if(ch == '#')
+            {
+                if(st.size() != 0)
+                {
+                    st.pop();
+                }
+            }
+            else
+            {
+                st.push(ch);
+            }
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        while(st.size() != 0)
+        {
+            sb.append(st.pop());        
+        }
+        return sb.toString();
+    }
+
+
+    // using two pointer approach _____
+    public static boolean backspaceCompare3(String S, String T) 
+    {
+        int i = S.length() -1 , j = T.length() - 1;
+        int skipS = 0 , skipT = 0;
+        
+        while(i >= 0 || j >= 0)
+        {
+            while(i >= 0)
+            {
+                if(S.charAt(i) == '#')
+                {
+                    skipS++;
+                    i--;
+                }
+                else if(skipS > 0)
+                {
+                    skipS--;
+                    i--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            
+            while(j >= 0)
+            {
+                if(T.charAt(j) == '#')
+                {
+                    skipT++;
+                    j--;
+                }
+                else if(skipT > 0)
+                {
+                    skipT--;
+                    j--;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            
+            
+            if(i >= 0 && j >= 0 && S.charAt(i) != T.charAt(j))
+            {
+                return false;
+            }
+            if ((i >= 0) != (j >= 0))       // for i >= 0 && j < 0 , ex. S = "f" , T = "#"
+            {
+                return false;
+            }
+            i--;
+            j--;
+        }
+        
+        return true;
     }
 }
