@@ -2,6 +2,9 @@ import java.util.Stack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
+import java.util.Queue;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
 
 public class leetcodeStack
 {
@@ -53,6 +56,39 @@ public class leetcodeStack
         // System.out.println(backspaceCompare1("y#fo##f" , "y#f#o##f"));
         // System.out.println(backspaceCompare2("y#fo##f" , "y#f#o##f"));
         // System.out.println(backspaceCompare3("y#fo##f" , "y#f#o##f"));
+
+
+
+        // LEETCODE - 225 , IMPLEMENT STACK USING QUEUES _____________________________
+        // MyStack1 obj1 = new MyStack1();
+        // MyStack2 obj2 = new MyStack2();
+        // MyStack3 obj3 = new MyStack3();
+
+
+        // LEETCODE - 155 , MIN STACK __________________________________________________
+        // MinStack1 o1 = new MinStack1();
+        // MinStack2 o2 = new MinStack2();
+
+
+
+        // LEETCODE - 20 , VALID PARENTHESIS __________________________________________________
+        // System.out.println(isValid("(()){{}}{[]}"));
+
+
+        // LEETCODE - 1381 , DESIGN STACK WITH INCREMENT OPERATION ______________________________________
+        // CustomStack obj = new CustomStack(10);
+
+
+        // LEETCODE - 921 , MINIMUM ADD TO MAKE VALID PARENTHESIS _______________________________________
+        // System.out.println(minAddToMakeValid("(())))(("));
+        
+
+
+        // LEETCODE - 1130 , MINIMUM COST TREE FROM LEAF VALUES _______________________________
+        // int[] arr = {6 , 2, 4}; // o/p = 32
+        // int[] arr = {15 , 3 ,5 , 13 , 15};      // o/p =  500 
+        int[] arr = {7 , 12 , 8, 10};       // o/p = 284
+        System.out.println(mctFromLeafValues(arr));
     }
 
 
@@ -714,5 +750,421 @@ public class leetcodeStack
         }
         
         return true;
+    }
+
+
+
+    // LEETCODE - 225 , IMPLEMENT STACK USING QUEUES __________________________________________________
+
+    // using 2 queues , push() - O(1) , pop() - O(n) , peek() - O(1)_________
+    public static class MyStack1 {
+
+        /** Initialize your data structure here. */
+        
+        Queue<Integer> que1;
+        Queue<Integer> que2;
+        public MyStack1() 
+        {
+            que1 = new ArrayDeque<>();
+            que2 = new ArrayDeque<>();
+        }
+        
+        /** Push element x onto stack. */
+        private int top;
+        public void push(int x) 
+        {
+            que1.add(x);
+            top = x;
+        }
+        
+        /** Removes the element on top of the stack and returns that element. */
+        public int pop()
+        {
+            while(que1.size() > 1)
+            {
+                top = que1.remove();
+                que2.add(top);
+            }
+            int val = que1.remove();
+            
+            Queue<Integer> temp = que1;
+            que1 = que2;
+            que2 = temp;
+            return val;
+        }
+        
+        /** Get the top element. */
+        public int top() 
+        {
+            return top;    
+        }
+        
+        /** Returns whether the stack is empty. */
+        public boolean empty() 
+        {
+            return que1.size() == 0;
+        }
+    }
+
+
+    // using 2 queues , push() - O(n) , pop() - O(1) , peek() - O(1)_________
+    public static class MyStack2 
+    {
+        /** Initialize your data structure here. */
+        Queue<Integer> que1;
+        Queue<Integer> que2;
+        public MyStack2() 
+        {
+            que1 = new ArrayDeque<>();
+            que2 = new ArrayDeque<>();
+        }
+        
+        /** Push element x onto stack. */
+        private int top;
+        public void push(int x) 
+        {
+            que2.add(x);
+            top = x;
+            
+            while(que1.size() != 0)
+            {
+                que2.add(que1.remove());
+            }
+            
+            Queue<Integer> temp = que1;
+            que1 = que2;
+            que2 = temp;
+        }
+        
+        /** Removes the element on top of the stack and returns that element. */
+        public int pop()
+        {
+            int val = que1.remove();
+            if(que1.size() != 0)
+            {
+                top = que1.peek();
+            }
+            
+            return val;
+        }
+        
+        /** Get the top element. */
+        public int top() 
+        {
+            return top;    
+        }
+        
+        /** Returns whether the stack is empty. */
+        public boolean empty() 
+        {
+            return que1.size() == 0;
+        }
+    }
+
+
+
+    // using 1 queue , push() - O(n) , pop() - O(1) , peek() - O(1)_________
+    public static class MyStack3 {
+
+        /** Initialize your data structure here. */
+        
+        Queue<Integer> que1;
+        public MyStack3() 
+        {
+            que1 = new ArrayDeque<>();
+        }
+        
+        /** Push element x onto stack. */
+        public void push(int x) 
+        {
+            que1.add(x);
+            int size = que1.size();
+            
+            while(size > 1)
+            {
+                que1.add(que1.remove());
+                size--;
+            }
+        }
+        
+        /** Removes the element on top of the stack and returns that element. */
+        public int pop()
+        {
+           return que1.remove();
+        }
+        
+        /** Get the top element. */
+        public int top() 
+        {
+            return que1.peek();    
+        }
+        
+        /** Returns whether the stack is empty. */
+        public boolean empty() 
+        {
+            return que1.size() == 0;
+        }
+    }
+
+
+
+    // LEETCODE - 155 , MIN STACK ___________________________________________________________
+
+    // using two stacks ___________
+    public class MinStack1 {
+
+        /** initialize your data structure here. */
+        Stack<Integer> st;
+        Stack<Integer> minSt;
+        public MinStack1() 
+        {
+            st = new Stack<>();
+            minSt = new Stack<>();
+        }
+        
+        public void push(int x) 
+        {
+            if(st.size() == 0)
+            {
+                minSt.push(x);
+            }
+            else 
+            {
+                minSt.push(Math.min(minSt.peek() , x));
+            }
+            st.push(x);
+        }
+        
+        public void pop() 
+        {
+            st.pop();
+            minSt.pop();
+        }
+        
+        public int top() 
+        {
+            return st.peek();
+        }
+        
+        public int getMin() 
+        {
+            return minSt.peek();    
+        }
+    }
+
+
+    // using 1 stack
+    public static class MinStack2 {
+
+        /** initialize your data structure here. */
+        Stack<Long> st;
+        long min = Long.MAX_VALUE;
+        public MinStack2() 
+        {
+            st = new Stack<>();    
+        }
+        
+        public void push(int x) 
+        {
+            long val = (long) x;
+            
+            if(st.size() == 0)
+            {
+                min = val;
+                st.push(val);
+            }
+            else
+            {
+                if(min > val)
+                {
+                    st.push(val - min + val);
+                    min = val;
+                }
+                else
+                {
+                    st.push(val);
+                }
+            }
+        }
+        
+        public void pop() 
+        {
+            if(st.peek() < min)
+            {
+                long val =  min;
+                min = val - st.pop() + val;
+            }
+            else
+            {
+                st.pop();
+            }
+        }
+        
+        public int top() 
+        {
+            if(st.peek() > min)
+            {
+                long val = st.peek();
+                return (int)val;
+            }
+            return (int)min;
+        }
+        
+        public int getMin() 
+        {
+            return (int)min;
+        }
+    }
+
+
+
+    // LEETCODE - 20 , VALID PARENTHESIS ________________________________________________________
+    public static boolean isValid(String s) 
+    {
+        Stack<Character> st = new Stack<>();
+        
+        for(char ch : s.toCharArray())
+        {
+            if(ch == '(' || ch == '{' || ch == '[')
+            {
+                st.push(ch);
+            }
+            else
+            {
+                if(st.size() == 0)
+                {
+                    return false;
+                }
+                else if(ch == ')' && st.peek() != '(')
+                {
+                    return false;
+                }
+                else if(ch == '}' && st.peek() != '{')
+                {
+                    return false;
+                }
+                else if(ch == ']' && st.peek() != '[')
+                {
+                    return false;
+                }
+                else 
+                {
+                    st.pop();
+                }
+            }
+        }
+        
+        return st.size() == 0;
+    }
+
+
+
+    // LEETCODE - 1381 , DESIGN STACK WITH INCREMENT OPERATION __________________________________________
+    public static class CustomStack {
+
+        Stack<Integer> st;
+        int maxSize;
+        public CustomStack(int maxSize) 
+        {
+            st = new Stack<Integer>();
+            this.maxSize = maxSize;
+        }
+        
+        public void push(int x) 
+        {
+            if(st.size() == maxSize)
+            {
+                return;
+            }
+            st.push(x); 
+        }
+        
+        public int pop() 
+        {
+            if(st.size() == 0)
+            {
+                return -1;
+            }
+            return st.pop();    
+        }
+        
+        public void increment(int k, int val) 
+        {
+            ArrayList<Integer> list = new ArrayList<>();
+            
+            while(!st.isEmpty())
+            {
+                list.add(st.pop());
+            }
+            
+            for(int i = list.size() - 1 ; i >= 0 ; i--)
+            {
+                if(k > 0)
+                {
+                    st.push(list.get(i) + val);
+                    k--;
+                }
+                else
+                {
+                    st.push(list.get(i));
+                }
+            }
+        }
+    }
+
+
+
+    // LEETCODE - 921 , MINIMUM ADD TO MAKE VALID PARENTHESIS _______________________________________
+    public static int minAddToMakeValid(String S) 
+    {
+        Stack<Character> st = new Stack<>();
+        
+        for(char ch : S.toCharArray())
+        {
+            if(ch == '(')
+            {
+                st.push(ch);
+            }
+            else
+            {
+                if(st.size() != 0 && st.peek() == '(')
+                {
+                    st.pop();
+                }
+                else
+                {
+                    st.push(ch);
+                }
+            }
+        }
+        
+        return st.size();
+    }
+
+
+    // LEETCODE - 1131 , MINIMUM COST FROM LEAF VALUES ____________________________________________
+    public static int mctFromLeafValues(int[] arr) 
+    {
+        Stack<Integer> st = new Stack<>();
+        
+        int sum = 0;
+        st.push(Integer.MAX_VALUE);
+        
+        for(int i = 0 ; i < arr.length ; i++)
+        {
+            while(arr[i] > st.peek())
+            {
+                int temp = st.pop();
+                sum += temp * Math.min(arr[i] , st.peek());
+            }
+            st.push(arr[i]);
+        }
+        
+        while(st.size() >= 3)
+        {
+            int temp = st.pop();
+            sum += temp * st.peek();
+        }
+        return sum;
     }
 }
