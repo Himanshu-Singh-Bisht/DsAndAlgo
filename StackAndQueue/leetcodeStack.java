@@ -87,8 +87,27 @@ public class leetcodeStack
         // LEETCODE - 1130 , MINIMUM COST TREE FROM LEAF VALUES _______________________________
         // int[] arr = {6 , 2, 4}; // o/p = 32
         // int[] arr = {15 , 3 ,5 , 13 , 15};      // o/p =  500 
-        int[] arr = {7 , 12 , 8, 10};       // o/p = 284
-        System.out.println(mctFromLeafValues(arr));
+        // int[] arr = {7 , 12 , 8, 10};       // o/p = 284
+        // System.out.println(mctFromLeafValues(arr));
+
+
+        // LEETCODE - 94 , BINARY TREE INORDER TRAVERSAL __________________________________
+        // INPUT : node = [1,null,2,3]
+        // System.out.println(inorderTraversal(node));
+
+
+        // LEETCODE - 739 , DAILY TEMPERATURE _________________________________________________
+        // int[] arr = {73,74,75,71,69,72,76,73};
+        // int[] ans = dailyTemperatures(arr);
+        // display(ans);
+
+
+        // LEETCODE - 1249 , MINIMUM REMOVE TO MAKE VALID PARENTHESIS _______________________________________
+        // System.out.println(minRemoveToMakeValid("lee(t(co)d)e)"));
+
+
+        // LEETCODE - 1190 , REVERSE SUBSTRINGS BETWEEN EACH PAIR OF PARENTHESIS ___________________
+        // System.out.println(reverseParentheses("(u(love)i)"));
     }
 
 
@@ -1166,5 +1185,134 @@ public class leetcodeStack
             sum += temp * st.peek();
         }
         return sum;
+    }
+
+
+    // LEETCODE - 94 , BINARY TREE INORDER TRAVERSAL_________________________________________
+    public static List<Integer> inorderTraversal(TreeNode node) 
+    {
+        Stack<TreeNode> st = new Stack<>();
+        List<Integer> list = new ArrayList<>();
+        
+        while(node != null || st.size() != 0)
+        {
+            while(node != null)
+            {
+                st.push(node);
+                node = node.left;
+            }
+            
+            node = st.pop();
+            list.add(node.val);
+            node = node.right;
+        }
+        
+        return list;
+    }
+
+
+    // LEETCODE - 739 , DAILY TEMPERATURE _________________________________________________
+    public static int[] dailyTemperatures(int[] T) 
+    {
+        Stack<Integer> st = new Stack<>();
+        
+        int[] ans = new int[T.length];
+        
+        for(int i = 0 ; i < T.length ; i++)
+        {
+            while(st.size() != 0 && T[st.peek()] < T[i])
+            {
+                int idx = st.pop();
+                ans[idx] = i - idx;
+            }
+            st.push(i);
+        }
+        
+        
+        while(st.size() != 0)
+        {
+            ans[st.pop()] = 0;
+        }
+        return ans;
+    }
+
+
+
+
+    // LEETCODE - 1249 , MINIMUM REMOVE TO MAKE VALID PARENTHESIS _______________________________
+    public static String minRemoveToMakeValid(String s) 
+    {
+        Stack<Integer> st = new Stack<>();
+        
+        StringBuilder sb = new StringBuilder(s);
+        
+        for(int i = 0 ; i < sb.length() ; i++)
+        {
+            char ch = sb.charAt(i);
+            
+            if(ch == '(')
+            {
+                st.push(i);
+            }
+            else if(ch == ')')
+            {
+                if(st.size() != 0 && sb.charAt(st.peek()) == '(')
+                {
+                    st.pop();
+                }
+                else
+                {
+                    st.push(i);
+                }
+            }
+        }
+        
+        while(!st.isEmpty())
+        {
+            sb.deleteCharAt(st.pop());
+        }
+        
+        return sb.toString();
+    }
+
+
+
+    // LEETCODE - 1190, REVERSE SUBSTRINGS BETWEEN EACH PAIR OF PARENTHESIS _________________________________ 
+    public static String reverseParentheses(String s) 
+    {
+        Stack<String> st = new Stack();
+        StringBuilder sb = new StringBuilder();
+        
+        for(char c: s.toCharArray())
+        {
+            if(c =='(')
+            {
+                st.push(sb.toString());
+                sb = new StringBuilder();
+            } 
+            else if(c ==')')
+            {
+                sb = sb.reverse();
+                sb.insert(0,st.pop());
+            } 
+            else 
+            {
+                sb.append(c);
+            } 
+        }
+        
+        return sb.toString();
+        
+    }
+
+
+
+    // HELPER FUNCTIONS _________________________________________________________________
+    public static void display(int[] arr)
+    {
+        for(int ele : arr)
+        {
+            System.out.print(ele + " ");
+        }
     }
 }
