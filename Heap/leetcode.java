@@ -2,14 +2,81 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class leetcode
 {
     public static void main(String[] args) 
     {
         // LEETCODE - 1046 , LAST STONE WEIGHT ________________________________________
-        int[] arr = {2,7,4,1,8,1};
-        System.out.println(lastStoneWeight(arr));
+        // int[] arr = {2,7,4,1,8,1};
+        // System.out.println(lastStoneWeight(arr));        // o/p = 1
+
+
+
+        // LEETCODE - 703 , KTH LARGEST ELEMENT IN A STREAM ___________________________________
+        // int k = 3;
+        // int[] arr = {4,5,8,2};
+        // KthLargest kthLargest = new KthLargest(k, arr);
+        // System.out.println(kthLargest.add(3));   // returns 4
+        // System.out.println(kthLargest.add(5));   // returns 5
+        // System.out.println(kthLargest.add(10));  // returns 5
+        // System.out.println(kthLargest.add(9));   // returns 8
+        // System.out.println(kthLargest.add(4));   // returns 8
+
+
+
+        // LEETCODE - 973 , KTH CLOSEST POINT TO ORIGIN ________________________________________
+        // int[][] points = {{3,3} ,{5,-1},{-2,4}} ; 
+        // int K = 2;
+
+        // int[][] ans = kClosest1(points, K);
+        // int[][] ans = kClosest2(points, K);
+        // int[][] ans = kClosest3(points, K);
+        // int[][] ans = kClosest4(points, K);
+        // display2d(ans);
+
+
+
+        // LEETCODE - 451 , SORT CHARACTERS BY FREQUENCY ______________________________
+        // System.out.println(frequencySort("Aabb"));      // o/p = bbAa
+
+
+        // LEETCODE - 347 , TOP K FREQUENT ELEMENTS ___________________________________
+        // int[] nums = {1,1,1,2,2,3};
+        // int k = 2;
+        // int[] ans = topKFrequent(nums, k);
+        // display(ans);
+
+
+        // LEETCODE - 215 , KTH LARGEST ELEMENT IN AN ARRAY ____________________________________
+        // int[] arr = {3,2,1,5,6,4};
+        // int k = 2;
+        // System.out.println(findKthLargest(arr, k));
+
+
+
+        // LEETCODE - 378 , KTH SMALLEST ELEMENT IN A SORTED MATRIX ________________________________
+        // int[][] matrix = {{ 1,  5,  9},
+        //             {10, 11, 13},
+        //             {12, 13, 15}};      
+        // int k = 8;
+
+        // System.out.println(kthSmallest(matrix, k));   // o/p - 13
+
+
+
+        // LEETCODE - 692 , TOP K FREQUENT WORDS _____________________________________
+        // String[] arr = {"the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"}; 
+        // int k = 4;
+        // Output: ["the", "is", "sunny", "day"]
+        // System.out.println(topKFrequent(arr, k));
+        
+
+        // LEETCODE - 767 , REORGANIZE STRING ______________________________________________
+        // String str = "aab";  //    "aba"   ,  "aaab" = ""
+        // System.out.println(reorganizeString(str));
     }
 
 
@@ -39,8 +106,8 @@ public class leetcode
 
 
     // LEETCODE - 703 , LARGEST ELEMENT IN A STREAM ________________________________________________
-    class KthLargest {
-
+    public static class KthLargest 
+    {
         public PriorityQueue<Integer> pq;
         public int k;
         public KthLargest(int k, int[] nums) 
@@ -289,5 +356,168 @@ public class leetcode
         }
         
         return ans;
+    }
+
+
+
+    // LEETCODE - 215 , KTH LARGEST ELEMENT IN AN ARRAY ________________________________
+    public static int findKthLargest(int[] nums, int k) 
+    {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+        
+        for(int ele : nums)
+        {
+            pq.add(ele);
+            if(pq.size() > k)
+            {
+                pq.remove();
+            }
+        }
+        
+        return pq.peek();
+    }
+
+
+    // LEETCODE - 378 , KTH SMALLEST ELEMENT IN A SORTED MATRIX ___________________________________
+    public static int kthSmallest(int[][] matrix, int k) 
+    {
+        PriorityQueue<Integer> pq = new PriorityQueue<>(Collections.reverseOrder());
+        
+        for(int i = 0 ; i < matrix.length ; i++)
+        {
+            for(int j = 0 ; j < matrix[0].length ; j++)
+            {
+                if(pq.size() < k)
+                {
+                    pq.add(matrix[i][j]);
+                }
+                else if(pq.peek() > matrix[i][j])
+                {
+                    pq.remove();
+                    pq.add(matrix[i][j]);
+                }
+                else if(pq.peek() < matrix[i][j])
+                {
+                    break;
+                }
+            }
+        }
+        
+        return pq.peek();
+    }
+
+
+
+
+    // LEETCODE - 692 , TOP K FREQUENT WORDS  __________________________________________________
+    public static List<String> topKFrequent(String[] words, int k)
+    {
+        HashMap<String , Integer> map = new HashMap<>();
+        for(String ele : words)
+        {
+            map.put(ele , map.getOrDefault(ele , 0) + 1);
+        }
+        
+        PriorityQueue<String> pq = new PriorityQueue<>((a,b) ->                                                               {
+            if(map.get(a) == map.get(b))
+            {
+                return b.compareTo(a);
+            }
+            return map.get(a) - map.get(b);                                                 
+        });
+        
+        for(String key : map.keySet())
+        {
+            pq.add(key);
+            if(pq.size() > k)
+            {
+                pq.remove();
+            }
+        }
+        
+        List<String> list = new ArrayList<>();
+        while(pq.size() != 0)
+        {
+            list.add(pq.remove());
+        }
+        
+        Collections.reverse(list);
+        return list;
+    }
+    
+
+    // LEETCODE - 767 , REORGANISE STRING ____________________________________________________
+    public static String reorganizeString(String S)
+    {
+        HashMap<Character , Integer> map = new HashMap<>();
+        for(char c : S.toCharArray())
+        {
+            map.put(c , map.getOrDefault(c , 0) + 1);
+        }
+        
+        PriorityQueue<Character> pq = new PriorityQueue<>((a,b)->                                                  
+        {
+             return map.get(b) - map.get(a);                                                
+        });
+        
+        pq.addAll(map.keySet());
+        
+        StringBuilder ans = new StringBuilder();
+        while(pq.size() > 1)
+        {
+            char curr = pq.remove();
+            char next = pq.remove();
+            
+            ans.append(curr);
+            ans.append(next);
+            
+            map.put(curr , map.get(curr) - 1);
+            map.put(next , map.get(next) - 1);
+            
+            if(map.get(curr) > 0)
+            {
+                pq.add(curr);
+            }
+            if(map.get(next) > 0)
+            {
+                pq.add(next);
+            }
+        }
+        
+        while(!pq.isEmpty())
+        {
+            char last = pq.remove();
+            if(map.get(last) > 1)
+            {
+                return "";
+            }
+            else
+            {
+                ans.append(last);
+            }
+        }
+        
+        return ans.toString();
+    }
+
+
+
+
+
+    // HELPER FUNCTIONS _______________________________________________________
+    public static void display2d(int[][] arr)
+    {
+        for(int[] ar : arr)
+        {
+            System.out.println("[" + ar[0] + "," + ar[1] + "]");
+        }
+    }
+
+    public static void display(int[] arr)
+    {
+        for(int ele : arr)
+        {
+            System.out.print(ele + " ");
+        }
     }
 }
