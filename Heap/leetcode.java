@@ -77,6 +77,29 @@ public class leetcode
         // LEETCODE - 767 , REORGANIZE STRING ______________________________________________
         // String str = "aab";  //    "aba"   ,  "aaab" = ""
         // System.out.println(reorganizeString(str));
+
+
+
+        // TO SORT K-SORTED LIST(NEARLY SORTED LIST) ______________________________________
+        // int[] arr = {2 , 3 , 1 , 4 , 6 , 7 , 5 , 8 , 9};
+        // int k = 2;
+        // int[] ans = sortKSortedList(arr , k);
+        // display(ans);
+
+
+        // LEETCODE - 295 , FIND MEDIAN FROM DATA STREAM _________________________________________
+        // MedianFinder mpq = new MedianFinder();
+        // mpq.addNum(1);
+        // mpq.addNum(2);
+        // System.out.println(mpq.findMedian()); // -> 1.5
+        // mpq.addNum(3); 
+        // System.out.println(mpq.findMedian()); // -> 2
+
+
+        // LEETCODE - 23 , MERGE K SORTED LIST______________________________________________
+        // Input: lists = [[1,4,5],[1,3,4],[2,6]]
+        // Output: [1,1,2,3,4,4,5,6]
+        // mergeKLists(lists);
     }
 
 
@@ -502,6 +525,123 @@ public class leetcode
 
 
 
+    // TO SORT K-SORTED LIST (NEARLY SORTED LIST) ____________________________________________
+    public static int[] sortKSortedList(int[] arr , int k)
+    {
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
+
+        for(int i = 0 ; i <= k ; i++)
+        {
+            pq.add(arr[i]);
+        }
+
+        int[] ans = new int[arr.length];
+        for(int i = k + 1 ; i < arr.length ; i++)
+        {
+            ans[i - k - 1] = pq.remove();
+            pq.add(arr[i]);
+        }
+
+        int j = arr.length - 1 - k;
+        while(pq.size() != 0)
+        {
+            ans[j] = pq.remove();
+            j++;
+        }
+
+        return ans;
+    }
+
+
+
+    // LEETCODE - 295 , FIND MEDIAN FROM DATA STREAM ____________________________________________
+    public static class MedianFinder {
+
+        /** initialize your data structure here. */
+        PriorityQueue<Integer> left;
+        PriorityQueue<Integer> right;
+        public MedianFinder() 
+        {
+            left = new PriorityQueue<>(Collections.reverseOrder());
+            right = new PriorityQueue<>();
+        }
+        
+        public void addNum(int num) 
+        {
+            if(right.size() > 0 && num >= right.peek())
+            {
+                right.add(num);
+            }
+            else
+            {
+                left.add(num);
+            }
+            
+            if(left.size() - right.size() == 2)
+            {
+                right.add(left.remove());
+            }
+            else if(right.size() - left.size() == 2)
+            {
+                left.add(right.remove());
+            }
+        }
+        
+        public double findMedian() 
+        {
+            if(left.size() > right.size())
+            {
+                return (double)(left.peek());
+            }
+            else if(right.size() > left.size())
+            {
+                return (double)(right.peek());
+            }
+            else
+            {
+                double val = (double)(left.peek() + right.peek()) / 2;
+                return val;
+            }
+        }
+    }
+
+
+
+
+    // LEETCODE - 23 , MERGE K SORTED LISTS ______________________________________________________
+    public static class ListNode 
+    {
+        int val;
+        ListNode next;
+        ListNode(int x) 
+        { 
+            val = x;
+        }
+    }
+    public static ListNode mergeKLists(ListNode[] lists) 
+    {
+        PriorityQueue<ListNode> q = new PriorityQueue<ListNode>((a,b) -> { 
+                                                                return a.val - b.val;});
+        for(ListNode l : lists){
+            if(l != null)
+            {
+                q.add(l);
+            }        
+        }
+        ListNode head = new ListNode(0);
+        ListNode point = head;
+        while(!q.isEmpty())
+        { 
+            point.next = q.poll();
+            point = point.next; 
+            ListNode next = point.next;
+            if(next != null)
+            {
+                q.add(next);
+            }
+        }
+        return head.next;
+    }
 
 
     // HELPER FUNCTIONS _______________________________________________________

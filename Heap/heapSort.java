@@ -4,8 +4,8 @@ public class heapSort
     {
         int[] arr = {10 , 20 , 30 , -2, -3 , -4 , 5 , 6, 7 , 8 , 9 , 22 , 11 , 13};
 
-        // boolean isMax = true;     // true = maxHeap (increasing sorting), 
-        boolean isMax = false ;   // false = minHeap (decreasing sorting)
+        boolean isMax = true;     // true = maxHeap (increasing sorting), 
+        // boolean isMax = false ;   // false = minHeap (decreasing sorting)
         for(int i = arr.length / 2 - 1 ; i >= 0 ; i--)
         {
             downheapify(arr, i, arr.length -1 , isMax);
