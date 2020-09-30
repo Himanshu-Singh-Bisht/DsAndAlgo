@@ -59,6 +59,38 @@ public class leetcode
         // int[] arr = {7 , 8 , 6 , 8 , 7};        // o/p = 6
         // System.out.println(singleNumber(arr));
         // System.out.println(singleNumber2(arr));
+
+
+
+        // LEETCODE - 500 , KEYBOARD ROW _____________________________________________
+        // String[] words = {"Hello", "Alaska", "Dad", "Peace"};   // o/p = ["Alaska" ,"Dad"]
+        // System.out.println(findWords(words));
+
+
+        // LEETCODE - 884 , UNCOMMON WORDS FROM TWO SENTENCES _______________________________________
+        // String A = "this apple is is sweet";
+        // String B = "this appple is sour";
+        // System.out.println(uncommonFromSentences(A, B)); // o/ p = ["sweet" , "sour"]
+
+
+        // LEETCODE - 1185 , MAXIMUM NUMBER OF BALLONS ________________________________________
+        // System.out.println(maxNumberOfBalloons("loonbalxballpoon"));     // o/p = 2
+
+
+        // LEETCODE - 242 , VALID ANAGRAMS _______________________________________________
+        // String s = "anagram";
+        // String t = "nagaram";
+        // System.out.println(isAnagram(s, t));     // Output: true
+
+
+        // LEETCODE - 389 , FIND THE DIFFERENCE _______________________________________________
+        // System.out.println(findTheDifference("abcd", "aedbc")); // o/p = 'e'
+
+
+        // LEETCODE - 217 , DUPLICATE ELEMENTS ___________________________________________
+        int[] arr = {1 ,2  ,3 , 4, 1};
+        System.out.println(containsDuplicate(arr));
+
     }
 
     // LEETCODE - 1512 , NUMBER OF GOOD PAIRS __________________________________________________
@@ -374,7 +406,206 @@ public class leetcode
     }
 
 
+    // LEETCODE - 500 , KEYBOARD ROW _____________________________________________________
+    public static String[] findWords(String[] words) 
+    {
+        char[][] arr = {{'q' , 'w' , 'e' , 'r' , 't' , 'y' , 'u' , 'i' , 'o' , 'p'},
+                        {'a' , 's' , 'd' , 'f' , 'g' , 'h' , 'j' , 'k' , 'l'},
+                        {'z' , 'x' , 'c' , 'v' , 'b' , 'n' , 'm'}};
+        
+        HashMap<Character , Integer> map = new HashMap<>();
+        int idx = 0;
+        for(char[] ar : arr)
+        {
+            for(char ele : ar)
+            {
+                map.put(ele , idx);
+            }
+            idx++;
+        }
+        
+        
+        List<String> list = new ArrayList<>();
+        for(String word : words)
+        {
+            boolean flag = true;
+            char ch = word.charAt(0);
+            if(ch >= 'A' && ch <= 'Z')
+            {
+                ch = (char)(ch - 'A' + 'a');
+            }
+            int row = map.get(ch);
+            for(int i = 1; i < word.length() ; i++)
+            {
+                ch = word.charAt(i);
+                if(ch >= 'A' && ch <= 'Z')
+                {
+                    ch = (char)(ch - 'A' + 'a');
+                }   
+                if(row != map.get(ch))
+                {
+                    flag = false;
+                    break;
+                }
+            }
+            
+            if(flag)
+            {
+                list.add(word);
+            }
+        }
+        
+        String[] ans = new String[list.size()];
+        ans = list.toArray(ans);
+        
+        return ans;
+    }
 
+
+    // LEETCODE - 884 , UNCOMMON WORDS FROM TWO SENTENCES _______________________________________
+    public static String[] uncommonFromSentences(String A, String B) 
+    {
+        String[] arr1 = A.split("\\s");
+        String[] arr2 = B.split("\\s");
+        
+        HashMap<String , Integer> map = new HashMap<>();
+        for(String ele : arr1)
+        {
+            map.put(ele, map.getOrDefault(ele , 0) + 1);
+        }
+        
+        for(String ele : arr2)
+        {
+            map.put(ele, map.getOrDefault(ele , 0) + 1);
+        }
+        
+        List<String> list = new ArrayList<>();  
+        for(String key : map.keySet())
+        {
+            if(map.get(key) == 1)
+            {
+                list.add(key);
+            }
+        }
+        
+        String[] ans = new String[list.size()];
+        ans = list.toArray(ans);
+        return ans;
+    }
+
+
+
+    // LEETCODE - 1185 , MAXIMUM NUMBER OF BALLONS _____________________________________________
+    public static int maxNumberOfBalloons(String text) 
+    {
+        HashMap<Character ,Integer> map = new HashMap<>();
+        
+        for(char ch : text.toCharArray())
+        {
+            map.put(ch , map.getOrDefault(ch , 0) + 1);
+        }
+        
+        String str = "balon";
+        
+        int count = Integer.MAX_VALUE;
+        for(int i = 0 ; i < str.length() ; i++)
+        {
+            char ch = str.charAt(i);
+            if(map.containsKey(ch))
+            {
+                int rep = map.get(ch);
+                if(ch == 'l' || ch == 'o')
+                {
+                    rep = rep / 2;
+                }
+                count = Math.min(count , rep);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        return count;    
+    }
+
+
+    // LEETCODE - 242 , VALID ANAGRAMS_____________________________________________________
+    public static boolean isAnagram(String s, String t) 
+    {
+        if(s.length() != t.length())
+        {
+            return false;
+        }
+        int[] map = new int[26];
+        for(char c : s.toCharArray())
+        {
+            int idx = c - 'a';
+            map[idx]++;
+        }
+        
+        for(char c : t.toCharArray())
+        {
+            int idx = c - 'a';
+            if(map[idx] == 0)
+            {
+                return false;
+            }
+            map[idx]--;
+        }
+        
+        for(int i = 0 ; i < 26 ; i++)
+        {
+            if(map[i] > 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    // LEETCODE - 389 , FIND THE DIFFERENCE _______________________________________________
+    public static char findTheDifference(String s, String t) 
+    {
+        HashMap<Character , Integer> map = new HashMap<>();
+        for(char c :s.toCharArray())
+        {
+            map.put(c , map.getOrDefault(c , 0) + 1);
+        }
+        
+        char ch = ' ';
+        for(char c : t.toCharArray())
+        {
+            if(map.containsKey(c) && map.get(c) > 0)
+            {
+                map.put(c , map.get(c) - 1);
+            }
+            else
+            {
+                ch = c;
+                break;
+            }
+        }
+        
+        return ch;
+    }
+
+
+    // LEETCODE - 217 , DUPLICATE ELEMENTS ___________________________________________
+    public static boolean containsDuplicate(int[] nums) 
+    {
+        HashSet<Integer> set = new HashSet<>();
+        for(int ele : nums)
+        {
+            if(set.contains(ele))
+            {
+                return true;
+            }
+            set.add(ele);
+        }
+        
+        return false;
+    }
 
     // HELPER FUNCTIONS __________________________________________________
     public static void display1D(int[] nums)
