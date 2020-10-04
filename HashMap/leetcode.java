@@ -88,8 +88,32 @@ public class leetcode
 
 
         // LEETCODE - 217 , DUPLICATE ELEMENTS ___________________________________________
-        int[] arr = {1 ,2  ,3 , 4, 1};
-        System.out.println(containsDuplicate(arr));
+        // int[] arr = {1 ,2  ,3 , 4, 1};
+        // System.out.println(containsDuplicate(arr));
+
+
+
+        // LEETCODE - 387 , FIRST UNIQUE CHARACTER IN A STRING ________________________________
+        // System.out.println(firstUniqChar("loveleetcode"));
+
+
+        // LEETCODE - 1539 , KTH MISSING POSITIVE NUMBER ___________________________________________
+        // int[] arr = {2,3,4,7,11};
+        // System.out.println(findKthPositive(arr, 5));        // o/p - 9
+
+
+        // LEETCODE - 409 , LONGEST PALINDROME ___________________________________________________
+        // System.out.println(longestPalindrome("abccccdd"));      // o/p = 7
+
+
+        // LEETCODE - 1 , TWO SUM _____________________________________________________________________
+        // int[] arr = {2,7,11,15};
+        // int target = 9;         // o/p = [0 , 1]
+        // System.out.println(twoSum(arr, target));
+        // System.out.println(twoSum2(arr, target));
+
+
+        // LEETCODE - 
 
     }
 
@@ -606,6 +630,240 @@ public class leetcode
         
         return false;
     }
+
+
+    // LEETCODE - 387 , FIRST UNIQUE CHARACTER IN A STRING __________________________________
+    public static int firstUniqChar(String s) 
+    {
+        HashMap<Character , Integer> map = new HashMap<>();
+        
+        for(char ch : s.toCharArray())
+        {
+            map.put(ch , map.getOrDefault(ch , 0) + 1);
+        }
+        
+        for(int i = 0 ; i < s.length() ; i++)
+        {
+            if(map.get(s.charAt(i)) == 1)
+            {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+
+
+
+    // LEETCODE - 1539 , KTH MISSING POSITIVE INTEGER _______________________________________________
+    public static int findKthPositive(int[] arr, int k)
+    {
+        HashSet<Integer> set = new HashSet<>();
+        for(int ele : arr)
+        {
+            set.add(ele);
+        }
+        
+        int i = 0;
+        while(k > 0)
+        {
+            i++;
+            if(!set.contains(i))
+            {
+                k--;
+            }
+        }
+        
+        return i;
+    }
+
+
+
+    // LEETCODE - 409 , LONGEST PALINDROME ________________________________________________________
+    public static int longestPalindrome(String s) 
+    {
+        HashMap<Character , Integer> map = new HashMap<>();
+        
+        for(char ch : s.toCharArray())
+        {
+            map.put(ch , map.getOrDefault(ch , 0) + 1);
+        }
+        
+        int len = 0;
+        int odd = 0;
+        for(Character key : map.keySet())
+        {
+            int num = map.get(key);
+            if(num % 2 == 0)
+            {
+                len += num;
+            }
+            else
+            {
+                if(odd == 0)
+                {
+                    len += num;
+                    odd = 1;
+                }
+                else
+                {
+                    len += num - 1;
+                }
+            }
+        }
+        
+        return len;
+    }
+
+
+    // LEETCODE - 1 , TWO SUM _____________________________________________________________________
+    // ONE PASS ________
+    public static int[] twoSum(int[] nums, int target) 
+    {
+        HashMap<Integer , Integer> map = new HashMap<>();
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            int k = target - nums[i];
+            if(map.containsKey(k))
+            {
+                return new int[]{i , map.get(k)};
+            }
+            map.put(nums[i] , i);
+        }
+        
+        
+        throw new IllegalArgumentException("No two sum solution");
+    }
+
+    // TWO PASS ________
+    public static int[] twoSum2(int[] nums, int target) 
+    {
+        HashMap<Integer , Integer> map = new HashMap<>();
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            map.put(nums[i] , i);
+        }
+        
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            int k = target - nums[i];
+            if(map.containsKey(k) && map.get(k) != i)
+            {
+                return new int[]{i , map.get(k)};
+            }
+        }
+        
+        throw new IllegalArgumentException("No two sum solution");
+    }
+
+
+    // LEETCODE - 705 , DESIGN HASHSET _____________________________________________________________
+    public static class MyHashSet {
+
+        LinkedList<Integer>[] buckets;
+        int size = 0;
+        public MyHashSet() 
+        {
+            buckets = new LinkedList[5];
+            reassign();
+        }
+        
+        
+        public void reassign()
+        {
+            for(int i = 0 ; i < buckets.length ; i++)
+            {
+                buckets[i] = new LinkedList<>();
+            }
+            this.size = 0;
+        }
+        
+        public int myGroup(Integer key)
+        {
+            int hashcode = key.hashCode();
+            return Math.abs(hashcode) % buckets.length;
+        }
+        
+        public boolean foundElementInGroup(int key , LinkedList<Integer> group)
+        {
+            int groupSize = group.size();
+            
+            while(groupSize-- > 0)
+            {
+                if(group.getFirst() == key)
+                {
+                    return true;
+                }
+                group.addLast(group.removeFirst());
+            }
+            
+            return false;
+        }
+        
+        public void add(int key) 
+        {
+            int idx = myGroup(key);
+            LinkedList<Integer> group = buckets[idx];
+            
+            boolean flag = foundElementInGroup(key , group);
+            if(!flag)
+            {
+                group.addLast(key);
+                this.size++;
+            }
+            
+            double lamda = group.size() * 1.0 / buckets.length;
+            if(lamda > 0.3)
+            {
+                rehash();
+            }
+        }
+        
+        
+        public void rehash()
+        {
+            LinkedList<Integer>[] oldBuckets = buckets;
+            buckets = new LinkedList[2 * oldBuckets.length];
+            reassign();
+            
+            for(int i = 0 ; i < oldBuckets.length ; i++)
+            {
+                LinkedList<Integer> group = oldBuckets[i];
+                int groupSize = group.size();
+                
+                while(groupSize-- > 0)
+                {
+                    int ele = group.getFirst();
+                    group.addLast(group.removeFirst());
+                    add(ele);
+                }
+            }
+        }
+        
+        public void remove(int key)
+        {
+            int idx = myGroup(key);
+            LinkedList<Integer> group = buckets[idx];
+            
+            boolean flag = foundElementInGroup(key , group);
+            if(flag)  
+            {
+                group.removeFirst();
+                this.size--;
+            }
+        }
+        
+        /** Returns true if this set contains the specified element */
+        public boolean contains(int key) 
+        {
+            int idx = myGroup(key);
+            LinkedList<Integer> group = buckets[idx];
+            
+            boolean flag = foundElementInGroup(key , group);
+            return flag;
+        }
+    }
+    
 
     // HELPER FUNCTIONS __________________________________________________
     public static void display1D(int[] nums)
