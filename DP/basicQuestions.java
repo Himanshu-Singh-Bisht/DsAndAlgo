@@ -1373,7 +1373,9 @@ public class basicQuestions
         return dp[n];
     }
 
+
     
+
     // DISPLAY FUNCTION __________________________________________________________________________
     public static void display1D(int[] arr)
     {
@@ -1384,6 +1386,7 @@ public class basicQuestions
         System.out.println();
     }
 
+    
     public static void display(boolean[] dp)
     {
         for(int i = 0 ; i < dp.length ; i++)
@@ -1392,6 +1395,7 @@ public class basicQuestions
         }
         System.out.println();
     }
+
 
     public static void display2D(int[][] arr)
     {
