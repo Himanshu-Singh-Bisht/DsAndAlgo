@@ -1,5 +1,7 @@
 import java.util.Arrays;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
+
 public class basicQuestions
 {
     public static void main(String[] args)
@@ -174,12 +176,69 @@ public class basicQuestions
 
 
         // GFG , COUNT NO. OF WAYS TO FILL N X M SPACE USING 1 X M TILES____________________________
-        int n = 7 , m = 4;
+        // int n = 7 , m = 4;
         // System.out.println(tileFloor_1(n, m));
         // int[] dp = new int[n + 1];
         // System.out.println(tileFloor_2(n, m , dp));
         // display1D(dp);
-        System.out.println(tileFloor_3(n, m));
+        // System.out.println(tileFloor_3(n, m));
+
+
+
+        // COIN CHANGE ________________________________________________
+        // int[] arr = {2 , 3 , 5 , 7};
+        // int target = 10;
+        // System.out.println(permu_1(arr , target));
+        // int[] dp = new int[target + 1];
+        // System.out.println(permu_2(arr , target , dp));
+        // display1D(dp);
+        // System.out.println(permu_3(arr , target));
+
+        // System.out.println(combi_1(arr, target, 0));
+        // int[] dp = new int[target + 1];
+        // System.out.println(combi_2(arr, target, 0 , dp));
+        // display1D(dp);
+        // System.out.println(combi_3(arr, target));
+
+
+        // LEETCODE - 377 , COMBINATION SUM - IV ____________________________________
+        // int[] arr = {1 , 2, 3};
+        // int target  = 4;
+        // System.out.println(combinationSum4(arr, target));       // o/p = 4
+
+
+        // (GFG) NO. OF SOLUTIONS OF A LINEAR EQUATION OF N VARIABLE __________________
+        // int[] coeff = {2 , 3 , 7};
+        // int rhs = 20;       // o/p = 8
+        // System.out.println(countSol_1(coeff ,0 ,  rhs));
+        // System.out.println(countSol_2(coeff , rhs));
+        
+
+        // TARGET TYPE _______________________
+
+        // COIN CHANGE COMBINATION (COIN USED ONLY ONCE)
+        // int[] arr = new int[]{0 , 2 , 3 , 5 , 1 , 6};
+        // int target = 10;
+        // System.out.println(combiOnce_1(arr, target , 0));
+        // System.out.println(combiOnce_1b(arr, target, 0));
+        // int[][] dp = new int[arr.length][target + 1];
+        // System.out.println(combiOnce_2(arr, target , arr.length - 1 , dp));
+        // display2D(dp);
+        // System.out.println(combiOnce_3(arr , target));
+
+
+        // (GFG) 0-1 KNAPSACK PROBLEM _____________________________
+        int[] val = {15 , 14 , 10 , 45 , 30};
+        int[] weights = {2 , 5 , 1 , 3 , 4};
+        int cap = 7;
+        // System.out.println(knapsack_1(val , weights , cap , weights.length - 1));
+        // int[][] dp = new int[weights.length][cap + 1];
+        // System.out.println(knapsack_2(val, weights, cap, weights.length - 1 , dp));
+        // display2D(dp);
+        // System.out.println(knapsack_3(val, weights, cap));
+
+        // UNBOUNDED KNAPSACK ________________________________________
+        System.out.println(unboundeknapsack_1(val , weights , cap));
     }
 
     // FIBONACCI SERIES _________________________________________________________
@@ -1374,8 +1433,455 @@ public class basicQuestions
     }
 
 
-    
+    // COIN CHANGE ________________________________________________
+    // PERMUTATION (INFINTE COINS USED)_________________________________
+    // recursion ________________
+    public static int permu_1(int[] arr , int target)
+    {
+        if(target == 0)
+        {
+            return 1;
+        }
 
+        int count = 0;
+        for(int i = 0; i < arr.length ; i++)
+        {
+            if(target - arr[i] >= 0)
+            {
+                count += permu_1(arr, target - arr[i]);
+            }
+        }
+
+        return count;
+    }
+
+    // memoization ______________________________
+    public static int permu_2(int[] arr , int target , int[] dp)
+    {
+        if(target == 0)
+        {
+            return 1;
+        }
+
+        if(dp[target] != 0)
+        {
+            return dp[target];
+        }
+
+        int count = 0;
+        for(int i = 0 ; i < arr.length ; i++)
+        {
+            if(target - arr[i] >= 0)
+            {
+                count += permu_2(arr, target - arr[i], dp);
+            }
+        }
+        dp[target] = count;
+        return count;
+    }
+
+    // tabulation __________________________________
+    public static int permu_3(int[] arr , int target)
+    {
+        int[] dp = new int[target + 1];
+        for(int i = 0 ; i < dp.length ; i++)
+        {
+            if(i == 0)
+            {
+                dp[i] = 1;
+                continue;
+            }
+
+            for(int j = 0 ; j < arr.length ; j++)
+            {
+                if(i - arr[j] >= 0)
+                {
+                    dp[i] += dp[i - arr[j]];
+                }
+            }
+        }
+
+        display1D(dp);
+        return dp[target];
+    }
+
+    // COMBINATION (INFINTE COINS USED) ______________________
+    // recursion ____________
+    public static int combi_1(int[] arr , int target , int idx)
+    {
+        if(target == 0)
+        {
+            return 1;
+        }
+
+        int count = 0;
+
+        for(int i = idx ; i < arr.length ; i++)
+        {
+            if(target - arr[i] >= 0)
+            count += combi_1(arr, target - arr[i], i);
+        }
+
+        return count;
+    }
+
+    // memoization _________________________
+    public static int combi_2(int[] arr , int target , int idx , int[] dp)
+    {
+        // if(target == 0 || idx == arr.length)
+        // {
+        //     return target == 0 ? 1 : 0;
+        // }
+
+        // if(dp[target] != 0)
+        // {
+        //     return dp[target];
+        // }
+
+        // int count = 0;
+
+        // for(int i = 1 ; i < dp.length && idx < arr.length; i++)
+        // {
+        //     if(target - arr[idx] >= 0)
+        //     {
+        //         count += combi_2(arr, target - arr[idx], idx , dp);
+        //     }
+        //     idx++;
+        // }
+
+        // dp[target] = count;
+        // return count;
+        if(target == 0 || idx == arr.length)
+        {
+            if(target == 0)
+            {
+                dp[target] = 1;
+                return 1;
+            }
+            return 0;
+        }
+    
+        if(dp[target] != 0)
+        {
+            return dp[target];
+        }
+        int count = 0;
+    
+        for(int i = idx ; i < arr.length ; i++)
+        {
+            if (target - arr[i] >= 0)
+            {
+                count += combi_2(arr , target - arr[i], idx ,  dp);
+            }
+            idx++;                  // done to not use previous indexes of the current index. 
+        }
+        dp[target] = count;
+        return count;
+    }
+
+
+    // tabulation ____________________________ (very different)
+    public static int combi_3(int[] arr , int target)
+    {
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        for(int i = 0 ; i < arr.length ; i++)
+        {
+            for(int t = 0 ; t < dp.length ; t++)
+            {
+                if(t - arr[i] >= 0)
+                {
+                    dp[t] += dp[t - arr[i]];
+                }
+            }
+        }
+
+        display1D(dp);
+        return dp[target];
+    }
+
+
+
+    // LEETCODE - 377 , COMBINATION SUM - IV _________________________
+    public static int combinationSum4(int[] nums, int target) 
+    {
+        int[] dp = new int[target + 1];
+        dp[0] = 1;
+        
+        for(int t = 1 ; t < dp.length ; t++)
+        {
+            for(int i = 0 ; i < nums.length ; i++)
+            {
+                if(t - nums[i] >= 0)
+                {
+                    dp[t] += dp[t - nums[i]];
+                }
+            }
+        }
+        
+        return dp[target];
+    }
+
+
+    // LEETCODE - 322 , COIN CHANGE ____________________________________
+    public static int coinChange(int[] coins, int amount)
+    {
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp , Integer.MAX_VALUE);
+        dp[0] = 0;
+        
+        for(int i = 1; i < dp.length ; i++)
+        {
+            int min = Integer.MAX_VALUE;
+            for(int j = 0 ; j < coins.length ; j++)
+            {
+                if(i - coins[j] >= 0)
+                {
+                    min = Math.min(min , dp[i - coins[j]]);
+                }
+            }
+            
+            if(min < Integer.MAX_VALUE)
+            {
+                dp[i] = min + 1;
+            }
+        }
+        
+        return dp[amount] == Integer.MAX_VALUE ? -1 : dp[amount];
+    }
+
+
+    // (GFG) NO. OF SOLUTIONS OF A LINEAR EQUATION OF N VARIABLE __________________
+    public static int countSol_1(int[] coeff ,int idx , int rhs)
+    {
+        if(rhs == 0)
+        {
+            return 1;
+        }
+
+        int count = 0;
+        for(int i = idx ; i < coeff.length ; i++)
+        {
+            if(rhs - coeff[i] >= 0)
+            {
+                count += countSol_1(coeff, i , rhs - coeff[i]);
+            }
+        }
+
+        return count;
+    }
+
+    // tabulation ________________________________
+    public static int countSol_2(int[] coeff , int rhs)
+    {
+        int[] dp = new int[rhs + 1];
+        dp[0] = 1; 
+        for(int i = 0 ; i < coeff.length ; i++)
+        {
+            for(int t = 1 ; t < dp.length ; t++)
+            {
+                if(t - coeff[i] >= 0)
+                {
+                    dp[t] += dp[t- coeff[i]];
+                }
+            }
+        }
+
+        display1D(dp);
+        return dp[rhs];
+    }
+
+
+    // COIN CHANGE COMBINATION (COIN ONCE USED)____________________________
+    // recursion ___________
+    public static int combiOnce_1(int[] arr , int target , int idx)
+    {
+        if(target == 0)
+        {
+            return 1;
+        }
+
+        int count = 0;
+        for(int i = idx ; i < arr.length ; i++)
+        {
+            if(target - arr[i] >= 0)
+            {
+                count += combiOnce_1(arr, target - arr[i], i + 1);
+            }
+        }
+        return count;
+    }
+
+    public static int combiOnce_1b(int[] arr , int target , int idx)
+    {
+        if(target == 0 || idx == arr.length)
+        {
+            return target == 0 ? 1 : 0;
+        }
+
+        int count = 0;
+        if(target - arr[idx] >= 0)
+        {
+            count += combiOnce_1b(arr, target - arr[idx], idx + 1);
+        }
+        count += combiOnce_1b(arr, target, idx + 1);
+
+        return count;
+    }
+
+
+    // tabulation _____________________________
+    public static int combiOnce_2(int[] arr , int target , int idx , int[][] dp)
+    {
+        if(target == 0 || idx < 0)
+        {
+            
+            return target == 0 ? 1 : 0;
+        }
+
+        if(dp[idx][target] != 0)
+        {
+            return dp[idx][target];
+        }
+
+        int count = 0;
+        if(target - arr[idx] >= 0)
+        {
+            count += combiOnce_2(arr, target- arr[idx], idx - 1 , dp);
+        }
+        count += combiOnce_2(arr, target, idx - 1, dp);
+
+        dp[idx][target] = count;
+        return count;
+    }
+
+    // tabulation ______________________________________
+    public static int combiOnce_3(int[] arr , int target)
+    {
+        int[][] dp = new int[arr.length][target + 1];
+        dp[0][0] = 1;
+
+        for(int idx = 1 ; idx < arr.length ; idx++)
+        {
+            for(int tar = 0 ; tar <= target ; tar++)
+            {
+                if(tar == 0)
+                {
+                    dp[idx][tar] = 1;
+                    continue;
+                }
+
+                if(tar - arr[idx] >= 0)
+                {
+                    dp[idx][tar] += dp[idx - 1][tar - arr[idx]];
+                }
+                dp[idx][tar] += dp[idx - 1][tar];
+            }
+        }
+
+        display2D(dp);
+        return dp[arr.length - 1][target];
+    }
+
+
+    // (GFG) 0-1 KNAPSACK PROBLEM __________________________________________________________
+    // recursion _____________________
+    public static int knapsack_1(int[] val, int[] weights, int cap , int idx)
+    {
+        if(cap == 0 || idx < 0)
+        {
+            return 0;
+        }
+
+        int picked = 0 , unpicked = 0;
+        if(cap - weights[idx] >= 0)
+        {
+            picked = knapsack_1(val, weights, cap - weights[idx], idx - 1) + val[idx];
+        }
+        unpicked = knapsack_1(val, weights, cap, idx - 1);
+
+        return Math.max(picked , unpicked);
+    }
+
+    // memoization ___________________________________
+    public static int knapsack_2(int[] val , int[] weights, int cap , int idx , int[][] dp)
+    {
+        if(cap == 0 || idx < 0)
+        {
+            return 0;
+        }
+
+        if(dp[idx][cap] != 0)
+        {
+            return dp[idx][cap];
+        }
+
+        int picked = 0 , unpicked = 0;
+        if(cap - weights[idx] >= 0)
+        {
+            picked = knapsack_2(val, weights, cap - weights[idx] ,  idx - 1, dp) + val[idx];
+        }
+        unpicked = knapsack_2(val, weights, cap, idx - 1, dp);
+
+        dp[idx][cap] = Math.max(picked , unpicked);
+        return dp[idx][cap]; 
+    }
+
+    // tabulation _____________________________________
+    public static int knapsack_3(int[] val , int[] weights, int cap)
+    {
+        int[][] dp = new int[weights.length + 1][cap + 1];
+        
+        for(int idx = 1 ; idx < dp.length ; idx++)
+        {
+            int weightIdx = idx - 1;
+            for(int c = 0 ; c <= cap ; c++)
+            {
+                if(c == 0)
+                {
+                    dp[idx][c] = 0;
+                    continue;
+                }
+
+                int picked = 0 , unpicked = 0;
+                if(c - weights[weightIdx] >= 0)
+                {
+                    picked = dp[idx - 1][c - weights[weightIdx]] + val[weightIdx];
+                }
+                unpicked = dp[idx - 1][c];
+
+                dp[idx][c] = Math.max(picked , unpicked);
+            }
+        }
+
+        display2D(dp);
+        return dp[dp.length - 1][cap];
+    }
+
+    // (GFG) UNBOUNDED KNAPSACK _____________________________________________________________
+    // tabulation _______________________
+    public static int unboundeknapsack_1(int[] val ,int[] weights , int cap)
+    {
+        int[] dp = new int[cap + 1];
+
+        for(int idx = 0 ; idx < weights.length ; idx++)
+        {
+            for(int c = 0 ; c <= cap ; c++)
+            {
+                int picked = 0  , unpicked = 0;
+                if(c - weights[idx] >= 0)
+                {
+                    picked = dp[c - weights[idx]] + val[idx];
+                }
+                unpicked = dp[c];
+
+                dp[c] = Math.max(picked , unpicked);
+            }
+        }
+
+        display1D(dp);
+        return dp[cap];
+    }
     // DISPLAY FUNCTION __________________________________________________________________________
     public static void display1D(int[] arr)
     {
