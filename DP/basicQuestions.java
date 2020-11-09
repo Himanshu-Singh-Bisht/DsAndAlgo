@@ -295,8 +295,15 @@ public class basicQuestions
         // display1D(ldsDP);
 
         // LONGEST BITONIC SUBSEQUENCES (LBS) __________________________________________
-        int[] lbs_DP = LBS_DP(arr);
-        display1D(lbs_DP);
+        // int[] lbs_DP = LBS_DP(arr);
+        // display1D(lbs_DP);
+
+
+        // longest sum increasing subsequences (gfg) _________________________________
+        // System.out.println(sumIncreasingSubsequencesDP(arr));
+
+        // mininum no.of deletions required to make the array sorted _____________________
+        System.out.println(minDeltionsToMakeSorted(arr));
     }
 
     // FIBONACCI SERIES _________________________________________________________
@@ -2353,6 +2360,59 @@ public class basicQuestions
 
         System.out.println(maxLen);
         return lbs;
+    }
+
+
+
+    // longest sum increasing subsequence (gfg) _____________________________________________
+    public static int sumIncreasingSubsequencesDP(int[] arr)
+    {
+        int[] dp = new int[arr.length];
+        dp[0] = arr[0];
+
+        int maxSum = arr[0];
+        for(int i = 1 ; i < dp.length ; i++)
+        {
+            int sum = 0;
+            for(int j = 0 ; j < i ; j++)
+            {
+                if(arr[i] > arr[j])
+                {
+                    sum = Math.max(sum , dp[j]);
+                }
+            }
+            dp[i] = sum + arr[i];
+            maxSum = Math.max(maxSum , dp[i]);
+        }
+
+        display1D(dp);
+        return maxSum;
+    }
+
+
+    // minimum Number of deletions required to make a sequence sorted _________________________________
+    public static int minDeltionsToMakeSorted(int[] arr)
+    {
+        int[] dp = new int[arr.length];
+        dp[0] = 1;
+
+        int maxLen = 1;
+        for(int i = 1 ; i < dp.length ; i++)
+        {
+            int max = 0;
+            for(int j = 0 ; j < i ; j++)
+            {
+                if(arr[i] > arr[j])
+                {
+                    max = Math.max(max , dp[j]);
+                }
+                dp[i] = max + 1;
+
+                maxLen = Math.max(maxLen , dp[i]);
+            }
+        }
+
+        return dp.length - maxLen;
     }
     // DISPLAY FUNCTION __________________________________________________________________________
     public static void display1D(int[] arr)
