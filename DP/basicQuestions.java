@@ -228,9 +228,9 @@ public class basicQuestions
 
 
         // (GFG) 0-1 KNAPSACK PROBLEM _____________________________
-        int[] val = {15 , 14 , 10 , 45 , 30};
-        int[] weights = {2 , 5 , 1 , 3 , 4};
-        int cap = 7;
+        // int[] val = {15 , 14 , 10 , 45 , 30};
+        // int[] weights = {2 , 5 , 1 , 3 , 4};
+        // int cap = 7;
         // System.out.println(knapsack_1(val , weights , cap , weights.length - 1));
         // int[][] dp = new int[weights.length][cap + 1];
         // System.out.println(knapsack_2(val, weights, cap, weights.length - 1 , dp));
@@ -238,7 +238,65 @@ public class basicQuestions
         // System.out.println(knapsack_3(val, weights, cap));
 
         // UNBOUNDED KNAPSACK ________________________________________
-        System.out.println(unboundeknapsack_1(val , weights , cap));
+        // System.out.println(unboundeknapsack_1(val , weights , cap));
+
+
+        // (GFG) PRINT ALL PALINDROMIC SUBSTRINGS IN A STRING ____________________________________
+        // String str = "abccbdefeg";
+        // boolean[][] dp = isPalindromeSubstring(str);
+        // int count = 0;
+        // for(int i = 0 ; i < dp.length ; i++)
+        // {
+        //     for(int j = 0 ; j < dp[0].length ; j++)
+        //     {
+        //         if(dp[i][j])
+        //         {
+        //             System.out.println(str.substring(i , j + 1));
+        //             count++;
+        //         }
+        //     }
+        // }
+        // System.out.println(count);
+        // System.out.println(palindromeSubstringEffeicient(str));
+
+
+        // leetcode - 5 , longest palindrome substring ___________________________
+        // String str = "abcbaddef";
+        // System.out.println(longestPalindrome_1(str));
+        // System.out.println(longestPalindrome_2(str));
+        // int[][] dp = longestPalindromeDP(str);
+        // display2D(dp);
+
+
+        // leetcode - 516 , longest palindromic subsequence _____________________________
+        // String str = "acbdebafgh";
+        // System.out.println(longestPalindromicSubsequenceDP(str));
+
+        // count all palindromic subsequences possible _________________________
+        // String str = "amrmsra";     // o/p - 23
+        // String str = "amrmsrp";     // o/p = 12
+        // System.out.println(countPalindromicSubsequence(str));
+
+
+        // LONGEST INCREASING SUBSEQUENCES (LIS) ____________________________________________
+        int[] arr = {0 , 8 , 4 , 12 , 2  , 10 , 6 , 11 , 1 , 9 , 5 };
+        // System.out.println(totalLIS_1(arr , 0 , ""));
+        // int[] dp = new int[arr.length];
+        // LIS_memo(arr , arr.length - 1, dp);
+        // System.out.println(maxAnsLIS);
+        // display1D(dp);
+        // int[] lisDP = LIS_DP(arr);
+        // display1D(lisDP);
+        // int[] ans = LIS_DP_optimized(arr);
+        // display1D(ans);
+
+        // LONGEST DECREASING SUBSEQUENCES (LDS) ______________________________________________
+        // int[] ldsDP = LDS_DP(arr);
+        // display1D(ldsDP);
+
+        // LONGEST BITONIC SUBSEQUENCES (LBS) __________________________________________
+        int[] lbs_DP = LBS_DP(arr);
+        display1D(lbs_DP);
     }
 
     // FIBONACCI SERIES _________________________________________________________
@@ -1881,6 +1939,420 @@ public class basicQuestions
 
         display1D(dp);
         return dp[cap];
+    }
+
+
+    // COUNT ALL PALINDROMIC SUBSTRINGS _______________________________________________________________
+    // tabulation __________________________________
+    public static boolean[][] isPalindromeSubstring(String str)
+    {
+        boolean[][] dp = new boolean[str.length()][str.length()];
+
+        for(int gap = 0; gap < str.length() ; gap++)
+        {
+            for(int i = 0 , j = gap ; j < str.length() ; i++ , j++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = true;
+                    continue;
+                }
+                else if(str.charAt(i) == str.charAt(j))
+                {
+                    if(gap == 1)
+                    {
+                        dp[i][j] = true;
+                    }
+                    else if(dp[i + 1][j - 1] == true)
+                    {
+                        dp[i][j] = true;
+                    }
+                }
+            }
+        }
+
+        return dp;
+    }
+
+    // leetcode - 647 , palindrome substring
+    public static int palindromeSubstringEffeicient(String str)
+    {
+        int count = 0;
+        for(int center = 0; center < 2 * str.length() ; center++)
+        {
+            int left = center / 2;
+            int right = left + (center % 2);
+            while(left >= 0 && right < str.length() && str.charAt(left) == str.charAt(right))
+            {
+                System.out.println(str.substring(left , right + 1));
+                count++;
+                left--;
+                right++;
+            }
+        }
+        return count;
+    }
+
+
+    // LEETCODE - 5 , LONGEST PALINDROME SUBSTRING _________________________________________________
+    // best case ____________
+    public static String longestPalindrome_1(String str)
+    {
+        String ans = "";
+        int len = 0;
+        
+        for(int center = 0 ; center < 2 * str.length() ; center++)
+        {
+            int left = center / 2;
+            int right = left + (center % 2);
+            while(left >= 0 && right < str.length() && str.charAt(left) == str.charAt(right))
+            {
+                if(right - left + 1 > len)
+                {
+                    ans = str.substring(left , right + 1);
+                    len = right - left + 1;
+                }
+                left--;
+                right++;
+            }
+        }
+        return ans;
+    }
+
+    // using boolean dp array 
+    public static String longestPalindrome_2(String str) 
+    {
+         String longestPalindromeSubstring = "";
+         int length = 0;
+        
+        boolean[][] dp = new boolean[str.length() + 1][str.length() + 1];
+                               
+        for(int gap = 0 ; gap < str.length() ; gap++)
+        {
+            for(int i = 0 , j = gap ; j < str.length() ; i++ , j++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = true;
+                }
+                
+                else if(str.charAt(i) == str.charAt(j))
+                {
+                    if(gap == 1)
+                    {
+                        dp[i][j] = true;
+                    }
+                    
+                    else if(dp[i+1][j-1])
+                    {
+                        dp[i][j] = true;
+                    }
+                }
+                
+                
+                if(dp[i][j])
+                {
+                    int len = j-i+1;
+                    if(len > length)
+                    {
+                        length = len;
+                        longestPalindromeSubstring = str.substring(i , j+1);
+                    }
+                }
+            }
+        }  
+                               
+        return longestPalindromeSubstring;
+    }
+
+    // DP MADE FOR THE LONGEST PALINDROME SUBSTRING _______________________________________
+    public static int[][] longestPalindromeDP(String str)
+    {
+        int[][] dp = new int[str.length()][str.length()];
+
+        for(int gap = 0 ; gap < str.length() ; gap++)
+        {
+            for(int i = 0 , j = gap ; j < str.length() ; i++ , j++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = 1;
+                }
+                else if(str.charAt(i) == str.charAt(j))
+                {
+                    if(gap == 1)
+                    {
+                        dp[i][j] = 2;
+                    }
+                    else if(dp[i + 1][j - 1] != 0)
+                    {
+                        dp[i][j] = dp[i + 1][j - 1] + 2;
+                    }
+                }
+                else
+                {
+                    dp[i][j] = Math.max(dp[i + 1][j] , dp[i][j - 1]);
+                }
+            }
+        }
+
+        return dp;
+    }
+
+    // leetcode - 516 , longest palindromic subsequences __________________________________
+    // tabulation ______________________
+    public static int longestPalindromicSubsequenceDP(String str)
+    {
+        int[][] dp = new int[str.length()][str.length()];
+
+        for(int gap = 0 ; gap < str.length() ; gap++)
+        {
+            for(int i = 0 , j = gap ; j < str.length() ; i++ , j++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = 1;
+                }
+                else if(gap == 1)
+                {
+                    if(str.charAt(i) == str.charAt(j))
+                    {
+                        dp[i][j] = 2;
+                    }
+                    else
+                    {
+                        dp[i][j] = 1;
+                    }
+                }
+                else
+                {
+                    if(str.charAt(i) == str.charAt(j))
+                    {
+                        dp[i][j] = dp[i + 1][j - 1] + 2;
+                    }
+                    else
+                    {
+                        dp[i][j] = Math.max(dp[i + 1][j] , dp[i][j - 1]);
+                    }
+                }
+            }
+        }
+
+        display2D(dp);
+        return dp[0][dp.length - 1];
+    }
+
+
+    // count all palindromic subsequences possible __________________________________
+    public static int countPalindromicSubsequence(String str)
+    {
+        int[][] dp = new int[str.length()][str.length()];
+
+        for(int gap = 0 ; gap < str.length() ; gap++)
+        {
+            for(int i = 0 , j = gap ; j < str.length() ; i++ , j++)
+            {
+                if(gap == 0)
+                {
+                    dp[i][j] = 1;
+                }
+                else if(str.charAt(i) == str.charAt(j))
+                {
+                    dp[i][j] += (dp[i + 1][j - 1] + 1) + (dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1]);
+
+                    // dp[i][j] += dp[i][j - 1] + dp[i + 1][j] + 1;     // it can be done as this.
+                }
+                else
+                {
+                    dp[i][j] += dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1];
+                }
+            }
+        }
+
+        display2D(dp);
+        return dp[0][dp.length - 1];
+    }
+
+
+    // longest increasing subseqiences (LIS) (gfg) (leetcode - 300)___________________________________________
+    // recursion (count all LIS possible)______
+    public static int totalLIS_1(int[] arr , int idx , String ans)
+    {
+        if(idx == arr.length)
+        {
+            System.out.println(ans);
+            return 1;
+        }
+
+        int count = 0;
+        count += totalLIS_1(arr, idx + 1, ans);
+
+        for(int i = idx + 1; i < arr.length ; i++)
+        {
+            if(arr[i] > arr[idx])
+            {
+                count += totalLIS_1(arr, i , ans + arr[i] + " ");
+            }
+        }
+
+        return count;
+    }
+
+    // recursion and memoization ___________
+    public static int maxAnsLIS = 0;
+    public static int LIS_memo(int[] arr , int idx , int[] dp)
+    {
+        if(idx == 0)
+        {
+            return 1;
+        }
+
+        if(dp[idx] != 0)
+        {
+            return dp[idx];
+        }
+
+        int max = 0;
+        for(int i = idx - 1 ; i >= 0 ; i--)
+        {
+            int recAns = LIS_memo(arr, i, dp);
+            if(arr[i] < arr[idx])
+            {
+                max = Math.max(max , recAns + 1);
+            }
+        }
+
+        dp[idx] = max;
+        maxAnsLIS = Math.max(dp[idx] , maxAnsLIS);
+
+        return max;
+    }
+
+
+    public static int[] LIS_DP(int[] arr)
+    {
+        int[] dp = new int[arr.length];
+        dp[0] = 1;
+
+        int ans = 1;
+        for(int i = 1 ; i < dp.length ; i++)
+        {
+            for(int j = i - 1; j >= 0 ; j--)
+            {
+                if(arr[j] < arr[i])
+                {
+                    dp[i] = Math.max(dp[i] , dp[j] + 1);
+                }
+            }
+            ans = Math.max(ans , dp[i]);
+        }
+
+        System.out.println(ans);
+        return dp;
+    }
+
+
+    // optimized LIS
+    public static int[] LIS_DP_optimized(int[] arr) 
+    {
+        int[] dp = new int[arr.length];
+        int[] c = new int[arr.length + 1];      // it contains longest increasing subsequence
+        
+        int curr = 1;
+        c[1] = arr[0];
+        
+        for(int i = 1 ; i < arr.length ; i++)
+        {
+            if(arr[i] < c[1])
+            {
+                c[1] = arr[i];
+                dp[i] = 1;
+            }
+            else if(arr[i] > c[curr])
+            {
+                c[curr + 1] = arr[i];
+                dp[i] = curr + 1;
+                curr++;
+            }
+            else
+            {
+                int k = binarySearchLIS(c , curr , arr[i]);
+                c[k] = arr[i];
+                dp[i] = k;
+            }
+        }
+        
+        System.out.println(curr);
+        return c;
+    }
+    
+    public static int binarySearchLIS(int[] c , int right , int item)
+    {
+        int left = 1;
+        int mid = 0;
+        
+        while(right > 1 && left <= right)
+        {
+            mid = (left + right) / 2;
+            
+            if(c[mid] == item)
+            {
+                return mid;
+            }
+            else if(c[mid] > item)
+            {
+                right = mid - 1;         
+            }
+            else
+            {
+                left = mid + 1;
+            }
+        }
+        
+        return mid;
+    }
+
+
+    // LONGEST DECREASING SUBSEQUENCES ________________________________
+    public static int[] LDS_DP(int[] arr)
+    {
+        int[] dp = new int[arr.length];
+        dp[dp.length - 1] = 1;
+
+        int maxLen = 0;
+        for(int i = dp.length - 2 ; i >= 0 ; i--)
+        {
+            dp[i] = 1;
+            for(int j = i + 1 ; j < dp.length ; j++)
+            {
+                if(arr[i] > arr[j])
+                {
+                    dp[i] = Math.max(dp[i] , dp[j] + 1);
+                }
+            }
+            maxLen = Math.max(maxLen , dp[i]);
+        }
+        System.out.println(maxLen);
+        return dp;
+    }
+
+
+    // Longest Bitonic Subsequences (LBS) _____________________________________________________
+    public static int[] LBS_DP(int[] arr)
+    {
+        int[] lis = LIS_DP(arr);
+        int[] lds = LDS_DP(arr);
+
+        int[] lbs = new int[arr.length];
+        int maxLen = 0;
+        for(int i = 0 ; i < lbs.length ; i++)
+        {
+            lbs[i] = lis[i] + lds[i] - 1;
+            maxLen = Math.max(maxLen , lbs[i]);
+        }
+
+        System.out.println(maxLen);
+        return lbs;
     }
     // DISPLAY FUNCTION __________________________________________________________________________
     public static void display1D(int[] arr)
