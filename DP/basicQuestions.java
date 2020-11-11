@@ -1,7 +1,5 @@
 import java.util.Arrays;
 
-import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
-
 public class basicQuestions
 {
     public static void main(String[] args)
@@ -279,7 +277,7 @@ public class basicQuestions
 
 
         // LONGEST INCREASING SUBSEQUENCES (LIS) ____________________________________________
-        int[] arr = {0 , 8 , 4 , 12 , 2  , 10 , 6 , 11 , 1 , 9 , 5 };
+        // int[] arr = {0 , 8 , 4 , 12 , 2  , 10 , 6 , 11 , 1 , 9 , 5 };
         // System.out.println(totalLIS_1(arr , 0 , ""));
         // int[] dp = new int[arr.length];
         // LIS_memo(arr , arr.length - 1, dp);
@@ -303,7 +301,23 @@ public class basicQuestions
         // System.out.println(sumIncreasingSubsequencesDP(arr));
 
         // mininum no.of deletions required to make the array sorted _____________________
-        System.out.println(minDeltionsToMakeSorted(arr));
+        // System.out.println(minDeltionsToMakeSorted(arr));
+
+
+        // MATRIX CHAIN MULTIPLICATION (MCM) (GFG)_____________________________________________________________
+        // int[] arr = {10 , 20 , 30 , 40 , 30};
+        // System.out.println(MCM_1(arr , 0 , arr.length - 1));
+        // int[][] dp = new int[arr.length][arr.length];
+        // System.out.println(MCM_2(arr, 0, arr.length - 1, dp));
+        // display2D(dp);
+        // System.out.println(MCM_3(arr));
+
+        // MCM WITH ACTUAL STRING _________________________________________
+        // pair[][] dp = new pair[arr.length][arr.length];
+        // pair obj = MCM_WithString(arr , 0 , arr.length - 1 , dp);
+        // System.out.println(obj.first + " -> " + obj.second);
+
+        // System.out.println(MCM_DP_WithString(arr));
     }
 
     // FIBONACCI SERIES _________________________________________________________
@@ -2413,6 +2427,168 @@ public class basicQuestions
         }
 
         return dp.length - maxLen;
+    }
+
+
+    // MATRIX CHAIN MULTIPLICATION (MCM) (GFG)_____________________________________________________________
+    // recursion ___________
+    public static int MCM_1(int[] arr , int si , int ei)
+    {
+        if(si + 1 == ei)
+        {
+            return 0;
+        }
+
+        int minAns = Integer.MAX_VALUE;
+        for(int cut = si + 1 ; cut < ei ; cut++)
+        {
+            int left = MCM_1(arr, si, cut);
+            int right = MCM_1(arr, cut, ei);
+
+            int recAns = left + arr[si] * arr[cut] * arr[ei] + right;
+            minAns = Math.min(minAns , recAns);
+        }
+
+        return minAns;
+    }
+
+    // memoization _____________________
+    public static int MCM_2(int[] arr ,int si , int ei ,int[][] dp)
+    {
+        if(si + 1 == ei)
+        {
+            return 0;
+        }
+
+        if(dp[si][ei] != 0)
+        {
+            return dp[si][ei];
+        }
+
+        int minAns = Integer.MAX_VALUE;
+        for(int cut = si + 1 ; cut < ei ; cut++)
+        {
+            int left = MCM_2(arr, si, cut , dp);
+            int right = MCM_2(arr, cut, ei , dp);
+
+            int recAns = left + arr[si] * arr[cut] * arr[ei] + right;
+            minAns = Math.min(minAns , recAns);
+        }
+
+        dp[si][ei] = minAns;
+        return minAns;
+    }
+
+    // tabulation __________________________________________
+    public static int MCM_3(int[] arr)
+    {
+        int[][] dp = new int[arr.length][arr.length];
+
+        for(int gap = 2 ; gap < arr.length ; gap++)
+        {
+            for(int si = 0, ei = gap ; ei < arr.length ; si++ , ei++)
+            {
+                int minAns = Integer.MAX_VALUE;
+                for(int cut = si + 1 ; cut < ei ; cut++)
+                {
+                    int left = dp[si][cut];
+                    int right = dp[cut][ei];
+
+                    int temp = left + arr[si] * arr[cut] * arr[ei] + right;
+                    minAns = Math.min(minAns , temp);
+                }
+
+                dp[si][ei] = minAns;
+            }
+        }
+
+        display2D(dp);
+        return dp[0][arr.length - 1];
+    }
+
+
+    // mcm with actual string _____________________________
+
+    public static class pair
+        {
+            int first = 0;
+            String second = "";
+
+            public pair(int first , String second)
+            {
+                this.first = first;
+                this.second = second;
+            }
+        }
+
+    public static pair MCM_WithString(int[] arr , int si , int ei , pair[][] dp)
+    {
+        if(si + 1 == ei)
+        {
+            dp[si][ei] = new pair(0 , (char)(si + 'A') + "");
+            return dp[si][ei];
+        }
+
+        if(dp[si][ei] != null && dp[si][ei].first != 0)
+        {
+            return dp[si][ei];
+        }
+        pair minAns = new pair(Integer.MAX_VALUE , "");
+
+        for(int cut = si + 1 ; cut < ei ; cut++)
+        {
+            pair left = MCM_WithString(arr, si, cut, dp);
+            pair right = MCM_WithString(arr, cut, ei, dp);
+
+            int recAns = (left != null ? left.first : 0) + (arr[si] * arr[cut] * arr[ei]) + (right != null ? right.first : 0);
+            if(recAns < minAns.first)
+            {
+                minAns.first = recAns;
+                minAns.second = "(" + (left != null ? left.second : "") + (right != null ? right.second : "") + ")"; 
+            }
+        }
+
+        dp[si][ei] = minAns;
+        return dp[0][dp.length - 1];
+    }
+
+    // tabulation ____________________________________
+    public static int MCM_DP_WithString(int[] arr)
+    {
+        int[][] dp = new int[arr.length][arr.length];
+        String[][] sdp = new String[arr.length][arr.length];
+
+        for(int gap = 1; gap < arr.length ; gap++)
+        {
+            for(int si = 0 , ei = gap ; ei < arr.length ; si++ , ei++)
+            {
+                if(si + 1 == ei)
+                {
+                    dp[si][ei] = 0;
+                    sdp[si][ei] = (char)(si + 'A') + "";
+                    continue;
+                }
+
+                int minAns = Integer.MAX_VALUE;
+                for(int cut = si + 1 ; cut < ei ; cut++)
+                {
+                    int left = dp[si][cut];
+                    int right = dp[cut][ei];
+
+                    int myCost = left + arr[si] * arr[cut] * arr[ei] + right;
+                    if(myCost < minAns)
+                    {
+                        minAns = myCost;
+                        dp[si][ei] = minAns;
+                        sdp[si][ei] = "(" + sdp[si][cut] + sdp[cut][ei] + ")";
+                    }
+                }
+            }
+        }
+
+        display2D(dp);
+        System.out.println(sdp[0][sdp.length - 1]);
+        return dp[0][dp.length - 1];
     }
     // DISPLAY FUNCTION __________________________________________________________________________
     public static void display1D(int[] arr)
