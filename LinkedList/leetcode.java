@@ -374,7 +374,8 @@ public class leetcode
         ListNode a = mergeKLists_(lists , si , mid);
         ListNode b = mergeKLists_(lists , mid + 1 , ei);
         
-        return mergeTwoSortedLists(a , b);
+        // return mergeTwoSortedLists(a , b);
+        return mergeKListsPQ(lists);    // using priority queue
     }
     
     public ListNode mergeTwoSortedLists(ListNode l1 ,ListNode l2)
@@ -419,5 +420,181 @@ public class leetcode
         return head.next;
     }
 
+    public ListNode mergeKListsPQ(ListNode[] lists) 
+    {
+        
+        PriorityQueue<ListNode> pq = new PriorityQueue<>((ListNode a , ListNode b) ->
+                                                         {
+                                                             return a.val - b.val;
+                                                         });
+        for(ListNode l : lists)
+        {
+            if(l != null)
+            {
+                pq.add(l);
+            }
+        }
+        
+        ListNode head = new ListNode(-1);
+        ListNode curr = head;
+        
+        while(pq.size() != 0)
+        {
+            ListNode l = pq.peek();
+            pq.remove();
+            
+            curr.next = l;
+            curr = curr.next;
+            
+            if(l.next != null)
+            {
+                pq.add(l.next);
+            }
+        }
+        
+        return head.next;
+    }
+
+
+    // leetcode - 1290 , convert binary number in a linked list ___________________
+    public int getDecimalValue(ListNode head) 
+    {
+        ListNode curr = reverseList2(head);  
+        
+        int ans = 0;
+        int i = 0;
+        while(curr != null)
+        {
+            ans += Math.pow(2 , i) * curr.val;
+            curr = curr.next;
+            i++;
+        }
+        
+        return ans;
+    }
     
+    public ListNode reverseList2(ListNode head)
+    {
+        ListNode curr = head;
+        ListNode prev = null;
+        ListNode forw = null;
+        
+        while(curr != null)
+        {
+            forw = curr.next;
+            curr.next = prev;
+            
+            prev = curr;
+            curr = forw;
+        }
+          
+        return prev;
+    }
+
+    // leetcode - 148 ,reorder list 
+    public void reorderList(ListNode head) 
+    {
+        if(head == null || head.next == null)
+        {
+            return;
+        }
+        ListNode mid = middleNode(head);
+        ListNode nhead = mid.next;
+        
+        mid.next = null;
+        
+        nhead = reverseList(nhead);
+        
+        ListNode curr1 = head;
+        ListNode curr2 = nhead;
+        
+        while(curr1 != null && curr2 != null)
+        {
+            ListNode forw1 = curr1.next;
+            ListNode forw2 = curr2.next;
+            
+            curr1.next = curr2;
+            curr2.next = forw1;
+            
+            curr1 = forw1;
+            curr2 = forw2;
+        }
+        
+    }
+    
+    public ListNode middle(ListNode head)
+    {
+        ListNode slow = head;
+        ListNode fast = head;
+        
+        while(fast != null && fast.next != null && fast.next.next != null)
+        {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        return slow;
+    }
+    
+    public ListNode reverse(ListNode head)
+    {
+        ListNode curr = head;
+        ListNode prev = null;
+        ListNode forw = null;
+        
+        while(curr != null)
+        {
+            forw = curr.next;
+            curr.next = prev;
+            
+            prev = curr;
+            curr = forw;
+        }
+          
+        return prev;
+    }
+
+    // Again Reorder list (making folded list back to normal list)
+    public ListNode againReorderList(ListNode head)
+    {
+        if(head == null || head.next == null)
+        {
+            return head;
+        }
+
+        ListNode curr1 = head;
+        ListNode nhead = curr1.next;
+        ListNodde curr2 = nhead;
+
+        while(curr1 != null && curr2 != null)
+        {
+            if(curr2.next != null)
+            {
+                curr1.next = curr2.next;
+                curr1 = curr1.next;
+            }
+            else
+            {
+                break;
+            }
+
+            if(curr1.next != null)
+            {
+                curr2.next = curr1.next;
+                curr2 = curr2.next;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        curr1.next = null;
+        curr2.next = null;
+
+        nhead = reverseList(nhead);
+        curr1.next = nhead;
+        
+        return head;
+    }
 }
