@@ -597,4 +597,283 @@ public class leetcode
         
         return head;
     }
+
+
+    // leetcode - 1019 , next greater node in linked list ___________________
+    // by brute force ________
+    public int[] nextLargerNodes_1(ListNode head) 
+    {
+        if(head == null)
+        {
+            return new int[0];
+        }
+        ListNode curr = head;
+        int count = 0;
+        while(curr != null)
+        {
+            curr = curr.next;
+            count++;
+        }
+        int[] ans = new int[count];
+        
+        curr = head;
+        int i = 0;
+        while(curr != null)
+        {
+            ListNode nextGreater = nextGreaterNode(curr);
+            if(nextGreater == null)
+            {
+                ans[i++] = 0;
+            }
+            else
+            {
+                ans[i++] = nextGreater.val;
+            }
+            
+            curr = curr.next;
+        }
+        
+        return ans;
+    }
+    
+    
+    public ListNode nextGreaterNode(ListNode l)
+    {
+        ListNode curr = l;
+        while(curr != null)
+        {
+            if(curr.val > l.val)
+            {
+                break;
+            }
+            curr = curr.next;
+        }
+        
+        return curr;
+    }
+
+    // using stack __________
+    public int[] nextLargerNodes(ListNode head) 
+    {
+        ArrayList<Integer> nodeVals = new ArrayList<>();
+        
+        ListNode curr = head;
+        while(curr != null)
+        {
+            nodeVals.add(curr.val);
+            curr = curr.next;
+        }
+        
+        int[] ans = new int[nodeVals.size()];
+        Stack<Integer> st = new Stack<>();
+        
+        for(int i = 0 ; i < nodeVals.size() ; i++)
+        {
+            while(st.size() != 0 && nodeVals.get(st.peek()) < nodeVals.get(i))
+            {
+                int idx = st.pop();
+                ans[idx] = nodeVals.get(i);
+            }
+            
+            st.push(i);
+        }
+        
+        while(st.size() != 0)
+        {
+            ans[st.pop()] = 0;
+        }
+        
+        return ans;
+    }
+
+
+    // leetcode - 328 , odd even linked list
+    public ListNode oddEvenList(ListNode head) 
+    {
+        if(head == null || head.next == null || head.next.next == null)
+        {
+            return head;
+        }
+        ListNode odd = new ListNode(-1);
+        ListNode curr1 = odd;
+        
+        ListNode even = new ListNode(-1);
+        ListNode curr2 = even;
+        
+        while(head != null)
+        {
+            curr1.next = head;
+            curr2.next = head.next;
+            
+            curr1 = curr1.next;
+            curr2 = curr2.next;
+            
+            head = head.next;
+            if(head != null)
+            {
+                head = head.next;
+            }
+            else
+            {
+                break;
+            }
+        }
+        
+        curr1.next = even.next;
+        
+        return odd.next;
+    }
+
+    // leetcode = 2 , Add two numbers ______
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) 
+    {
+        if(l1 == null)
+        {
+            return l2;
+        }
+        if(l2 == null)
+        {
+            return l1;
+        }
+        int carry = 0;
+        ListNode curr1 = l1;
+        ListNode prev = null;
+        ListNode curr2 = l2;
+        while(curr1 != null && curr2 != null)
+        {
+            curr1.val = curr1.val + curr2.val + carry;
+            carry = curr1.val / 10;
+            curr1.val %= 10;
+            
+            prev = curr1;
+            curr1 = curr1.next;
+            curr2 = curr2.next;
+        }
+        
+        while(curr1 != null && carry != 0)
+        {
+            curr1.val += carry;
+            carry = curr1.val / 10;
+            curr1.val %= 10;
+            
+            prev = curr1;
+            curr1 = curr1.next;
+        }
+        
+        if(curr2 != null)
+        {
+            prev.next = curr2;
+            while(curr2 != null && carry != 0)
+            {
+                curr2.val += carry;
+                carry = curr2.val / 10;
+                curr2.val %= 10;
+                
+                prev = curr2;
+                curr2 = curr2.next;
+            }
+        }
+        
+        if(carry != 0)
+        {
+            prev.next = new ListNode(carry);
+        }
+        
+        return l1;
+    }
+
+
+    // leetcode = 146 , LRU Cache ________
+    class LRUCache 
+    {
+
+        public class Node 
+        {
+            int key;
+            int val;
+            Node next;
+            Node prev;   
+            
+            public Node()
+            {
+                
+            }
+            public Node(int key ,int val)
+            {
+                this.key = key;
+                this.val = val;
+            }
+        }
+        
+        Node tail = new Node();
+        Node head = new Node();
+        
+        int cacheCapacity;
+        HashMap<Integer , Node> map;
+        
+        public LRUCache(int capacity) 
+        {
+            map = new HashMap<>(capacity);
+            this.cacheCapacity = capacity;
+            
+            head.next = tail;
+            tail.prev = head;
+        }
+        
+        public int get(int key)
+        {
+            int result = -1;
+            Node node = map.get(key);
+            
+            if(node != null)
+            {
+                result = node.val;
+                remove(node);
+                add(node);
+            }
+            
+            return result;
+        }
+        
+        public void put(int key, int value)
+        {
+            Node node = map.get(key);
+            if(node != null)
+            {
+                node.val = value;
+                remove(node);
+                add(node);
+            }
+            else
+            {
+                if(map.size() == cacheCapacity)
+                {
+                    map.remove(tail.prev.key);
+                    remove(tail.prev);
+                }
+                Node newNode = new Node(key , value);
+                map.put(key , newNode);
+                add(newNode);
+            }
+        }
+        
+        public void add(Node node)
+        {
+            Node headNext = head.next;
+            headNext.prev = node;
+            node.next = headNext;
+            
+            head.next = node;
+            node.prev = head;
+        }
+        
+        public void remove(Node node)
+        {
+            Node nextNode = node.next;
+            Node prevNode = node.prev;
+            
+            nextNode.prev = prevNode;
+            prevNode.next = nextNode;
+        }
+    } 
 }
