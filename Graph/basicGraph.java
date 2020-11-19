@@ -1,4 +1,7 @@
+import java.nio.file.Path;
 import java.util.ArrayList;
+
+import javax.crypto.Mac;
 
 public class basicGraph
 {
@@ -33,6 +36,20 @@ public class basicGraph
         // postorderAllPath(0, 0, vis, "");
 
         // path maximum and minimum according to weights_______________________
+        // pathMaxMin(0, 5, 0, vis, "");
+        // System.out.println(maxPath + " ---> " + max_wsf);
+        // System.out.println(minPath + " ---> " + min_wsf);
+
+
+        // path maximum and minimum using class objects______________________
+        // PathMaxMin ansMax = pathMax_2(0, 5, vis);
+        // System.out.println(ansMax.s + " ---> " + ansMax.wt);
+        // PathMaxMin ansMin = pathMin_2(0, 5, vis);
+        // System.out.println(ansMin.s +" ---> " + ansMin.wt);
+
+
+        // Hamiltonian Path And Cycle _____________________________
+        hamiltonianPathCycle(2, 2, 0, 0, vis, maxPath);
     }
 
     public static void constructor()
@@ -51,6 +68,8 @@ public class basicGraph
         addEdge(4 , 5 , 2);
         addEdge(5 , 6 , 8);
         addEdge(4 , 6 , 3);
+
+        addEdge(2 , 5 , 5);         // extra edge for hamiltonian 
     }
 
     public static void addEdge(int u , int v, int w)
@@ -203,5 +222,143 @@ public class basicGraph
 
 
     // path maximum and minimum according to weights_______________________
-    
+    static int max_wsf = Integer.MIN_VALUE;
+    static int min_wsf = Integer.MAX_VALUE;
+    static String maxPath = "";
+    static String minPath = "";
+
+    public static void pathMaxMin(int src , int dest , int wsf , boolean[] vis , String ans)
+    {
+        if(src == dest)
+        {
+            ans += src;
+            if(max_wsf < wsf)
+            {
+                max_wsf = wsf;
+                maxPath = ans;
+            }
+            if(min_wsf > wsf)
+            {
+                min_wsf = wsf;
+                minPath = ans;
+            }
+            return;
+        }
+
+        vis[src] = true;
+        for(Edge e : graph.get(src))
+        {
+            if(!vis[e.v]) 
+            {
+                pathMaxMin(e.v, dest, wsf + e.w, vis, ans + src + "->");
+            }
+        }
+        vis[src] = false;
+    }
+
+
+    // path maximum and minimum using class objects______________________
+    public static class PathMaxMin
+    {
+        int wt = 0; 
+        String s = "";
+
+        PathMaxMin()
+        {
+
+        }
+
+        PathMaxMin(int wt , String s)
+        {
+            this.wt = wt;
+            this.s = s;
+        }
+    }
+
+    public static PathMaxMin pathMax_2(int src , int dest , boolean[] vis)  // for max
+    {
+        if(src == dest)
+        {
+            PathMaxMin base = new PathMaxMin();
+            base.s += src;
+            return base;
+        }
+
+        PathMaxMin myAns = new PathMaxMin(Integer.MIN_VALUE , "");
+        vis[src] = true;
+
+        for(Edge e : graph.get(src))
+        {
+            if(!vis[e.v])
+            {
+                PathMaxMin recAns = pathMax_2(e.v, dest, vis);
+                if(recAns.wt > myAns.wt)
+                {
+                    myAns = recAns;
+                    myAns.wt += e.w;
+                    myAns.s =  src + " -> " + myAns.s;
+                }
+            }
+        }
+
+        return myAns;
+    }   
+
+    public static PathMaxMin pathMin_2(int src , int dest , boolean[] vis)
+    {
+        if(src == dest)
+        {
+            PathMaxMin base = new PathMaxMin();
+            base.s += src;
+            return base;
+        }
+
+        PathMaxMin myAns = new PathMaxMin(Integer.MAX_VALUE , "");
+        vis[src] = true;
+        for(Edge e : graph.get(src))
+        {
+            if(!vis[e.v])
+            {
+                PathMaxMin recAns = pathMin_2(e.v, dest, vis);
+                if(recAns.wt < myAns.wt)
+                {
+                    myAns.wt = e.w + recAns.wt;
+                    myAns.s = recAns.s;
+                    myAns.s = src + "->" + myAns.s;
+                }
+            }
+        }
+        vis[src] = false;
+
+        return myAns;
+    }
+
+
+    // Hamiltonian Path And Cycle _______________________
+    public static void hamiltonianPathCycle(int osrc , int src , int count ,int wsf, boolean[] vis , String ans)
+    {
+        if(count == graph.size() - 1)
+        {
+            System.out.print(ans + src + " @ " + wsf);
+            for(Edge e : graph.get(src))
+            {
+                if(e.v == osrc)
+                {
+                    System.out.print(" CYCLE ");
+                }
+            }
+            System.out.println();
+            return;
+        }
+
+        vis[src] = true;
+        for(Edge e : graph.get(src))
+        {
+            if(!vis[e.v])
+            {
+                hamiltonianPathCycle(osrc, e.v, count + 1, wsf + e.w , vis, ans + src + "->");
+            }
+        }
+        vis[src] = false;
+    }
 }
