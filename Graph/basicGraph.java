@@ -1,7 +1,8 @@
-import java.nio.file.Path;
+import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.Queue;
 
-import javax.crypto.Mac;
+
 
 public class basicGraph
 {
@@ -28,7 +29,7 @@ public class basicGraph
 
         // removeVertex(3);
 
-        boolean[] vis = new boolean[graph.size()];
+        // boolean[] vis = new boolean[graph.size()];
         // System.out.println(hasPath(0, 6, vis , ""));
 
         // System.out.println(allPath(0 , 6 , 0 , vis , ""));
@@ -49,12 +50,22 @@ public class basicGraph
 
 
         // Hamiltonian Path And Cycle _____________________________
-        hamiltonianPathCycle(2, 2, 0, 0, vis, maxPath);
+        // hamiltonianPathCycle(2, 2, 0, 0, vis, maxPath);
+
+
+        // get connected component ________________
+        // System.out.println(getConnectedComponent());
+
+
+        // BFS traversal ____________
+        bfs(0, 6);      // using class 
+        // bfs_2(0 , 6);      // using null as delimiter
+        // bfs_3(0 , 6);          // using two loops
     }
 
     public static void constructor()
     {
-        int n = 7;
+        int n = 7;      // 9
         for(int i= 0 ; i < n ; i++)
         {
             graph.add(new ArrayList<Edge>());
@@ -69,7 +80,11 @@ public class basicGraph
         addEdge(5 , 6 , 8);
         addEdge(4 , 6 , 3);
 
-        addEdge(2 , 5 , 5);         // extra edge for hamiltonian 
+        // addEdge(2 , 5 , 5);         // extra edge for hamiltonian 
+
+        // addEdge(7 , 8 , 1);
+        // addEdge(8 , 9 , 4);
+        // addEdge(9 , 7 , 3);
     }
 
     public static void addEdge(int u , int v, int w)
@@ -360,5 +375,186 @@ public class basicGraph
             }
         }
         vis[src] = false;
+    }
+
+
+    // get connetected component ______________________
+    public static int getConnectedComponent()
+    {
+        boolean[] vis = new boolean[graph.size()];
+        int compo = 0;
+
+        for(int i = 0 ; i < graph.size() ; i++)
+        {
+            if(!vis[i])
+            {
+                compo++;
+                dfs(i , vis);
+            }
+        }
+
+        return compo;
+    }
+
+    public static void dfs(int src , boolean[] vis)
+    {
+        vis[src] = true;
+
+        for(Edge e : graph.get(src))
+        {
+            if(!vis[e.v])
+            {
+                dfs(e.v , vis);
+            }
+        }
+    }
+
+
+    // BFS traversal 
+    // 1st method (using class)
+    public static class BFSPath
+    {
+        int vtx = 0;
+        int wsf = 0;
+        String psf = "";
+
+        public BFSPath(int vtx , int wsf , String psf)
+        {
+            this.vtx = vtx;
+            this.wsf = wsf;
+            this.psf = psf;
+        }
+    }
+
+    public static void bfs(int src , int dest)
+    {
+        Queue<BFSPath> que = new LinkedList<>();
+        boolean[] vis = new boolean[graph.size()];
+
+        int cycle = 0;
+        BFSPath root = new BFSPath(src , 0 , src + "");
+        que.add(root);
+
+        while(!que.isEmpty())
+        {
+            BFSPath rpair = que.remove();
+
+            // cycle
+            if(vis[rpair.vtx])
+            {
+                cycle++;
+                System.out.println("cycle number - " + cycle + " -> " + rpair.psf);
+                continue;
+            }
+
+            vis[rpair.vtx] = true;
+
+            // destination
+            if(rpair.vtx == dest)
+            {
+                System.out.println(rpair.psf);
+            }
+
+            for(Edge e : graph.get(rpair.vtx))
+            {
+                if(!vis[e.v])
+                {
+                    BFSPath pair = new BFSPath(e.v, rpair.wsf + e.w , rpair.psf + "->" + e.v);
+                    que.add(pair);
+                }
+            }
+        }
+    }
+
+    // 2nd Method (usinhg -1 as an delimiter)
+    public static void bfs_2(int src ,int dest)
+    {
+        Queue<Integer> que = new LinkedList<>();
+        boolean[] vis = new boolean[graph.size()];
+
+        que.add(src);
+        que.add(null);
+
+        int level = 0;
+        int cycle = 0;
+
+        while(que.size() != 1)
+        {
+            if(que.peek() == null)
+            {
+                level++;
+                que.poll();
+                que.add(null);
+                continue;
+            }
+
+            int rvtx = que.remove();
+
+            if(vis[rvtx])
+            {
+                cycle++;
+                System.out.println("cycle - "+ cycle + " @ " + rvtx);
+                continue;
+            }
+
+            vis[rvtx] = true;
+
+            if(rvtx == dest)
+            {
+                System.out.println("Destination Reached " + "@ level " + level);
+            }
+
+            for(Edge e : graph.get(rvtx))
+            {
+                if(!vis[e.v])
+                {
+                    que.add(e.v);
+                }
+            }
+        }
+    }
+
+    // 3rd method (using two loops)
+    public static void bfs_3(int src , int dest)
+    {
+        Queue<Integer> que = new LinkedList<>();
+        boolean[] vis = new boolean[graph.size()];
+
+        int cycle = 0;
+        int level = 0;
+
+        que.add(src);
+
+        while(!que.isEmpty())
+        {
+            int size = que.size();
+            while(size-- > 0)
+            {
+                int rvtx = que.remove();
+                
+                if(vis[rvtx])
+                {
+                    cycle++;
+                    System.out.println("Cycle Number " + cycle + " @ vertex " + rvtx);
+                    continue;
+                }
+
+                vis[rvtx] = true;
+
+                if(rvtx == dest)
+                {
+                    System.out.println("Destination Reached " + "@ level " + level);
+                }
+
+                for(Edge e : graph.get(rvtx))
+                {
+                    if(!vis[e.v])
+                    {
+                        que.add(e.v);
+                    }
+                }
+            }
+            level++;
+        }
     }
 }
