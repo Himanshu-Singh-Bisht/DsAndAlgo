@@ -1,6 +1,10 @@
 import java.util.LinkedList;
+import java.lang.reflect.Array;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.Arrays;
+import java.util.Stack;
 
 
 
@@ -22,7 +26,7 @@ public class basicGraph
 
     public static void main(String[] args)
     {
-        constructor();
+        // constructor();
         // display();
 
         // removeEdge(0 , 1);
@@ -58,14 +62,26 @@ public class basicGraph
 
 
         // BFS traversal ____________
-        bfs(0, 6);      // using class 
+        // bfs(0, 6);      // using class 
         // bfs_2(0 , 6);      // using null as delimiter
         // bfs_3(0 , 6);          // using two loops
+
+
+        // Bipartite graph ________________
+        // bipartite();
+
+
+        // creating the directional graph
+        constructDirectionalGraph();
+        // displayDirectional();
+
+        // topogical sort 
+        topologicalSort();
     }
 
     public static void constructor()
     {
-        int n = 7;      // 9
+        int n = 10;      // 9
         for(int i= 0 ; i < n ; i++)
         {
             graph.add(new ArrayList<Edge>());
@@ -82,9 +98,9 @@ public class basicGraph
 
         // addEdge(2 , 5 , 5);         // extra edge for hamiltonian 
 
-        // addEdge(7 , 8 , 1);
-        // addEdge(8 , 9 , 4);
-        // addEdge(9 , 7 , 3);
+        addEdge(7 , 8 , 1);
+        addEdge(8 , 9 , 4);
+        addEdge(9 , 7 , 3);
     }
 
     public static void addEdge(int u , int v, int w)
@@ -557,4 +573,169 @@ public class basicGraph
             level++;
         }
     }
+
+
+    // Bipartite Graph ___________________________
+    public static class Pair
+    {
+        int vertex = 0;
+        int color = 0;
+
+        public Pair(int vertex ,int color)
+        {
+            this.vertex = vertex;
+            this.color = color;
+        }
+    }
+
+    public static void bipartite()
+    {
+        int[] vis = new int[graph.size()];
+        Arrays.fill(vis , -1);
+
+        int count = 0;
+
+        // as there can be different components of the graph so we use for loop to traverse all.
+        for(int i = 0 ; i < graph.size() ; i++)
+        {
+            if(vis[i] == -1)        // means not traversed yet____
+            {
+                count++;
+                System.out.println("Component - "+count + " " + ((isBipartite(i , vis)) ? "is bipartite graph." :
+                                                                        "is not a bipartite graph."));
+            }
+        }
+    }
+
+    public static boolean isBipartite(int src , int[] vis)
+    {
+        Queue<Pair> que = new ArrayDeque<Pair>();
+
+        que.add(new Pair(src , 0));
+        boolean flag = true;
+
+        while(!que.isEmpty())
+        {
+            int size = que.size();
+            while(size-- > 0)
+            {
+                Pair rpair = que.remove();
+
+                if(vis[rpair.vertex] != -1)      // means this vertex is already colored
+                {
+                    if(vis[rpair.vertex] != rpair.color)
+                    {
+                        System.out.println("Conflict arises at " + rpair.vertex + " so not a bipartite.");
+                        flag = false;
+                    }
+                    if(!flag)
+                    {
+                        break;
+                    }
+                    continue;
+                }
+
+                vis[rpair.vertex] = rpair.color;
+
+                for(Edge e : graph.get(rpair.vertex))
+                {
+                    if(vis[rpair.vertex] != -1)
+                    {   
+                        int col = (rpair.color + 1) % 2;
+                        que.add(new Pair(e.v , col));
+                    }
+                }
+            }
+            if(!flag)
+            {
+                break;
+            }
+        }
+
+        return flag;
+    }
+
+
+    // Directional Graph ____________________
+    public static ArrayList<ArrayList<Edge>> graphDirectional = new ArrayList<>();
+    public static void constructDirectionalGraph()
+    {
+        int n = 7;
+        for(int i = 0 ; i < n ; i++)
+        {
+            graphDirectional.add(new ArrayList<Edge>());
+        }
+
+        addEdgeDirecionalGraph(0 , 1 , 3);
+        addEdgeDirecionalGraph(1 , 2 , 2);
+        addEdgeDirecionalGraph(2 , 3 , 5);
+        addEdgeDirecionalGraph(0 , 3 , 4);
+        addEdgeDirecionalGraph(4 , 3 , 6);
+        addEdgeDirecionalGraph(4 , 5 , 3);
+        addEdgeDirecionalGraph(4 , 6 , 2);
+        addEdgeDirecionalGraph(5 , 6 , 7);
+    }
+
+    public static void addEdgeDirecionalGraph(int u , int v , int w)
+    {
+        if(u < 0 || v < 0 || u >= graphDirectional.size() || v >= graphDirectional.size())
+        {
+            return;
+        }
+
+        graphDirectional.get(u).add(new Edge(v , w));   // to construct the single edge means directional edge.
+    }
+
+    public static void displayDirectional()
+    {
+        for(int i = 0 ; i < graphDirectional.size() ; i++)
+        {
+            System.out.print(i + " -> ");
+            for(Edge e : graphDirectional.get(i))
+            {
+                System.out.print("(" + e.v + "," + e.w + ") ");
+            }
+            System.out.println();
+        }
+
+        System.out.println();
+    }
+
+
+    // toplogical sort _________________
+    public static void topologicalSort()
+    {
+        boolean[] vis = new boolean[graphDirectional.size()];
+        Stack<Integer> st = new Stack<>();
+
+        for(int i = 0 ; i < graphDirectional.size() ; i++)
+        {
+            if(!vis[i])
+            {
+                topologicalSort_(i , vis , st);
+            }
+        }
+
+
+        while(st.size() != 0)
+        {
+            System.out.print(st.pop() + " ");
+        }
+    }
+
+    public static void topologicalSort_(int si , boolean[] vis , Stack<Integer> st)
+    {
+        vis[si] = true;
+
+        for(Edge e : graphDirectional.get(si))
+        {
+            if(!vis[e.v])
+            {
+                topologicalSort_(e.v , vis , st);
+            }
+        }
+
+        st.push(si);
+    }
+    
 }
