@@ -76,7 +76,10 @@ public class basicGraph
         // displayDirectional();
 
         // topogical sort 
-        topologicalSort();
+        // topologicalSort();
+
+        // detecting cycle using topological sort technique _________
+        detectCycleInDirectedGraph();
     }
 
     public static void constructor()
@@ -672,7 +675,7 @@ public class basicGraph
         addEdgeDirecionalGraph(0 , 3 , 4);
         addEdgeDirecionalGraph(4 , 3 , 6);
         addEdgeDirecionalGraph(4 , 5 , 3);
-        addEdgeDirecionalGraph(4 , 6 , 2);
+        addEdgeDirecionalGraph(4 , 6 , 2);          // 6 -> 4 , for obtaining a cycle instead of 4 -> 6
         addEdgeDirecionalGraph(5 , 6 , 7);
     }
 
@@ -738,4 +741,55 @@ public class basicGraph
         st.push(si);
     }
     
+
+    // to detect a cycle using topological sort in a directed graph ___________
+    public static void detectCycleInDirectedGraph()
+    {
+        boolean[] vis = new boolean[graphDirectional.size()];
+        boolean[] cycleDetection = new boolean[graphDirectional.size()];
+        Stack<Integer> st = new Stack<>();
+        boolean res = false;
+
+        for(int i = 0 ; i < graphDirectional.size() ; i++)
+        {
+            if(!vis[i])
+            {
+                res = res || detectCycleUsingTopologicalSort(i , vis , cycleDetection , st);
+            }
+        }
+
+        while(st.size() != 0 && !res)  // if no cycle is present then print topological sort order
+        {
+            System.out.print(st.pop());
+        }
+    }
+
+    public static boolean detectCycleUsingTopologicalSort(int src , boolean[] vis , 
+                                                        boolean[] cycleDetection , Stack<Integer> st)
+    {
+        boolean res = false;
+
+        vis[src] = true;
+        cycleDetection[src] = true;
+
+        for(Edge e : graphDirectional.get(src))
+        {
+            if(!vis[e.v])
+            {
+                res = res || detectCycleUsingTopologicalSort(e.v, vis, cycleDetection, st);
+            }
+            else
+            {
+                if(cycleDetection[e.v])
+                {
+                    System.out.println("CYCLE");
+                    return true;
+                }
+            }
+        }
+
+        cycleDetection[src] = false;
+        st.push(src);
+        return res;
+    }
 }
