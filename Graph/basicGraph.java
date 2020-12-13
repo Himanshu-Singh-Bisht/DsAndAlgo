@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -79,7 +80,11 @@ public class basicGraph
         // topologicalSort();
 
         // detecting cycle using topological sort technique _________
-        detectCycleInDirectedGraph();
+        // detectCycleInDirectedGraph();
+
+        //  Khans Algo ______________________________
+        KhansAlgo();
+
     }
 
     public static void constructor()
@@ -485,7 +490,7 @@ public class basicGraph
         }
     }
 
-    // 2nd Method (usinhg -1 as an delimiter)
+    // 2nd Method (using -1 as an delimiter)
     public static void bfs_2(int src ,int dest)
     {
         Queue<Integer> que = new LinkedList<>();
@@ -659,6 +664,8 @@ public class basicGraph
     }
 
 
+    
+
     // Directional Graph ____________________
     public static ArrayList<ArrayList<Edge>> graphDirectional = new ArrayList<>();
     public static void constructDirectionalGraph()
@@ -726,6 +733,7 @@ public class basicGraph
         }
     }
 
+
     public static void topologicalSort_(int si , boolean[] vis , Stack<Integer> st)
     {
         vis[si] = true;
@@ -792,4 +800,117 @@ public class basicGraph
         st.push(src);
         return res;
     }
+
+
+    // Khans's Algo ___________
+    public static void KhansAlgo()
+    {
+        int[] indegree = new int[graphDirectional.size()];
+        for(int i = 0 ; i < graphDirectional.size() ; i++)
+        {
+            for(Edge e : graphDirectional.get(i))
+            {
+                indegree[e.v]++;
+            }
+        }
+
+        Queue<Integer> que = new LinkedList<>();
+
+        for(int i = 0 ; i < indegree.length ; i++)
+        {
+            if(indegree[i] == 0)
+            {
+                que.add(i);
+            }
+        }
+
+        ArrayList<Integer> ans = new ArrayList<>();
+        while(que.size() != 0)
+        {
+            int rvtx = que.poll();
+            ans.add(rvtx);
+            for(Edge e : graphDirectional.get(rvtx))
+            {
+                indegree[e.v]--;
+
+                if(indegree[e.v] == 0)
+                {
+                    que.add(e.v);
+                }
+            }
+        }
+
+        if(ans.size() != graphDirectional.size())
+        {
+            System.out.println("Cycle Detected");
+        }
+        else
+        {
+            for(int e : ans)
+            {
+                System.out.print(e + " ");
+            }
+        }
+    }
+
+
+    // DIJIKSTRA'S ALGORITHM ______________________________
+    public static class dpair
+    {
+        int vtx;
+        int par;
+        int wt;
+        int wsf;
+
+        public dpair(int vtx , int par , int wt , int wsf)
+        {
+            this.vtx = vtx;
+            this.par = par;
+            this.wt = wt;
+            this.wsf = wsf;
+        }
+
+        public dpair()
+        {
+
+        }
+    }
+
+    public static ArrayList<dpair>[] dgraph = new ArrayList[graph.size()];
+    public static int[] dshortestPath = new int[graph.size()];   //to contain min cost to each vertex from src
+
+    public static void dijikstraAlgo(int src)
+    {
+        for(int i = 0 ; i < dgraph.length ; i++)
+        {
+            dgraph[i] = new ArrayList<>();
+        }
+
+        boolean[] vis = new boolean[dgraph.length];
+        PriorityQueue<dpair> pq = new PriorityQueue<>((a , b) -> 
+                                                    {
+                                                        return a.wsf - b.wsf;
+                                                    });      // min priority queue on the basis of wsf
+
+        pq.add(new dpair(src , -1 , 0 , 0));
+
+        while(pq.size() != 0)
+        {
+            dpair rpair = pq.poll();
+
+            if(vis[rpair.vtx])
+            {
+                continue;
+            }
+
+            if(rpair.par != -1)
+            {
+                
+            }
+        }
+    }
+
+
+    // function to add Edge of the dijikstra algo graph
+    
 }
