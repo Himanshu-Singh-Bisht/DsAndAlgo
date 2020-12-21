@@ -27,8 +27,8 @@ public class basicGraph
 
     public static void main(String[] args)
     {
-        // constructor();
-        // display();
+        constructor();
+        display();
 
         // removeEdge(0 , 1);
 
@@ -73,7 +73,7 @@ public class basicGraph
 
 
         // creating the directional graph
-        constructDirectionalGraph();
+        // constructDirectionalGraph();
         // displayDirectional();
 
         // topogical sort 
@@ -83,13 +83,21 @@ public class basicGraph
         // detectCycleInDirectedGraph();
 
         //  Khans Algo ______________________________
-        KhansAlgo();
+        // KhansAlgo();
+
+
+        // DISJISTRA ALGO __________________________________
+        // dijikstraAlgo(0);
+
+
+        // PRIMS ALGO ___________________________________________________
+        primsAlgo();
 
     }
 
     public static void constructor()
     {
-        int n = 10;      // 9
+        int n = 7;      // 9
         for(int i= 0 ; i < n ; i++)
         {
             graph.add(new ArrayList<Edge>());
@@ -106,9 +114,9 @@ public class basicGraph
 
         // addEdge(2 , 5 , 5);         // extra edge for hamiltonian 
 
-        addEdge(7 , 8 , 1);
-        addEdge(8 , 9 , 4);
-        addEdge(9 , 7 , 3);
+        // addEdge(7 , 8 , 1);
+        // addEdge(8 , 9 , 4);
+        // addEdge(9 , 7 , 3);
     }
 
     public static void addEdge(int u , int v, int w)
@@ -854,6 +862,7 @@ public class basicGraph
     }
 
 
+
     // DIJIKSTRA'S ALGORITHM ______________________________
     public static class dpair
     {
@@ -862,37 +871,39 @@ public class basicGraph
         int wt;
         int wsf;
 
-        public dpair(int vtx , int par , int wt , int wsf)
+        public dpair()
+        {
+
+        }
+
+        public dpair(int vtx, int par , int wt , int wsf)
         {
             this.vtx = vtx;
             this.par = par;
             this.wt = wt;
             this.wsf = wsf;
         }
-
-        public dpair()
-        {
-
-        }
     }
-
-    public static ArrayList<dpair>[] dgraph = new ArrayList[graph.size()];
-    public static int[] dshortestPath = new int[graph.size()];   //to contain min cost to each vertex from src
 
     public static void dijikstraAlgo(int src)
     {
+        ArrayList<Edge>[] dgraph = new ArrayList[graph.size()];
+
         for(int i = 0 ; i < dgraph.length ; i++)
         {
-            dgraph[i] = new ArrayList<>();
+            dgraph[i] = new ArrayList<Edge>();
         }
 
-        boolean[] vis = new boolean[dgraph.length];
-        PriorityQueue<dpair> pq = new PriorityQueue<>((a , b) -> 
-                                                    {
-                                                        return a.wsf - b.wsf;
-                                                    });      // min priority queue on the basis of wsf
+        int[] dshortestPath = new int[dgraph.length];  // to store minimum distance to reach that vtx.
 
-        pq.add(new dpair(src , -1 , 0 , 0));
+        PriorityQueue<dpair> pq = new PriorityQueue<>((a , b) -> 
+                                                { 
+                                                    return a.wsf - b.wsf;
+                                                });
+                                                
+        pq.add(new dpair(src , -1, 0 , 0));
+
+        boolean[] vis = new boolean[dgraph.length];
 
         while(pq.size() != 0)
         {
@@ -905,12 +916,123 @@ public class basicGraph
 
             if(rpair.par != -1)
             {
-                
+                addEdgeGraph(dgraph , rpair.vtx, rpair.par, rpair.wt);
+                dshortestPath[rpair.vtx] = rpair.wsf; 
             }
+
+            // if(rpair.vtx == dest)           // to consider while giving destination point
+            // {
+
+            // }
+
+            vis[rpair.vtx] = true;
+            for(Edge e : graph.get(rpair.vtx))
+            {
+                if(!vis[e.v])
+                {
+                    pq.add(new dpair(e.v , rpair.vtx , e.w , rpair.wsf + e.w));
+                }
+            }
+        }
+
+        System.out.println("THE DIJISTRA GRAPH FORMED IS - ");
+        displayGraph(dgraph);
+
+
+        for(int i = 0 ; i < dshortestPath.length ; i++)
+        {
+            System.out.println(i + " -> " + dshortestPath[i]);
+        }
+        
+    }
+
+    // function to add Edge of the dijikstra algo graph
+    public static void addEdgeGraph(ArrayList<Edge>[] gp , int u , int v ,int w)
+    {
+        if(u < 0 || v < 0 || u >= gp.length || v >= gp.length)
+        {
+            return;
+        }
+
+        gp[u].add(new Edge(v , w));
+        gp[v].add(new Edge(u , w));
+    }
+
+    public static void displayGraph(ArrayList<Edge>[] gp)
+    {
+        for(int i = 0 ; i < gp.length ; i++)
+        {
+            System.out.print(i + " -> ");
+            for(Edge e : gp[i])
+            {
+                System.out.print("(" +e.v + "," + e.w + ") ");
+            }
+
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    
+
+    // PRIMS ALGORITHM ________________________________________________________
+    public static class ppair
+    {
+        int vtx;
+        int par;
+        int wt;
+
+        public ppair(int vtx , int par , int wt)
+        {
+            this.vtx = vtx;
+            this.par = par;
+            this.wt = wt;
         }
     }
 
+    public static void primsAlgo()
+    {
+        ArrayList<Edge>[] pgraph = new ArrayList[graph.size()];
 
-    // function to add Edge of the dijikstra algo graph
-    
+        for(int i = 0 ; i < pgraph.length ; i++)
+        {
+            pgraph[i] = new ArrayList<Edge>();
+        }
+
+        PriorityQueue<ppair> pq = new PriorityQueue<>((a , b) -> 
+                                                    {
+                                                        return a.wt - b.wt;
+                                                    });
+
+        pq.add(new ppair(0 , -1 , 0));      // start from any vertice as it doesn't matter
+        boolean[] vis = new boolean[pgraph.length];     // to avoid any cycle , we use visited array.
+
+        while(pq.size() != 0)
+        {
+            ppair rpair = pq.poll();
+
+            if(vis[rpair.vtx])  // for avoiding cycle
+            {
+                continue;
+            }
+
+            vis[rpair.vtx] = true;
+
+            if(rpair.par != -1)     // making the prims graph (MST (Minimum Spanning Tree))
+            {
+                addEdgeGraph(pgraph, rpair.vtx, rpair.par, rpair.wt);
+            }
+
+            for(Edge e : graph.get(rpair.vtx))
+            {
+                if(!vis[e.v])
+                {
+                    pq.add(new ppair(e.v , rpair.vtx , e.w));
+                }
+            }
+        }
+
+        System.out.println("THIS IS THE MINIMUM SPANNING TREE MADE BY THE PRIMS ALGO - ");
+        displayGraph(pgraph);
+    }
 }
