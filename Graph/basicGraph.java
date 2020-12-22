@@ -90,8 +90,13 @@ public class basicGraph
         // dijikstraAlgo(0);
 
 
-        // PRIMS ALGO ___________________________________________________
-        primsAlgo();
+        // PRIMS ALGO (MST) ___________________________________________________
+        // primsAlgo();
+
+
+        // DISJOINT UNION SET (DSU) _______________________________________________
+        // KRUSKAL ALGO (MST) ___________________________________
+        kruskalAlgo();
 
     }
 
@@ -1035,4 +1040,109 @@ public class basicGraph
         System.out.println("THIS IS THE MINIMUM SPANNING TREE MADE BY THE PRIMS ALGO - ");
         displayGraph(pgraph);
     }
+
+
+    // DISJOINT SET UNION (DSU) ___________________________________
+    // MERGE ________________
+    public static void merge(int p1 , int p2 , int[] par , int[] size)
+    {
+        if(size[p1] >= size[p2])
+        {
+            par[p2] = p1;
+            size[p1] += size[p2];
+        }
+        else
+        {
+            par[p1] = p2;
+            size[p2] += size[p1];
+        }
+    }
+
+    // FINDING PARENT (AND IF NEEDED ALSO DOING PATH COMPRESSION TO GET PARENT IN O(1))
+    public static int findParent(int vtx , int[] par)
+    {
+        if(par[vtx] == vtx)
+        {
+            return vtx;
+        }
+
+        par[vtx] = findParent(par[vtx] , par);
+        return par[vtx];
+    }
+
+
+    // KRUSKALS ALGO (USING DSU AND PATH COMPRESSION) ______________________________________________
+    public static class kpair
+    {
+        int u;
+        int v;
+        int wt;
+
+        public kpair(int u , int v , int wt)
+        {
+            this.u = u;
+            this.v = v;
+            this.wt = wt;
+        }
+    }
+
+    public static void kruskalAlgo()
+    {
+        PriorityQueue<kpair> pq = new PriorityQueue<>((a , b) -> 
+                                                        {
+                                                            return a.wt - b.wt;
+                                                        });
+        for(int i = 0 ; i < graph.size() ; i++)
+        {
+            for(Edge e : graph.get(i))
+            {
+                pq.add(new kpair(i , e.v , e.w));
+            }
+        }
+
+        int[] parent = new int[pq.size()];
+        for(int i = 0 ; i < parent.length ; i++)
+        {
+            parent[i] = i;
+        }
+
+        int[] size = new int[pq.size()];
+        Arrays.fill(size , 1);
+
+        kruskalAlgo_(pq , parent , size);
+    }
+
+
+    public static void kruskalAlgo_(PriorityQueue<kpair> pq , int[] parent , int[] size)
+    {
+        ArrayList<Edge>[] kgraph = new ArrayList[graph.size()];
+
+        for(int i = 0 ; i < kgraph.length ; i++)
+        {
+            kgraph[i] = new ArrayList<>();
+        }
+
+
+        while(pq.size() != 0)
+        {
+            kpair rpair = pq.poll();
+
+            int p1 = findParent(rpair.u, parent);
+            int p2 = findParent(rpair.v , parent);
+
+            if(p1 != p2)
+            {
+                merge(p1 , p2 , parent , size);
+
+                kgraph[rpair.u].add(new Edge(rpair.v , rpair.wt));
+                kgraph[rpair.v].add(new Edge(rpair.u , rpair.wt));
+            }
+        }
+
+        System.out.println("The MST according to kruskal algo is : ");
+        displayGraph(kgraph);
+    }
+
+
+
 }
