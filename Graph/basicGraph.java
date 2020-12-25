@@ -96,7 +96,11 @@ public class basicGraph
 
         // DISJOINT UNION SET (DSU) _______________________________________________
         // KRUSKAL ALGO (MST) ___________________________________
-        kruskalAlgo();
+        // kruskalAlgo();
+
+
+        // ARTICUALTION POINTS AND ARTICULATION BRIDGES __________________________________
+        
 
     }
 
