@@ -1,7 +1,30 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class leetcodeQuestions
 {
     public static void main(String[] args)
     {
+
+        // DETECT CYCLE IN A DIRECTED GRAPH _______________________
+        int n = 5;
+        ArrayList<Integer>[] dirGraph = new ArrayList[n];
+        for(int i = 0 ; i < dirGraph.length ; i++)
+        {
+            dirGraph[i] = new ArrayList<>();
+        }
+        addEdgeDirectedGraph(dirGraph, 0, 1);
+        addEdgeDirectedGraph(dirGraph, 2, 1);
+        addEdgeDirectedGraph(dirGraph, 2, 3);
+        addEdgeDirectedGraph(dirGraph, 3, 4);
+        addEdgeDirectedGraph(dirGraph, 4, 2);
+        addEdgeDirectedGraph(dirGraph, 4, 0);
+
+        System.out.println(isCyclicDirectedGraph(n , dirGraph));
+        
+        
         // leetcode - 200 , Number of Island _______________
 
 
@@ -14,6 +37,56 @@ public class leetcodeQuestions
         // leetcode - 
     }
 
+    // DETECT CYCLE IN A DIRECTED GRAPH _______________________
+    public static void addEdgeDirectedGraph(ArrayList<Integer>[] dirGraph , int u , int v)
+    {
+        dirGraph[u].add(v);
+    }
+
+    public static boolean isCyclicDirectedGraph(int n , ArrayList<Integer>[] dirGraph)
+    {
+        boolean[] vis = new boolean[n];
+        boolean flag = false;
+        for(int i = 0 ; i < n ; i++)
+        {
+            vis[i] = true;
+            for(int j = 0 ; j < dirGraph[i].size() ; j++)
+            {
+                flag = isCyclic_(dirGraph , vis, dirGraph[i].get(j));
+                if(flag)
+                {
+                    return true;
+                }
+            }
+            vis[i] = false;
+        }
+        return false;
+    }
+ 
+    public static boolean isCyclic_(ArrayList<Integer>[] dirGraph , boolean[] vis , int curr)
+    {
+        if(vis[curr] == true)
+        {
+            return true;
+        }
+
+        boolean flag = false;
+        vis[curr] = true;
+        for(int i = 0 ; i < dirGraph[curr].size() ; i++)
+        {
+            flag = isCyclic_(dirGraph, vis, dirGraph[curr].get(i));
+            if(flag)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+
+    
     // leetcode - 200 , Number of Island _______________
     public int numIslands(char[][] grid) 
     {
