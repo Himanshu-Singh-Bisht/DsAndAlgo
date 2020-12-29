@@ -321,6 +321,51 @@ public class basicQuestions
 
 
 
+        // LEETCODE - 132 , PALINDROME PARTITIONING - II ____________________________
+        // String str = "ababbbabbababa";
+
+        // boolean[][] isPalin = isPalindromeSubstring(str); 
+        // int[][] dp = new int[str.length()][str.length()];
+        // System.out.println(palindromePartitioning_1(str , 0 , str.length() - 1, isPalin, dp));
+        // display2D(dp);
+
+        // System.out.println(palindromePartitioning_2(str));
+        // System.out.println(palindromePartitioning_3_opti(str));
+
+
+
+        // LEETCODE - 312 , BURST BALLON _____________________________________
+        // int[] arr = {3 , 1 , 5 , 8};
+
+        // int[][] dp = new int[arr.length][arr.length];
+        // System.out.println(burstBallon_1(arr , 0 , arr.length - 1 , dp));
+        // display2D(dp);
+
+        // System.out.println(burstBallon_2(arr));
+
+
+        // OPTIMAL BINARY SEARCH TREE (OBST) (GFG) ____________________________________________
+        int[] keys = {10, 12, 20};
+        int[] freq = {34, 8, 50};
+
+        int[][] dp = new int[keys.length][keys.length];
+        // System.out.pintln(OBST_rec(keys, freq, 0, keys.length - 1 , dp));
+        // display2D(dp);
+
+        int[] psum = new int[freq.length];
+        for(int i = 0 ; i < psum.length ; i++)
+        {
+            if(i == 0)
+            {
+                psum[i] = freq[i];
+            }
+            else
+            {
+                psum[i] = freq[i] + psum[i -1];
+            }
+        }
+        System.out.println(OBST_rec2(keys, freq, 0, keys.length -1, dp , psum));
+        display2D(dp);
     }
 
     // FIBONACCI SERIES _________________________________________________________
@@ -2595,7 +2640,209 @@ public class basicQuestions
     }
 
 
-    
+    // LEETCODE - 112 , (GFG) PALINDROME PARTITIONING - II _______________________________________
+    // recursion and memoization ________________-
+    public static int palindromePartitioning_1(String str , int si , int ei , boolean[][] isPalin , int[][] dp)
+    {
+        if(isPalin[si][ei])         // substring is already a palindrome so not cut is needed.
+        {
+            dp[si][ei] = 0;
+            return 0;
+        }
+
+        if(dp[si][ei] != 0)
+        {
+            return dp[si][ei];
+        }
+
+        int minAnswer = Integer.MAX_VALUE;
+        for(int cut = si ; cut < ei ; cut++)
+        {
+            int left = palindromePartitioning_1(str, si, cut, isPalin, dp);
+            int right = palindromePartitioning_1(str, cut + 1, ei, isPalin, dp);
+
+            minAnswer = Math.min(minAnswer , left + 1 + right);
+        }
+
+        dp[si][ei] = minAnswer;
+        return dp[si][ei];
+    }
+
+    // TABULATION (O(N^3))_________________________
+    public static int palindromePartitioning_2(String str)
+    {
+        boolean[][] isPalin = isPalindromeSubstring(str);
+
+        int[][] dp = new int[str.length()][str.length()];
+
+        for(int gap = 0; gap < str.length() ; gap++)
+        {
+            for(int si = 0 , ei = gap ; ei < str.length() ; si++ , ei++)
+            {
+                if(isPalin[si][ei])
+                {
+                    dp[si][ei] = 0;
+                    continue;
+                }
+
+                int minAnswer = Integer.MAX_VALUE;
+                for(int cut = si ; cut < ei ; cut++)
+                {
+                    int left = dp[si][cut];
+                    int right = dp[cut + 1][ei];
+
+                    minAnswer = Math.min(minAnswer , left + 1 + right);
+                }
+
+                dp[si][ei] = minAnswer;
+            }
+        }
+
+        display2D(dp);
+        return dp[0][dp[0].length - 1];
+    }
+
+    // optimized (o(n^2)) __________________
+    public static int palindromePartitioning_3_opti(String str) 
+    {
+        boolean[][] isPalin = new boolean[str.length()][str.length()];
+        
+        int[] dp = new int[str.length()];
+        
+        for(int i = 0 ; i < str.length() ; i++)
+        {
+            int minCut = i;         // as maximum can be i only
+            for(int j = 0; j <= i ; j++)
+            {
+                if(str.charAt(i) == str.charAt(j) && 
+                   (i - j < 2 || isPalin[j + 1][i - 1]))
+                {
+                    isPalin[j][i] = true;
+                    
+                    minCut = Math.min(minCut , j == 0 ? 0 : (dp[j - 1] + 1));
+                }
+            }
+            
+            dp[i] = minCut;
+        }
+        
+        display1D(dp);
+        return dp[str.length() - 1];
+    }
+
+
+
+    // LEETCODE - 312 , BURST BALLON _______________________________________
+    // RECURSION AND MEMOIZATION 
+    public static int burstBallon_1(int[] arr , int si ,int ei , int[][] dp)
+    {
+        if(dp[si][ei] != 0)
+        {
+            return dp[si][ei];
+        }
+        int l = (si - 1 == -1) ? 1 : arr[si - 1];
+        int r = (ei + 1 == arr.length) ? 1 : arr[ei + 1];
+        
+        int maxAns = 0;
+        for(int cut = si ; cut <= ei ; cut++)
+        {
+            int left = (cut == si) ? 0 : burstBallon_1(arr, si, cut - 1, dp);
+            int right = (cut == ei) ? 0 : burstBallon_1(arr, cut + 1, ei, dp);
+
+            int cost = left + l * arr[cut] * r + right;
+            maxAns = Math.max(maxAns , cost);
+        }
+
+        dp[si][ei] = maxAns;
+        return dp[si][ei];
+    }
+
+    // TABULATION ___________________________
+    public static int burstBallon_2(int[] arr)
+    {
+        int[][] dp = new int[arr.length][arr.length];
+
+        for(int gap = 0 ; gap < arr.length ; gap++)
+        {
+            for(int si = 0 , ei = gap ; ei < arr.length ; si++ , ei++)
+            {
+                int l = (si - 1 == -1) ? 1 : arr[si - 1];
+                int r = (ei + 1 == arr.length) ? 1 : arr[ei + 1];
+
+                int maxAns = 0;
+                for(int cut = si ; cut <= ei ; cut++)
+                {
+                    int left = (cut == si) ? 0 : dp[si][cut - 1];
+                    int right = (cut == ei) ? 0 : dp[cut + 1][ei];
+
+                    int cost = left + l * arr[cut] * r + right;
+                    maxAns = Math.max(maxAns , cost);
+                }
+                dp[si][ei] = maxAns;
+            }
+        }
+
+        display2D(dp);
+        return dp[0][dp.length - 1];
+    }
+
+
+    // OBST (OPTIMAL BINARY SEARCH TREE) ______________________________________
+    // RECURSION AND MEMOIZATION
+    public static int OBST_rec(int[] keys , int[] freq , int si , int ei , int[][] dp)
+    {
+        if(dp[si][ei] != 0)
+        {
+            return dp[si][ei];
+        }
+
+        int minCost = Integer.MAX_VALUE;
+        for(int cut = si ; cut <= ei ; cut++)
+        {
+            int left = (cut == si) ? 0 : OBST_rec(keys, freq, si, cut - 1 , dp);
+            int right = (cut == ei) ? 0 : OBST_rec(keys, freq, cut + 1, ei , dp);
+            
+            int cost = left + sumInRange(freq , si , ei) + right;
+            minCost = Math.min(minCost , cost);
+        }
+
+        dp[si][ei] = minCost;
+        return minCost;
+    }
+
+    // sum in Range
+    public static int sumInRange(int[] freq , int si , int ei)
+    {
+        int sum = 0;
+        for(int i = si ; i <= ei ; i++)
+        {
+            sum += freq[i];
+        }
+
+        return sum;
+    }
+
+    // Recursion And Memoization (optimized using prefix sum Array) 
+    public static int OBST_rec2(int[] keys , int[] freq , int si , int ei , int[][] dp , int[] psum)
+    {
+        if(dp[si][ei] != 0)
+        {
+            return dp[si][ei];
+        }
+
+        int minCost = Integer.MAX_VALUE;
+        for(int cut = si ; cut <= ei ; cut++)
+        {
+            int left = (cut == si) ? 0 : OBST_rec2(keys, freq, si, cut - 1, dp , psum);
+            int right = (cut == ei) ? 0 : OBST_rec2(keys, freq, cut + 1, ei, dp , psum);
+
+            int myCost = left + (psum[ei] - ((si - 1 >= 0) ? psum[si - 1] : 0)) + right;
+            minCost = Math.min(minCost , myCost);
+        }
+
+        dp[si][ei] = minCost;
+        return minCost;
+    }
     // DISPLAY FUNCTION __________________________________________________________________________
     public static void display1D(int[] arr)
     {
@@ -2621,7 +2868,7 @@ public class basicQuestions
     {
         for(int[] ar : arr)
         {
-            for(int ele : ar)
+            for (int ele : ar)
             {
                 System.out.print(ele + " ");
             }
