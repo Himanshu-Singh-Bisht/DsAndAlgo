@@ -11,6 +11,18 @@ class questions
         // LEETCODE - 36 , SINGLE NUMBER
 
         // LEETCODE - 412 ,FIZZ BUZZ
+
+
+        
+        // LEETCODE - 217 , CONTAIN DUPLICATE
+
+        // LEETCODE - 121 , BSET TIME TO BUY AND SELL STOCKS
+
+        // LEETCODE - 867 , FIRST UNIQUE CHARACTER IN A STRING
+
+        // LEETCODE - 242 , VALID ANAGRAM
+
+        // LEETCODE - 344 , REVERSE STRING
     }
 
     // Leetcode - 200 , Number of Islands ____________________________________________
@@ -168,12 +180,194 @@ class questions
             }
             else
             {
-                ans.add(i + "");
+                ans.add(Integer.toString(i));
             }
             
             i++;
         }
         
         return ans;
+    }
+
+
+    // LEETCODE - 217 , CONTAIN DUPLICATE _____________________________________
+    public static boolean containsDuplicate(int[] nums) 
+    {
+        HashSet<Integer> set = new HashSet<>();
+        
+        for(int i : nums)
+        {
+            if(set.contains(i))
+            {
+                return true;
+            }
+            set.add(i);
+        }
+        
+        return false;
+    }
+
+
+    // LEETCODE - 121 , BSET TIME TO BUY AND SELL STOCKS ______________________________________
+    // O(N^2) __________
+    public static int maxProfit_1(int[] prices) 
+    {
+        int max = 0;
+        for(int i = 0 ; i < prices.length ; i++)
+        {
+            for(int j = i + 1 ; j < prices.length ; j++)
+            {
+                max = Math.max(max , prices[j] - prices[i]);
+            }
+        }
+        
+        return max;
+    }
+
+    // O(N) ______
+    public static int maxProfit_2(int[] prices) 
+    {
+        int max = 0;
+        int min = Integer.MAX_VALUE;
+        for(int i = 0 ; i < prices.length ; i++)
+        {
+            if(min < prices[i])
+            {
+                max = Math.max(max , prices[i] - min);
+            }
+            else
+            {
+                min = prices[i];
+            }
+        }
+        
+        return max;
+    }
+
+
+    // LEETCODE - 867 , FIRST UNIQUE CHARACTER IN A STRING ________________________________________________
+    public static int firstUniqChar_1(String s) 
+    {
+        HashMap<Character , Integer> map = new HashMap<>();
+        
+        for(int i = 0 ; i < s.length() ; i++)
+        {
+            char ch = s.charAt(i);
+            map.put(ch , map.getOrDefault(ch , 0) + 1);
+        }
+        
+        for(int i = 0 ; i < s.length() ; i++)
+        {
+            char ch = s.charAt(i);
+            if(map.get(ch) == 1)
+            {
+                return i;
+            }
+        }
+        
+        return -1;
+    }
+
+    public static int firstUniqChar_2(String s) 
+    {
+        HashMap<Character , int[]> map = new HashMap<>();
+        
+        for(int i = 0 ; i < s.length() ; i++)
+        {
+            char ch = s.charAt(i);
+            if(map.containsKey(ch))
+            {
+                int[] val = map.get(ch);
+                val[1] = val[1] + 1;
+                map.put(ch , val);
+            }
+            else
+            {
+                int[] val = {i, 1};
+                map.put(ch , val);
+            }
+        }
+        
+        int min = s.length();
+        for(Character c : map.keySet())
+        {
+            if(map.get(c)[1] == 1)
+            {
+                min = Math.min(min , map.get(c)[0]);
+            }
+        }
+        
+        return min == s.length() ? -1 : min;
+    }
+
+
+    // LEETCODE - 242 , VALID ANAGRAM ____________________________________
+    public static boolean isAnagram_1(String s, String t) 
+    {
+        if(s.length() != t.length())
+        {
+            return false;
+        }
+        HashMap<Character , Integer> map = new HashMap<>();
+        
+        for(char ch : s.toCharArray())
+        {
+            map.put(ch , map.getOrDefault(ch , 0) + 1);
+        }
+        
+        for(char ch : t.toCharArray())
+        {
+            if(map.containsKey(ch))
+            {
+                if(map.get(ch) == 1)
+                {
+                    map.remove(ch);
+                }
+                else
+                {
+                    map.put(ch , map.get(ch) - 1);
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+
+    public static boolean isAnagram_2(String s, String t) 
+    {
+        if(s.length() != t.length())
+        {
+            return false;
+        }
+        char[] arr1 = s.toCharArray();
+        char[] arr2 = t.toCharArray();
+        
+        Arrays.sort(arr1);
+        Arrays.sort(arr2);
+        
+        return Arrays.equals(arr1 , arr2);
+    }
+
+
+    // LEETCODE - 344 , REVERSE STRING __________________________________________
+    public static void reverseString(char[] s) 
+    {
+        int i = 0;
+        int j = s.length - 1;
+        
+        while(i < j)
+        {
+            char temp = s[i];
+            s[i] = s[j];
+            s[j] = temp;
+            
+            i++;
+            j--;
+        }
     }
 }
