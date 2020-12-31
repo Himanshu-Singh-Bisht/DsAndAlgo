@@ -13,7 +13,7 @@ class questions
         // LEETCODE - 412 ,FIZZ BUZZ
 
 
-        
+
         // LEETCODE - 217 , CONTAIN DUPLICATE
 
         // LEETCODE - 121 , BSET TIME TO BUY AND SELL STOCKS
@@ -23,6 +23,17 @@ class questions
         // LEETCODE - 242 , VALID ANAGRAM
 
         // LEETCODE - 344 , REVERSE STRING
+
+
+        // LEETCODE - 162 , FIND PEAK ELEMENT 
+
+        // LEETCODE - 1 , TWO SUM
+
+        // LEETCODE - 844 , BACKSPACE STRING COMPARE 
+        
+        // LEETCODE - 283 , MOVE ZEROES
+
+        // LEETCODE - 7 , Reverse Integer 
     }
 
     // Leetcode - 200 , Number of Islands ____________________________________________
@@ -370,4 +381,352 @@ class questions
             j--;
         }
     }
+
+
+    // LEETCODE - 162, FIND PEAK ELEMENT _____________________________________________________________
+    public static int findPeakElement(int[] nums) 
+    {
+        int peak = 0;
+        for(int i = 0; i < nums.length ; i++)
+        {
+            int left = (i - 1 < 0) ? Integer.MIN_VALUE : nums[i - 1];
+            int right = (i + 1 == nums.length) ? Integer.MIN_VALUE : nums[i + 1];
+            
+            if(nums[i] > left && nums[i] > right)
+            {
+                peak = i;    
+                break;
+            }
+        }
+        return peak;
+    }
+
+    // using Binary Search technique _____
+    public static int findPeakElement_2(int[] nums) 
+    {
+        int l = 0;
+        int r = nums.length - 1;
+        
+        while(l < r)
+        {
+            int mid = (l + r) / 2;
+            
+            if(nums[mid] > nums[mid+1])
+            {
+                r = mid;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        
+        return l;
+    }
+
+    // complete understanding of Binary Search Approach
+    public static int findPeakElement_2b(int[] arr) 
+    {
+        if(arr.length == 1)
+        {
+            return 0;
+        }
+        int l = 0;
+        int r = arr.length - 1;
+
+        while(l <= r)
+        {
+            int mid = (l + r) / 2;
+            if(mid > 0 && mid < arr.length - 1)
+            {
+                if(arr[mid] > arr[mid-1] && arr[mid] > arr[mid + 1])
+                {
+                    return mid;
+                }
+                else if(arr[mid] < arr[mid+ 1])
+                {
+                    l = mid + 1;     // as peak will be at right 
+                }
+                else if(arr[mid] < arr[mid-1])
+                {
+                    r = mid- 1;      // as peak will be at left
+                }
+            }
+            else
+            {
+                if(mid == 0)
+                {
+                    if(arr[mid] > arr[mid+ 1])
+                    {
+                        return mid;
+                    }
+                    else
+                    {
+                        l = mid + 1;
+                    }
+                }
+                else if(mid == arr.length - 1)
+                {
+                    if(arr[mid] > arr[mid- 1])
+                    {   
+                        return mid;
+                    }
+                    else
+                    {
+                        r = mid - 1;
+                    }
+                }
+            }
+        }
+        
+        return 0;
+    }
+
+
+    // LEETCODE = 1, TWO SUM ________________________________________________________
+    // O(n^2)
+    public static int[] twoSum(int[] nums, int target) 
+    {
+        int a = 0;
+        int b = 0;
+        
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            int tar = target - nums[i];
+            a = i;
+            b = i;
+            for(int j = i+1; j < nums.length ; j++)
+            {
+                if(tar - nums[j] == 0)
+                {
+                    b = j;
+                    break;
+                }
+            }
+            
+            if(a != b)
+            {
+                break;
+            }
+        }
+        
+        return new int[]{a, b};
+    }
+
+
+    // O(N)
+    public static int[] twoSum_2(int[] nums, int target) 
+    {
+        HashMap<Integer ,Integer> map = new HashMap<>();
+        
+        int[] ans = new int[2];
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            int tar = target - nums[i];
+            if(map.containsKey(tar))
+            {
+                ans[0] = i;
+                ans[1] = map.get(tar);
+                break;
+            }
+            
+            map.put(nums[i] , i);
+        }
+        
+        return ans;
+    }
+
+
+    // LEETCODE - 844 , BACKSPACE STRING COMPARE ____________________________________________
+    public static boolean backspaceCompare(String S, String T)
+    {
+        StringBuilder s = new StringBuilder();
+        for(char ch : S.toCharArray())
+        {
+            if(ch != '#')
+            {
+                s.append(ch + "");
+            }
+            else
+            {
+                if(s.length() != 0)
+                {
+                    s.deleteCharAt(s.length() - 1);
+                }
+            }
+        }
+        
+        StringBuilder t = new StringBuilder();
+        for(char ch : T.toCharArray())
+        {
+            if(ch != '#')
+            {
+                t.append(ch + "");
+            }
+            else
+            {
+                if(t.length() != 0)
+                {
+                    t.deleteCharAt(t.length() - 1);
+                }
+            }
+        }
+        
+        
+        S = s.toString();
+        T = t.toString();
+        
+        return S.compareTo(T) == 0;     // if true means equal
+    }
+
+    // opti (using stack)______
+    public static boolean backspaceCompare_2a(String S, String T)
+    {
+        Stack<Character> st1 = new Stack<>();
+        for(char ch : S.toCharArray())
+        {
+            if(ch == '#')
+            {
+                if(st1.size() != 0)
+                {
+                    st1.pop();
+                }
+            }
+            else
+            {
+                st1.push(ch);
+            }
+        }
+        
+        Stack<Character> st2 = new Stack<>();
+        for(char ch : T.toCharArray())
+        {
+            if(ch == '#')
+            {
+                if(st2.size() != 0)
+                {
+                    st2.pop();
+                }
+            }
+            else
+            {
+                st2.push(ch);
+            }
+        }
+        
+        if(st1.size() != st2.size())
+        {
+            return false;
+        }
+        
+        while(st1.size() != 0)
+        {
+            if(st1.pop() != st2.pop())
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    // opti (space - O(1)) _______
+    public static boolean backspaceCompare_2b(String S, String T)
+    {
+        int i = S.length() - 1;
+        int j = T.length() - 1;
+        
+        while(i >= 0 || j >= 0)
+        {
+            int skipS = 0;
+            while(i >= 0 && (skipS > 0 || S.charAt(i) == '#'))
+            {
+                if(S.charAt(i) == '#')
+                {
+                    skipS++;
+                }
+                else
+                {
+                    skipS--;
+                }
+                i--;
+            }
+            
+            int skipT = 0;
+            while(j >= 0 && (skipT > 0 || T.charAt(j) == '#'))
+            {
+                if(T.charAt(j) == '#')
+                {
+                    skipT++;
+                }
+                else
+                {
+                    skipT--;
+                }
+                j--;
+            }
+               
+            if(i >= 0 && j >= 0)
+            {
+                if(S.charAt(i) != T.charAt(j))
+                {
+                    return false;
+                }
+                i--;
+                j--;
+            }
+            else
+            {
+                if(i >= 0 || j >= 0)
+                {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+
+
+    // LEETCODE - 283 , MOVE ZEROES _________________________________________________
+    public static void moveZeroes(int[] nums) 
+    {
+        int i = 0;          // for non zeroes
+        int j = 0;          // for zeroes
+  
+        while(i < nums.length)
+        {
+            if(nums[i] != 0)
+            {
+                int temp = nums[i];
+                nums[i] = nums[j];
+                nums[j] = temp;
+                
+                j++;
+            }
+            i++;
+        }
+    }
+
+
+    // LEETCODE - 7 , REVERSE INTEGER __________________________________________________
+    public static int reverse(int x) 
+    {
+        int n = x;
+        long rev = 0;
+        while(n != 0)
+        {
+            int rem = n % 10;
+            n = n / 10;
+            rev = rev * 10 + rem;
+        }
+        rev = (x < 0) ? (-1 * rev) : rev;
+        if(rev > Integer.MAX_VALUE || rev < Integer.MIN_VALUE)
+        {
+            return 0;
+        }
+        return (x < 0) ? (int)(-1 * rev) : (int)(rev);
+    }
+
+    
 }
