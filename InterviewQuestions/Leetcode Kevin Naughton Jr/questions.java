@@ -25,6 +25,7 @@ class questions
         // LEETCODE - 344 , REVERSE STRING
 
 
+        
         // LEETCODE - 162 , FIND PEAK ELEMENT 
 
         // LEETCODE - 1 , TWO SUM
@@ -34,6 +35,18 @@ class questions
         // LEETCODE - 283 , MOVE ZEROES
 
         // LEETCODE - 7 , Reverse Integer 
+
+
+
+        // LEETCODE - 66 , PLUS ONE 
+
+        // LEETCODE - 278 , BAD VERSION
+
+        // LEETCODE - 657 , ROBOT RETURN TO ORIGIN
+
+        // LEETCODE - 219 , CONTAINS DUPLICATE - II
+
+        // 
     }
 
     // Leetcode - 200 , Number of Islands ____________________________________________
@@ -726,6 +739,102 @@ class questions
             return 0;
         }
         return (x < 0) ? (int)(-1 * rev) : (int)(rev);
+    }
+
+
+    // LEETCODE - 66 , PLUS ONE ___________________________________________________________
+    public static int[] plusOne(int[] digits) 
+    {
+        for(int i = digits.length - 1; i >= 0; i--)
+        {
+            if(digits[i] < 9)
+            {
+                digits[i]++;        // then just increase last index val by 1 and return that array.
+                return digits;
+            }
+            digits[i] = 0;
+        }
+        
+        int[] result = new int[digits.length + 1];
+        result[0] = 1;
+        return result;
+    }
+
+    // LEETCODE - 278 , BAD VERSION _________________________________________________________
+    public static int firstBadVersion(int n) 
+    {
+        int i = 1;
+        int j = n;
+        while(i < j)
+        {
+            int mid = i + (j - i) / 2;
+            if(isBadVersion(mid))
+            {
+                j = mid;
+            }
+            else
+            {
+                i = mid + 1;
+            }
+        }
+        return i;
+    }
+
+    // LEETCODE - 657 , ROBOT RETURN TO ORIGIN _________
+    public static boolean judgeCircle(String moves) 
+    {
+        int r = 0;
+        int c = 0;
+        
+        for(char ch : moves.toCharArray())
+        {
+            if(ch == 'R')
+            {
+                c += 1;
+            }
+            else if(ch == 'L')
+            {
+                c -= 1;
+            }
+            else if(ch == 'U')
+            {
+                r -= 1;
+            }
+            else 
+            {
+                r += 1;
+            }
+        }
+        
+        return (r == 0 && c == 0) ? true : false;
+    }
+
+
+    // LEETCODE - 219 , CONTAINS DUPLICATE - II _____________________________________
+    public boolean containsNearbyDuplicate(int[] nums, int k) 
+    {
+        HashMap<Integer , Integer> map = new HashMap<>();
+        for(int i = 0 ; i < nums.length ; i++)
+        {
+            if(map.containsKey(nums[i]))
+            {
+                int val = map.get(nums[i]);
+                if(i - val <= k)
+                {
+                    return true;
+                }
+                else
+                {
+                    map.put(nums[i] , i);
+                }
+            }
+            else 
+            {
+                map.put(nums[i] , i);
+            }
+        }
+        
+        return false;
     }
 
     
