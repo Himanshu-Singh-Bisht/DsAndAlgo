@@ -15,6 +15,12 @@ public class LeetcodeQuestions
         // LEETCODE - 852, Peak Index in a Mountain Array
 
         // leetcode - 1351, Count Negative Numbers in a Sorted Matrix
+
+        // LEETCODE - 1482 , MINIMUM NO. OF DAYS TO MAKE M BOUQUETS 
+
+        // LEETCODE = 778 , SWIM IN RISING WATER
+
+        // LEETCODE = 418 , 
     }
 
     // LEETCODE -794 , BINARY SEARCH ____________________________________________________
@@ -258,5 +264,131 @@ public class LeetcodeQuestions
         }
         
         return 0;
+    }
+
+
+    // LEETCODE - 1482 , MINIMUM NO. OF DAYS TO MAKE M BOUQUETS ___________________________________
+    public int minDays(int[] bloomDay, int m, int k) 
+    {
+        if(bloomDay.length < m * k)
+        {
+            return -1;
+        }
+        
+        int l = Integer.MAX_VALUE;
+        int r = Integer.MIN_VALUE;
+        
+        for(int ele : bloomDay)
+        {
+            l = Math.min(l , ele);
+            r = Math.max(r , ele);
+        }
+        
+        
+        int ans = r;
+        while(l <= r)
+        {
+            int mid = l + (r - l) / 2;
+            
+            // now for this mid(time) find the m(subArrays) required
+            int subArrays = 0;
+            int totalFlowers = 0;
+            for(int i = 0 ; i < bloomDay.length ; i++)
+            {
+                if(bloomDay[i] <= mid)
+                {
+                    totalFlowers++;
+                }
+                else
+                {
+                    totalFlowers = 0;
+                }
+                
+                if(totalFlowers == k)
+                {
+                    subArrays++;
+                    totalFlowers = 0;
+                }
+            }
+            
+            // binary search used now
+            if(subArrays >= m)
+            {
+                ans = mid;
+                r = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        
+        return ans;
+    }
+
+
+
+    // LEETCODE = 778 , SWIM IN RISING WATER __________________________________________________________
+    public boolean[][] vis;
+    public int swimInWater(int[][] grid) 
+    {
+        int l = Integer.MAX_VALUE;
+        int r = Integer.MIN_VALUE;
+        
+        for(int i = 0 ; i < grid.length ; i++)
+        {
+            for(int j = 0 ; j < grid[0].length ; j++)
+            {
+                l = Math.min(l , grid[i][j]);
+                r = Math.max(r , grid[i][j]);
+            }
+        }
+        
+        int ans = r;
+        
+        while(l <= r)
+        {
+            int mid = l + (r - l) / 2;
+            
+            vis = new boolean[grid.length][grid[0].length];
+            dfs(grid ,0 , 0 , mid);
+                
+            if(vis[grid.length - 1][grid[0].length - 1])
+            {
+                ans = mid;
+                r = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        
+        return ans;
+    }
+    
+    public void dfs(int[][] grid , int r , int c , int mid)
+    {
+        
+        if(grid[r][c] <= mid && !vis[r][c])
+        {
+            vis[r][c] = true;
+            if(r - 1 >= 0)
+            {
+                dfs(grid , r - 1 , c , mid);
+            }
+            if(c - 1 >= 0)
+            {
+                dfs(grid , r , c - 1 , mid);
+            }
+            if(r + 1 < grid.length)
+            {
+                dfs(grid , r + 1 , c , mid);
+            }
+            if(c + 1 < grid[0].length)
+            {
+                dfs(grid , r , c + 1 , mid);
+            }
+        }
     }
 }
