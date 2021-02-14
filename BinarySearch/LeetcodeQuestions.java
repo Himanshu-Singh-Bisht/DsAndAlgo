@@ -20,7 +20,9 @@ public class LeetcodeQuestions
 
         // LEETCODE = 778 , SWIM IN RISING WATER
 
-        // LEETCODE = 418 , 
+        // LEETCODE = 418 , SPLIT LARGEST SUM
+        
+        // LEETCODE = 
     }
 
     // LEETCODE -794 , BINARY SEARCH ____________________________________________________
@@ -390,5 +392,55 @@ public class LeetcodeQuestions
                 dfs(grid , r , c + 1 , mid);
             }
         }
+    }
+
+
+
+
+    // LEETCODE = 418 , SPLIT LARGEST SUM ________________________________________
+    public int splitArray(int[] nums, int m) 
+    {
+        int max = 0;
+        int sum = 0;
+        for(int ele : nums)
+        {
+            max = Math.max(max , ele);
+            sum += ele;
+        }
+        
+        int l = max;
+        int r = sum;
+        
+        int ans = 0;
+        while(l <= r)
+        {
+            int mid = l + (r - l) / 2;
+            
+            // subarrays needed for this mid (as largest sum among these subarrays)
+            int subarrays = 1;
+            int sumWt = 0;
+            for(int i = 0 ; i < nums.length ; i++)
+            {
+                if(sumWt + nums[i] > mid)
+                {
+                    subarrays++;
+                    sumWt = 0;
+                }
+                sumWt += nums[i];
+            }
+            
+            
+            if(subarrays <= m)
+            {
+                ans = mid;
+                r = mid - 1;
+            }
+            else
+            {
+                l = mid + 1;
+            }
+        }
+        
+        return ans;
     }
 }
